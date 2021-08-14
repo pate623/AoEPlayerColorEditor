@@ -1,2 +1,2 @@
 # AoEPlayerColorEditor
- Tool to edit Age of Empres Definitive Edition playerr colors.
+ Tool to edit Age of Empires Definitive Edition player colors.
