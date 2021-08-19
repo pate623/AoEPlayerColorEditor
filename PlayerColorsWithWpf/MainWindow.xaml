@@ -4,7 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
-        Title="AOE:DE Custom Player Colors" Height="320" Width="310">
+        Title="AOE:DE Custom Player Colors" Height="430" Width="310">
     <Grid>
         <TextBlock HorizontalAlignment="Left" Margin="10,20,0,0" TextWrapping="Wrap" Text="Player Color" VerticalAlignment="Top" FontSize="14"/>
         <TextBlock HorizontalAlignment="Left" Margin="10,50,0,0" TextWrapping="Wrap" Text="Blue" VerticalAlignment="Top"/>
@@ -78,7 +78,25 @@
             </Rectangle.Fill>
         </Rectangle>
 
+        <TextBlock HorizontalAlignment="Center" Margin="0,105" TextWrapping="Wrap" Text="Currently Active Player Color Preset" VerticalAlignment="Bottom" FontSize="12"/>
+
+        <ComboBox x:Name="PresetSelectionDropdown" SelectionChanged="PresetDropdown_SelectionChanged" HorizontalAlignment="Center" Margin="0, 80" VerticalAlignment="bottom" Width="140">
+            <ComboBoxItem IsSelected="True" Content="Choice 1"></ComboBoxItem>
+            <ComboBoxItem Content="Choice 2"></ComboBoxItem>
+            <ComboBoxItem Content="Choice 3"></ComboBoxItem>
+        </ComboBox>
+
         <Button x:Name="CreateColors" Content="Create Colors" HorizontalAlignment="Center" Margin="90,10" VerticalAlignment="bottom" Width="100" Click="CreateColors_Click"/>
 
+        <Button x:Name="SavePreset" Content="Save Preset"  IsEnabled="False" HorizontalAlignment="Left" Margin="50,50" VerticalAlignment="bottom" Width="100" Click="SavePreset_Click"/>
+
+        <Button x:Name="SavePresetAs" Content="Save Preset As" HorizontalAlignment="Right" Margin="50,50" VerticalAlignment="bottom" Width="100" Click="SavePresetAs_Click"/>
+
+        <StackPanel x:Name="PresetNamePopUp" Visibility="Collapsed" HorizontalAlignment="Center" Margin="0, 0, 0, 5" VerticalAlignment="bottom" Width="310" Height="125" Background="White">
+            <TextBlock HorizontalAlignment="Center" Margin="0, 10, 0, 2" Text="Enter Name For The New Preset"/>
+            <TextBox Margin="10,0"  x:Name="NewPresetNameInput" Text="New Preset Name" />
+            <Button VerticalAlignment="bottom" Margin="0, 20, 0, 0" Content="Apply"  Click="AcceptNewPresetName_Click" />
+            <Button VerticalAlignment="bottom" Margin="0, 10, 0, 0" Content="Cancel" Click="CancelNewPresetCreation_Click" />
+        </StackPanel>
     </Grid>
 </Window>
