@@ -18,9 +18,6 @@ using Newtonsoft.Json;
 /// Has presets allowing easy color swaps between different color schemes.
 /// </summary>
 /// 
-/// <!-- TODO: User Preferences -->
-/// Add lastly used palette. Used in boot up to know which color preset to load.
-/// 
 /// <!-- TODO: Add Action Info Screen -->
 ///  -Remove the pop up on palette creation.
 /// Action info screen works like a console.
@@ -242,7 +239,7 @@ namespace PlayerColorsWithWpf
             System.Windows.Controls.ComboBox PresetDropdown = FindName("PresetSelectionDropdown") as System.Windows.Controls.ComboBox;
             PresetDropdown.IsEnabled = true;
 
-            //Get the index of currently selected preset and Remove it from the list.
+            //Get the index of currently selected preset and remove it from the list.
             System.Windows.Controls.ComboBox PresetSelection = FindName("PresetSelectionDropdown") as System.Windows.Controls.ComboBox;
             int ToBeRemovedPreset = PresetSelection.SelectedIndex;
 
@@ -288,7 +285,7 @@ namespace PlayerColorsWithWpf
         ///Used to create a new color palette presets.
 
         /// <summary>
-        /// Opens the pop up asking a name for new preset.
+        /// Opens pop up asking a name for the new preset.
         /// </summary>
         private void SavePresetAs_Click(object sender, RoutedEventArgs e)
         {
@@ -307,7 +304,7 @@ namespace PlayerColorsWithWpf
         }
 
         /// <summary>
-        /// Closes the pop up asking a name for new preset.
+        /// Closes the pop up asking a name for new preset without creating new preset.
         /// </summary>
         private void CancelNewPresetCreation_Click(object sender, RoutedEventArgs e)
         {
@@ -401,11 +398,12 @@ namespace PlayerColorsWithWpf
         }
 
         /// <summary>
-        /// <para>Used to Load the color preset after it has been selected from the drop down.</para> 
+        /// <para>Used to load the color preset after it has been selected from the drop down.</para>
         /// <br>Updates both; the UI and the code.</br> 
         /// <br>In UI disables/enables "save" and "delete" preset buttons depending
         /// whether if the currently selected preset is one of the default presets.</br>
         /// <br>One the code side; loads the color presets colors into "NewPlayerColors" array.</br> 
+        /// <br>Updates user preferences.</br> 
         /// </summary>
         /// <param name="selectedPresetIndex">Which preset should be set as the currently active color preset.</param>
         /// <param name="updateListDropdown"><br>Set false if called from the drop down.</br>
@@ -415,8 +413,18 @@ namespace PlayerColorsWithWpf
         {
             if (updateListDropdown)
             {
+                Debug.WriteLine("Updating PresetSelectionDropdown from \"UpdateDataToSelectedPreseset\" function.");
                 object PresetsComboBox = FindName("PresetSelectionDropdown");
                 ((System.Windows.Controls.ComboBox)PresetsComboBox).SelectedIndex = selectedPresetIndex;
+
+                //Stop the script here. This way the player preferences are not saved twice.
+                return;
+            }
+            else if (selectedPresetIndex == -1)
+            {
+                //This function gets called when item is destroyed from the drop down list,
+                //and it happens before the drop down list has been set to 0, which causes errors and double calls.
+                return;
             }
 
             if (selectedPresetIndex < AllPalettePresets.Count && selectedPresetIndex >= 0)
@@ -431,6 +439,9 @@ namespace PlayerColorsWithWpf
                 NewPlayerColors[7] = new Vector3(AllPalettePresets[selectedPresetIndex].TealPlayerColor[0], AllPalettePresets[selectedPresetIndex].TealPlayerColor[1], AllPalettePresets[selectedPresetIndex].TealPlayerColor[2]);
 
                 Debug.WriteLine("Newly selected color updated to the Vector3[] NewPlayerColors.");
+
+                UserPreferences.ActivePlayerColorPalette = selectedPresetIndex;
+                UserPreferences.SavePlayerPreferences();
             }
             else
             {
@@ -480,7 +491,7 @@ namespace PlayerColorsWithWpf
             Rectangle TealPlayer = FindName("TealPlayerColor") as Rectangle;
             TealPlayer.Fill = (Brush)Converter.ConvertFromString("#FF" + ((byte)NewPlayerColors[7].X).ToString("X2") + ((byte)NewPlayerColors[7].Y).ToString("X2") + ((byte)NewPlayerColors[7].Z).ToString("X2"));
 
-            Debug.WriteLine("Main Windows player colors updated.");
+            Debug.WriteLine("UI player colors updated.");
         }
     }
 
@@ -506,7 +517,7 @@ namespace PlayerColorsWithWpf
 
         /// <summary>
         /// <br>Loads user preferences from disk to memory.</br>
-        /// <br>If no preferences are found creates the default user preferences file.</br>
+        /// <br>If no preferences are found creates the file with default settings.</br>
         /// </summary>
         public static void LoadPreferences()
         {
@@ -514,10 +525,10 @@ namespace PlayerColorsWithWpf
 
             if (File.Exists(PlayerPreferenceFileLocation))
             {
-                //Load player preferences
+                //Load player preferences.
                 string LoadedPreferences = File.ReadAllText(PlayerPreferenceFileLocation);
 
-                //convert JSON string back to object
+                //Convert JSON string back to object.
                 UserPreferencesJSON LoadedPreferencesAsObject = System.Text.Json.JsonSerializer.Deserialize<UserPreferencesJSON>(LoadedPreferences);
 
                 PlayerColorPaletteLocation = LoadedPreferencesAsObject.PaletteLocation;
@@ -701,7 +712,7 @@ namespace PlayerColorsWithWpf
     /// Player colors are created as follows:
     /// Start with the player color (RGB).
     /// Write it on the document. (use "ColorCodeSeperator" and "RGBColorSeperator" variables to separate each value.)
-    /// Get the first value of "InterpolatingIntoColors" array, and linearly Interpolate into that value.
+    /// Get the first value of "InterpolatingIntoColors" array, and linearly interpolate into that value.
     /// 16 numbers interpolated in total, if counting starting and ending values.
     /// Do the same for each value within "InterpolatingIntoColors" array.
     public static class PlayerColorsPalettes
@@ -710,7 +721,7 @@ namespace PlayerColorsWithWpf
         /// <br>Running this once creates all 8 player color palettes.</br>
         /// <br>The palette location is saved in the player preferences.</br>
         /// </summary>
-        /// <param name="playerColors">Holds 8 player colors</param>
+        /// <param name="playerColors">Holds 8 player colors.</param>
         public static void CreateColors(Vector3[] playerColors)
         {
             string PaletteStartingText = "JASC-PAL" + Environment.NewLine + "0100" + Environment.NewLine + "256";
@@ -718,14 +729,14 @@ namespace PlayerColorsWithWpf
             string ColorCodeSeperator = " ";
             string RGBColorSeperator = Environment.NewLine;
 
-            int ColorInterpolateCount = 15; //total of 16 colors if counting both starting and ending colors.
+            int ColorInterpolateCount = 15; //Total of 16 colors if counting both starting and ending colors.
 
             Vector3[] InterpolatingIntoColors = { new Vector3(0, 0, 0), new Vector3(32, 32, 32), new Vector3(64, 64, 64), new Vector3(128, 128, 128), new Vector3(192, 192, 192), new Vector3(224, 224, 224), new Vector3(255, 255, 255), new Vector3(128, 96, 64) };
 
             string[] PaletteNames = { "playercolor_blue.pal", "playercolor_red.pal", "playercolor_yellow.pal", "playercolor_brown.pal", "playercolor_orange.pal", "playercolor_green.pal", "playercolor_purple.pal", "playercolor_teal.pal" };
 
             /// <summary>
-            /// Creates and Saves one player color palette file.
+            /// Creates and saves one player color palette file.
             /// </summary>
             /// <param name="playerColor">Holds a single color.</param>
             /// <param name="paletteName">Holds the palette name.</param>
@@ -743,7 +754,7 @@ namespace PlayerColorsWithWpf
                     {
                         TextToWriteInPaletteFile += RGBColorSeperator;
 
-                        //Count the interpolation based on "i", "ColorToInterpolateInto" and "playerColor" variables
+                        //Count the interpolation based on "i", "ColorToInterpolateInto" and "playerColor" variables.
                         //Go from "playerColor" to "ColorToInterpolateInto", do this linearly.
                         TextToWriteInPaletteFile += Math.Round((playerColor.X * (ColorInterpolateCount - i) / ColorInterpolateCount) + (colorToInterpolateInto.X * i / ColorInterpolateCount));
                         TextToWriteInPaletteFile += ColorCodeSeperator;
@@ -753,7 +764,7 @@ namespace PlayerColorsWithWpf
                     }
                 }
 
-                //fill in "0 0 0" line to get a total of 256 lines if color data.
+                //Fill in "0 0 0" line to get a total of 256 lines in color data.
                 for (int i = 0; i < 128; i++)
                 {
                     TextToWriteInPaletteFile += RGBColorSeperator;
@@ -770,7 +781,7 @@ namespace PlayerColorsWithWpf
             ///<!-- Logic Starts Here -->
             if (Directory.Exists(UserPreferences.PlayerColorPaletteLocation))
             {
-                //Only removes the player color palettes allowing this.exe to be placed inside the AOE:DE folder.
+                //Only remove the player color palettes.
                 for (int i = 0; i < 8; i++)
                 {
                     File.Delete(UserPreferences.PlayerColorPaletteLocation + @"\" + PaletteNames[i]);
@@ -780,7 +791,7 @@ namespace PlayerColorsWithWpf
             else
             {
                 _ = Directory.CreateDirectory(UserPreferences.PlayerColorPaletteLocation);
-                Debug.WriteLine("No player color palette folder found, new pPlayer colors palette folder created.");
+                Debug.WriteLine("No player color palette folder found, new player colors palette folder created.");
             }
 
             for (int i = 0; i < 8; i++)
