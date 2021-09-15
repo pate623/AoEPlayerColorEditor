@@ -9,9 +9,9 @@
         <!-- "?" button -->
         <Button x:Name="Info" Content="?" IsEnabled="True" HorizontalAlignment="Right" Margin="0,15,15,0" VerticalAlignment="Top" Width="25" Click="Info_Click" />
 
-        <StackPanel x:Name="InfoPopUp" Visibility="Collapsed" HorizontalAlignment="Right" Margin="0,38,15,0" VerticalAlignment="Top" Width="305" Height="205" Background="White"  ZIndex="3">
+        <StackPanel x:Name="InfoPopUp" Visibility="Collapsed" HorizontalAlignment="Right" Margin="0,38,15,0" VerticalAlignment="Top" Width="305" Height="208" Background="White"  ZIndex="3">
             <Border BorderBrush="#999" BorderThickness="2" Padding="3">
-                <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" Margin="0" Text='If AoE:DE is installed in the default steam folder the "Locate color Palettes" button will automatically select the right folder. &#x0a;If you don&apos;t select a folder the palettes will be created in the same folder as this executable.&#x0a;&#x0a;You can edit the player colors by clicking the color boxes under &quot;Your Edit&quot; text. &#x0a;&#x0a;You can change and test different color schemes while the game is open. You just have to be in the main menu when creating the new colors.'/>
+                <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" Margin="0" Text='If AoE:DE is installed in the default steam folder the "Locate Color Palettes" button will automatically select the right folder. &#x0a;If you don&apos;t select a folder the palettes will be created in the same folder as this executable.&#x0a;&#x0a;You can edit the player colors by clicking the color boxes under &quot;Your Edit&quot; text. &#x0a;&#x0a;You can change and test different color schemes while the game is open. You just have to be in the main menu when creating the new colors.'/>
             </Border>
         </StackPanel>
 
@@ -32,60 +32,60 @@
         <TextBlock HorizontalAlignment="Left" Margin="10,225,0,0" TextWrapping="Wrap" Text="Teal" VerticalAlignment="Top"/>
 
         <TextBlock HorizontalAlignment="Left" Margin="60,20,0,0" TextWrapping="Wrap" Text="Your Edit | Default" VerticalAlignment="Top" FontSize="14"/>
-        <Rectangle x:Name="BluePlayerColor" MouseDown="BluePlayer_MouseDown" Width="18" Height="18" HorizontalAlignment="Left" Margin="90,50,0,0" VerticalAlignment="Top" Cursor="Hand" Fill="#FF2D2DF5">
+        <Rectangle x:Name="BluePlayerColor" MouseDown="BluePlayer_MouseDown" Width="20" Height="20" HorizontalAlignment="Left" Margin="95,50,0,0" VerticalAlignment="Top" Cursor="Hand" Fill="#FF2D2DF5">
         </Rectangle>
-        <Rectangle x:Name="RedPlayerColor" MouseDown="RedPlayer_MouseDown" Width="18" Height="18" HorizontalAlignment="Left" Margin="90,75,0,0" VerticalAlignment="Top" Cursor="Hand" Fill="#FFD22828">
+        <Rectangle x:Name="RedPlayerColor" MouseDown="RedPlayer_MouseDown" Width="20" Height="20" HorizontalAlignment="Left" Margin="95,75,0,0" VerticalAlignment="Top" Cursor="Hand" Fill="#FFD22828">
         </Rectangle>
-        <Rectangle x:Name="YellowPlayerColor" MouseDown="YellowPlayer_MouseDown" Width="18" Height="18" HorizontalAlignment="Left" Margin="90,100,0,0" VerticalAlignment="Top" Cursor="Hand" Fill="#FFD7D61E">
+        <Rectangle x:Name="YellowPlayerColor" MouseDown="YellowPlayer_MouseDown" Width="20" Height="20" HorizontalAlignment="Left" Margin="95,100,0,0" VerticalAlignment="Top" Cursor="Hand" Fill="#FFD7D61E">
         </Rectangle>
-        <Rectangle x:Name="BrownPlayerColor" MouseDown="BrownPlayer_MouseDown" Width="18" Height="18" HorizontalAlignment="Left" Margin="90,125,0,0" VerticalAlignment="Top" Cursor="Hand" Fill="#FF8E5B00">
+        <Rectangle x:Name="BrownPlayerColor" MouseDown="BrownPlayer_MouseDown" Width="20" Height="20" HorizontalAlignment="Left" Margin="95,125,0,0" VerticalAlignment="Top" Cursor="Hand" Fill="#FF8E5B00">
         </Rectangle>
-        <Rectangle x:Name="OrangePlayerColor" MouseDown="OrangePlayer_MouseDown" Width="18" Height="18" HorizontalAlignment="Left" Margin="90,150,0,0" VerticalAlignment="Top" Cursor="Hand" Fill="#FFFF9605">
+        <Rectangle x:Name="OrangePlayerColor" MouseDown="OrangePlayer_MouseDown" Width="20" Height="20" HorizontalAlignment="Left" Margin="95,150,0,0" VerticalAlignment="Top" Cursor="Hand" Fill="#FFFF9605">
         </Rectangle>
-        <Rectangle x:Name="GreenPlayerColor" MouseDown="GreenPlayer_MouseDown" Width="18" Height="18" HorizontalAlignment="Left" Margin="90,175,0,0" VerticalAlignment="Top" Cursor="Hand" Fill="#FF04A514">
+        <Rectangle x:Name="GreenPlayerColor" MouseDown="GreenPlayer_MouseDown" Width="20" Height="20" HorizontalAlignment="Left" Margin="95,175,0,0" VerticalAlignment="Top" Cursor="Hand" Fill="#FF04A514">
         </Rectangle>
-        <Rectangle x:Name="PurplePlayerColor" MouseDown="PurplePlayer_MouseDown" Width="18" Height="18" HorizontalAlignment="Left" Margin="90,200,0,0" VerticalAlignment="Top" Cursor="Hand" Fill="#FF960FFA">
+        <Rectangle x:Name="PurplePlayerColor" MouseDown="PurplePlayer_MouseDown" Width="20" Height="20" HorizontalAlignment="Left" Margin="95,200,0,0" VerticalAlignment="Top" Cursor="Hand" Fill="#FF960FFA">
         </Rectangle>
-        <Rectangle x:Name="TealPlayerColor" MouseDown="TealPlayer_MouseDown" Width="18" Height="18" HorizontalAlignment="Left" Margin="90,225,0,0" VerticalAlignment="Top" Cursor="Hand" Fill="#FF7EF2E1">
+        <Rectangle x:Name="TealPlayerColor" MouseDown="TealPlayer_MouseDown" Width="20" Height="20" HorizontalAlignment="Left" Margin="95,225,0,0" VerticalAlignment="Top" Cursor="Hand" Fill="#FF7EF2E1">
         </Rectangle>
 
 
-        <Rectangle Width="18" Height="18" HorizontalAlignment="Left" Margin="130,50,0,0" VerticalAlignment="Top">
+        <Rectangle Width="20" Height="20" HorizontalAlignment="Left" Margin="125,50,0,0" VerticalAlignment="Top">
             <Rectangle.Fill>
                 <SolidColorBrush Color="#FF2D2DF5" />
             </Rectangle.Fill>
         </Rectangle>
-        <Rectangle Width="18" Height="18" HorizontalAlignment="Left" Margin="130,75,0,0" VerticalAlignment="Top">
+        <Rectangle Width="20" Height="20" HorizontalAlignment="Left" Margin="125,75,0,0" VerticalAlignment="Top">
             <Rectangle.Fill>
                 <SolidColorBrush Color="#FFD22828" />
             </Rectangle.Fill>
         </Rectangle>
-        <Rectangle Width="18" Height="18" HorizontalAlignment="Left" Margin="130,100,0,0" VerticalAlignment="Top">
+        <Rectangle Width="20" Height="20" HorizontalAlignment="Left" Margin="125,100,0,0" VerticalAlignment="Top">
             <Rectangle.Fill>
                 <SolidColorBrush Color="#FFD7D61E" />
             </Rectangle.Fill>
         </Rectangle>
-        <Rectangle Width="18" Height="18" HorizontalAlignment="Left" Margin="130,125,0,0" VerticalAlignment="Top">
+        <Rectangle Width="20" Height="20" HorizontalAlignment="Left" Margin="125,125,0,0" VerticalAlignment="Top">
             <Rectangle.Fill>
                 <SolidColorBrush Color="#FF8E5B00" />
             </Rectangle.Fill>
         </Rectangle>
-        <Rectangle Width="18" Height="18" HorizontalAlignment="Left" Margin="130,150,0,0" VerticalAlignment="Top">
+        <Rectangle Width="20" Height="20" HorizontalAlignment="Left" Margin="125,150,0,0" VerticalAlignment="Top">
             <Rectangle.Fill>
                 <SolidColorBrush Color="#FFFF9605" />
             </Rectangle.Fill>
         </Rectangle>
-        <Rectangle Width="18" Height="18" HorizontalAlignment="Left" Margin="130,175,0,0" VerticalAlignment="Top">
+        <Rectangle Width="20" Height="20" HorizontalAlignment="Left" Margin="125,175,0,0" VerticalAlignment="Top">
             <Rectangle.Fill>
                 <SolidColorBrush Color="#FF04A514" />
             </Rectangle.Fill>
         </Rectangle>
-        <Rectangle Width="18" Height="18" HorizontalAlignment="Left" Margin="130,200,0,0" VerticalAlignment="Top">
+        <Rectangle Width="20" Height="20" HorizontalAlignment="Left" Margin="125,200,0,0" VerticalAlignment="Top">
             <Rectangle.Fill>
                 <SolidColorBrush Color="#FF960FFA" />
             </Rectangle.Fill>
         </Rectangle>
-        <Rectangle Width="18" Height="18" HorizontalAlignment="Left" Margin="130,225,0,0" VerticalAlignment="Top" Grid.Row="0">
+        <Rectangle Width="20" Height="20" HorizontalAlignment="Left" Margin="125,225,0,0" VerticalAlignment="Top" Grid.Row="0">
             <Rectangle.Fill>
                 <SolidColorBrush Color="#FF7EF2E1" />
             </Rectangle.Fill>
