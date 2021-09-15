@@ -18,16 +18,6 @@ using Newtonsoft.Json;
 /// Has presets allowing easy color swaps between different color schemes.
 /// </summary>
 /// 
-/// <!-- TODO: Add Action Info Screen -->
-///  -Remove the pop up on palette creation.
-/// Action info screen works like a console.
-/// Hold 4 lines of info, light gray font color.
-/// Writes in the action screen whenever you:
-///  -Create new palettes
-///  -Save palette preset
-///  -Create new palette preset
-///  -Delete palette preset
-///  
 /// <!-- TODO: Add Info Button -->
 /// Small button, on click/hover showcase info on what the editor does and how to use it.
 /// Showcased info:
@@ -36,6 +26,10 @@ using Newtonsoft.Json;
 ///  -How the color editing works (color picker).
 ///  -Tell about ability to change colors even when in game (at main menu).
 ///
+/// <!-- TODO: Allow changing "compared to" colors -->
+/// Create drop down below the action info screen.
+/// the drop down holds all the preset.
+/// 
 /// <!-- TODO: UI Rework -->
 /// Player colors now showcase all the shades of player color and not only the main colors.
 /// All objects now scale based on windows size.
@@ -57,6 +51,8 @@ namespace PlayerColorsWithWpf
         public static readonly int CountOfUnchangeableColorPresets = 3;
 
         public static readonly string[] PaletteFolderDefaultLocations = { @"C:\Program Files (x86)\Steam\steamapps\common\AoEDE\Assets\Palettes", @"D:\SteamLibrary\steamapps\common\AoEDE\Assets\Palettes", @"E:\SteamLibrary\steamapps\common\AoEDE\Assets\Palettes", @"C:\SteamLibrary\steamapps\common\AoEDE\Assets\Palettes", @"F:\SteamLibrary\steamapps\common\AoEDE\Assets\Palettes" };
+
+        public static int MaxLinesInConsole = 5;
 
         /// <summary>
         /// This is the currently active color scheme across the whole project.
@@ -234,6 +230,7 @@ namespace PlayerColorsWithWpf
 
             UpdatePresetComboBox(0);
             ShowNewlySelectedColors();
+            UpdateCustomConsole("Deleted palette preset");
         }
         ///<!-- End of delete presets button -->
 
@@ -259,6 +256,7 @@ namespace PlayerColorsWithWpf
             AllColorPalettePresets[CurrentlySelected].TealPlayerColor = new int[] { (int)NewPlayerColors[7].X, (int)NewPlayerColors[7].Y, (int)NewPlayerColors[7].Z };
 
             PalettePresets.SaveColorPresetsToDisk();
+            UpdateCustomConsole("Saved palette preset");
             Debug.WriteLine("Saved palette preset.");
         }
         ///<!-- End of Save presets button -->
@@ -328,6 +326,7 @@ namespace PlayerColorsWithWpf
 
             AllColorPalettePresets.Add(NewPreset);
             PalettePresets.SaveColorPresetsToDisk();
+            UpdateCustomConsole("Created new palette preset");
             Debug.WriteLine("Created new palette preset.");
 
             //Update UI to reflect all changes.
@@ -450,9 +449,45 @@ namespace PlayerColorsWithWpf
             Debug.WriteLine("UI player colors updated.");
         }
 
+        public void UpdateCustomConsole(string textToBeAdded)
+        {
+            if (textToBeAdded == null)
+            {
+                return;
+            }
+
+            TextBlock CustomConsole = FindName("CustomConsole") as TextBlock;
+
+            string ConsoleText = CustomConsole.Text;
+
+            int Limit = MaxLinesInConsole - 1;
+            string NewConsoleText = textToBeAdded + "\n";
+
+            foreach (char c in ConsoleText)
+            {
+                if (c == '\n')
+                {
+                    Limit--;
+                }
+                if (Limit < 1)
+                {
+                    break;
+                }
+                NewConsoleText += c;
+            }
+            CustomConsole.Text = NewConsoleText;
+        }
+
+        private void Info_Click(object sender, RoutedEventArgs e)
+        {
+            //PlayerColorsPalettes.CreateColors(NewPlayerColors);
+            //UpdateCustomConsole("Created the color palettes");
+        }
+
         private void CreateColors_Click(object sender, RoutedEventArgs e)
         {
             PlayerColorsPalettes.CreateColors(NewPlayerColors);
+            UpdateCustomConsole("Created the color palettes");
         }
     }
 
@@ -745,8 +780,6 @@ namespace PlayerColorsWithWpf
             {
                 CreatePlayerColorPalette(playerColors[i], PaletteNames[i]);
             }
-
-            _ = System.Windows.Forms.MessageBox.Show("New Player Colors Created.");
             Debug.WriteLine("All player colors created.");
         }
     }
