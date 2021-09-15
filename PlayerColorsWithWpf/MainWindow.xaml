@@ -4,13 +4,21 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
-        Title="AOE:DE Custom Player Colors" Height="560" Width="320">
+        Title="AOE:DE Custom Player Colors" Height="550" Width="345">
     <Grid>
         <!-- "?" button -->
         <Button x:Name="Info" Content="?" IsEnabled="True" HorizontalAlignment="Right" Margin="0,15,15,0" VerticalAlignment="Top" Width="25" Click="Info_Click" />
-        
+
+        <StackPanel x:Name="InfoPopUp" Visibility="Collapsed" HorizontalAlignment="Right" Margin="0,38,15,0" VerticalAlignment="Top" Width="305" Height="205" Background="White"  ZIndex="3">
+            <Border BorderBrush="#999" BorderThickness="2" Padding="3">
+                <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" Margin="0" Text='If AoE:DE is installed in the default steam folder the "Locate color Palettes" button will automatically select the right folder. &#x0a;If you don&apos;t select a folder the palettes will be created in the same folder as this executable.&#x0a;&#x0a;You can edit the player colors by clicking the color boxes under &quot;Your Edit&quot; text. &#x0a;&#x0a;You can change and test different color schemes while the game is open. You just have to be in the main menu when creating the new colors.'/>
+            </Border>
+        </StackPanel>
+
         <!-- Console -->
-        <TextBlock x:Name="CustomConsole" HorizontalAlignment="Right" Margin="0,45,15,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" FontSize="11"/>
+        <TextBlock HorizontalAlignment="Right" Margin="0,41,85,0" Text="Console" VerticalAlignment="Top" FontSize="10"/>
+        
+        <TextBlock x:Name="CustomConsole" HorizontalAlignment="Right" Margin="0,58,20,0" Text="" VerticalAlignment="Top" FontSize="11" LineHeight="18"/>
 
         <!-- Player Color Choices -->
         <TextBlock HorizontalAlignment="Left" Margin="10,22,0,0" TextWrapping="Wrap" Text="Color" VerticalAlignment="Top" FontSize="12"/>

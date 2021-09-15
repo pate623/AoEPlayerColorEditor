@@ -18,19 +18,11 @@ using Newtonsoft.Json;
 /// Has presets allowing easy color swaps between different color schemes.
 /// </summary>
 /// 
-/// <!-- TODO: Add Info Button -->
-/// Small button, on click/hover showcase info on what the editor does and how to use it.
-/// Showcased info:
-///  -How and where to locate the palette folder.
-///  -Where palettes are saved if the folder is not located.
-///  -How the color editing works (color picker).
-///  -Tell about ability to change colors even when in game (at main menu).
-///
 /// <!-- TODO: Allow changing "compared to" colors -->
-/// Create drop down below the action info screen.
-/// the drop down holds all the preset.
+/// Create drop down below the console screen.
+/// The drop down holds all the preset.
 /// 
-/// <!-- TODO: UI Rework -->
+/// <!-- TODO: Major UI Rework -->
 /// Player colors now showcase all the shades of player color and not only the main colors.
 /// All objects now scale based on windows size.
 /// Create blue button boxes.
@@ -52,7 +44,7 @@ namespace PlayerColorsWithWpf
 
         public static readonly string[] PaletteFolderDefaultLocations = { @"C:\Program Files (x86)\Steam\steamapps\common\AoEDE\Assets\Palettes", @"D:\SteamLibrary\steamapps\common\AoEDE\Assets\Palettes", @"E:\SteamLibrary\steamapps\common\AoEDE\Assets\Palettes", @"C:\SteamLibrary\steamapps\common\AoEDE\Assets\Palettes", @"F:\SteamLibrary\steamapps\common\AoEDE\Assets\Palettes" };
 
-        public static int MaxLinesInConsole = 5;
+        public static int MaxLineCountInConsole = 4;
 
         /// <summary>
         /// This is the currently active color scheme across the whole project.
@@ -457,10 +449,8 @@ namespace PlayerColorsWithWpf
             }
 
             TextBlock CustomConsole = FindName("CustomConsole") as TextBlock;
-
             string ConsoleText = CustomConsole.Text;
-
-            int Limit = MaxLinesInConsole - 1;
+            int Limit = MaxLineCountInConsole - 1;
             string NewConsoleText = textToBeAdded + "\n";
 
             foreach (char c in ConsoleText)
@@ -480,8 +470,8 @@ namespace PlayerColorsWithWpf
 
         private void Info_Click(object sender, RoutedEventArgs e)
         {
-            //PlayerColorsPalettes.CreateColors(NewPlayerColors);
-            //UpdateCustomConsole("Created the color palettes");
+            StackPanel InfoPopUp = FindName("InfoPopUp") as StackPanel;
+            InfoPopUp.Visibility = InfoPopUp.Visibility == Visibility.Collapsed ? Visibility.Visible : Visibility.Collapsed;
         }
 
         private void CreateColors_Click(object sender, RoutedEventArgs e)
