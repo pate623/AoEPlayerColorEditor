@@ -20,7 +20,7 @@
         
         <TextBlock x:Name="CustomConsole" HorizontalAlignment="Right" Margin="0,58,20,0" Text="" VerticalAlignment="Top" FontSize="11" LineHeight="18"/>
 
-        <!-- Player Color Choices -->
+        <!-- Player color text and header text -->
         <TextBlock HorizontalAlignment="Left" Margin="10,22,0,0" TextWrapping="Wrap" Text="Color" VerticalAlignment="Top" FontSize="12"/>
         <TextBlock HorizontalAlignment="Left" Margin="10,50,0,0" TextWrapping="Wrap" Text="Blue" VerticalAlignment="Top"/>
         <TextBlock HorizontalAlignment="Left" Margin="10,75,0,0" TextWrapping="Wrap" Text="Red" VerticalAlignment="Top"/>
@@ -32,6 +32,8 @@
         <TextBlock HorizontalAlignment="Left" Margin="10,225,0,0" TextWrapping="Wrap" Text="Teal" VerticalAlignment="Top"/>
 
         <TextBlock HorizontalAlignment="Left" Margin="60,20,0,0" TextWrapping="Wrap" Text="Your Edit | Default" VerticalAlignment="Top" FontSize="14"/>
+
+        <!-- User changeable color boxes -->
         <Rectangle x:Name="BluePlayerColor" MouseDown="BluePlayer_MouseDown" Width="20" Height="20" HorizontalAlignment="Left" Margin="95,50,0,0" VerticalAlignment="Top" Cursor="Hand" Fill="#FF2D2DF5">
         </Rectangle>
         <Rectangle x:Name="RedPlayerColor" MouseDown="RedPlayer_MouseDown" Width="20" Height="20" HorizontalAlignment="Left" Margin="95,75,0,0" VerticalAlignment="Top" Cursor="Hand" Fill="#FFD22828">
@@ -50,6 +52,7 @@
         </Rectangle>
 
 
+        <!-- Compared to color boxes -->
         <Rectangle Width="20" Height="20" HorizontalAlignment="Left" Margin="125,50,0,0" VerticalAlignment="Top">
             <Rectangle.Fill>
                 <SolidColorBrush Color="#FF2D2DF5" />
@@ -90,15 +93,15 @@
                 <SolidColorBrush Color="#FF7EF2E1" />
             </Rectangle.Fill>
         </Rectangle>
-        <!-- End Of Player Color Choices -->
 
-        <!-- Pick And Edit Color Preset -->
+        <!-- Palette folder location -->
         <TextBlock HorizontalAlignment="Left" Margin="10,266,0,0" TextWrapping="Wrap" Text="Color Palette Location:" VerticalAlignment="Top" FontSize="12" />
 
         <Button x:Name="LocateColorPalettesButton" Content="Locate Color Palettes"  FontSize="11" HorizontalAlignment="Left" Margin="140,265,0,0" VerticalAlignment="Top" Width="110" Click="LocateColorPalettes_Click" />
 
         <TextBlock x:Name="ColorPalettesLocation" HorizontalAlignment="Left" Margin="5,288,0,0" TextWrapping="Wrap" Text="Palette location folder" VerticalAlignment="Top" FontSize="12" />
 
+        <!-- Edit and switch palette presets -->
         <TextBlock HorizontalAlignment="Center" Margin="0,0,0,150" TextWrapping="Wrap" Text="Currently Active Player Color Preset" VerticalAlignment="Bottom" FontSize="12" />
 
         <ComboBox x:Name="PresetSelectionDropdown" SelectionChanged="PresetDropdown_SelectionChanged" HorizontalAlignment="Center" Margin="0,0,0,120" VerticalAlignment="Bottom" Width="140" >
@@ -115,7 +118,7 @@
 
         <Button x:Name="CreateColors" Content="Create Colors" HorizontalAlignment="Center" Margin="0,0,0,12" VerticalAlignment="Bottom" Width="100" Click="CreateColors_Click" />
 
-        <!-- All pop ups, place them here so there is no need to play with Z-axis -->
+        <!-- All palette preset related pop ups, place them here so there is no need to play with Z-axis -->
         <StackPanel x:Name="PresetNamePopUp" Visibility="Collapsed" HorizontalAlignment="Center" Margin="0,135,0,0" VerticalAlignment="Bottom" Width="320" Height="125" Background="White">
             <TextBlock HorizontalAlignment="Center" Margin="0, 10, 0, 2" Text="Enter Name For The New Preset" />
             <TextBox Margin="10,0"  x:Name="NewPresetNameInput" Text="New Preset Name" />
@@ -128,6 +131,5 @@
             <Button VerticalAlignment="bottom" Margin="0, 10, 0, 0" Content="Confirm"  Click="AcceptRemoval_Click" />
             <Button VerticalAlignment="bottom" Margin="0, 10, 0, 0" Content="Cancel" Click="CancelRemoval_Click" />
         </StackPanel>
-        <!-- End Of Pick And Edit Color Preset -->
     </Grid>
 </Window>
