@@ -18,14 +18,21 @@ using Newtonsoft.Json;
 /// Has presets allowing easy color swaps between different color schemes.
 /// </summary>
 /// 
+/// <!-- TODO: Windows resize -->
+/// Allow windows resizing only in fixed ratio (355:562)
+/// 
+/// <!-- TODO: Update user preferences -->
+/// When user resizes the windows update "WindowsWidth" and "WindowsHeight" variables.
+/// Crete two new variables: "windowsLocationX" and "windowsLocationY".
+/// When user moves the windows save the new location into the user preferences.
+/// 
 /// <!-- TODO: Allow changing "compared to" colors -->
 /// Create drop down below the console screen.
 /// The drop down holds all the preset.
 /// 
 /// <!-- TODO: Major UI Rework -->
 /// Player colors now showcase all the shades of player color and not only the main colors.
-/// All objects now scale based on windows size.
-/// Create blue button boxes.
+/// Create blue colored buttons.
 /// Add brown background with a rough image. Remember to edit all pop ups.
 
 
@@ -437,7 +444,7 @@ namespace PlayerColorsWithWpf
 
         /// <summary>
         /// <para>Add a line of text to the console windows.</para>
-        /// <para>Use empty line as parameter to apply the new maximum console line count.</para>
+        /// <para>Use empty line as parameter to apply the new maximum line count.</para>
         /// </summary>
         public void UpdateCustomConsole(string textToBeAdded)
         {
@@ -481,6 +488,8 @@ namespace PlayerColorsWithWpf
     {
         public string PaletteLocation { get; set; }
         public int ActiveColorPalette { get; set; }
+        public int WindowsWidth { get; set; }
+        public int WindowsHeight { get; set; }
     }
 
     /// <summary>
@@ -490,6 +499,9 @@ namespace PlayerColorsWithWpf
     {
         public static string PlayerColorPaletteLocation = Directory.GetCurrentDirectory() + @"\Palettes";
         public static int ActivePlayerColorPalette = 0;
+
+        private static readonly int DefaultWindowsWidth = 355;
+        private static readonly int DefaultWindowsHeight = 562;
 
         private static readonly string UserPreferenceFileLocation = Directory.GetCurrentDirectory() + @"\UserPreferences.json";
 
@@ -511,15 +523,22 @@ namespace PlayerColorsWithWpf
 
                 PlayerColorPaletteLocation = LoadedPreferencesAsObject.PaletteLocation;
                 ActivePlayerColorPalette = LoadedPreferencesAsObject.ActiveColorPalette;
+                System.Windows.Application.Current.MainWindow.Width = LoadedPreferencesAsObject.WindowsWidth;
+                System.Windows.Application.Current.MainWindow.Height = LoadedPreferencesAsObject.WindowsHeight;
                 Debug.WriteLine("Previous user preference file found and loaded.");
             }
             else //Creates new user preferences if none is found.
             {
                 Debug.WriteLine("No user preference file found.");
+                System.Windows.Application.Current.MainWindow.Width = DefaultWindowsWidth;
+                System.Windows.Application.Current.MainWindow.Height = DefaultWindowsHeight;
+
                 UserPreferencesJSON NewPreferences = new UserPreferencesJSON
                 {
                     PaletteLocation = PlayerColorPaletteLocation,
-                    ActiveColorPalette = ActivePlayerColorPalette
+                    ActiveColorPalette = ActivePlayerColorPalette,
+                    WindowsWidth = DefaultWindowsWidth,
+                    WindowsHeight = DefaultWindowsHeight
                 };
 
                 File.WriteAllText(UserPreferenceFileLocation, System.Text.Json.JsonSerializer.Serialize(NewPreferences));
