@@ -5,8 +5,10 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
+    SizeChanged="UserControl_SizeChanged"
     Title="AOE:DE Custom Player Colors" 
-    MinWidth="355" MinHeight="562">
+    MinWidth="355" MinHeight="562" ResizeMode="CanResizeWithGrip">
+    <!-- Window MinWidth and MinHeight determine the aspect ratio -->
     <Viewbox MinWidth="345" MinHeight="490">
         <Grid Width="320" Height="485">
             <!-- "?" button -->

@@ -11,6 +11,7 @@ using System.Windows.Forms;
 using System.IO;
 using System.Text.Json;
 using Newtonsoft.Json;
+using System.Threading.Tasks;
 
 /// <summary>
 /// Creates new player color palettes for Age of Empires Definitive edition.
@@ -32,6 +33,7 @@ using Newtonsoft.Json;
 /// 
 /// <!-- TODO: Major UI Rework -->
 /// Player colors now showcase all the shades of player color and not only the main colors.
+/// Create icon
 /// Create blue colored buttons.
 /// Add brown background with a rough image. Remember to edit all pop ups.
 
@@ -61,6 +63,7 @@ namespace PlayerColorsWithWpf
         public MainWindow() //Initialize everything through here, this ensures all folders and actions are created after the UI is loaded.
         {
             InitializeComponent();
+            WindowsSizer.InitializeWindowsSizer();
             UserPreferences.LoadPreferences();
             PalettePresets.InitializePresets();
             UpdatePresetComboBox(UserPreferences.ActivePlayerColorPalette);
@@ -478,6 +481,85 @@ namespace PlayerColorsWithWpf
             PlayerColorsPalettes.CreateColors(NewPlayerColors);
             UpdateCustomConsole("Created the color palettes");
         }
+
+        private void UserControl_SizeChanged(object sender, SizeChangedEventArgs args)
+        {
+            WindowsSizer.UserChangedSize();
+        }
+    }
+
+
+    /// <summary>
+    /// <br>Ensures the width height ratio stays same on resize.</br>
+    /// <br>Saves the final size to user preferences.</br>
+    /// </summary>
+    public static class WindowsSizer
+    {
+        public static double DefaultWidth;
+        public static double DefaultHeight;
+        private static double WidthRatio;
+        private static double HeightRatio;
+
+        public static bool TimerIsRunning = false;
+        public static bool TimerNeedsToBeRefreshed = false;
+
+        public static void InitializeWindowsSizer()
+        {
+            DefaultWidth = System.Windows.Application.Current.MainWindow.MinWidth;
+            DefaultHeight = System.Windows.Application.Current.MainWindow.MinHeight;
+
+            WidthRatio = DefaultWidth / DefaultHeight;
+            HeightRatio = DefaultHeight / DefaultWidth;
+        }
+
+        public static void UserChangedSize()
+        {
+            double Width = System.Windows.Application.Current.MainWindow.Width;
+            double Height = System.Windows.Application.Current.MainWindow.Height;
+
+            if (Width * DefaultWidth > Height * DefaultHeight)
+            {
+                System.Windows.Application.Current.MainWindow.Width = Width;
+                System.Windows.Application.Current.MainWindow.Height = Width * HeightRatio;
+            }
+            else
+            {
+                System.Windows.Application.Current.MainWindow.Height = Height;
+                System.Windows.Application.Current.MainWindow.Width = Height * WidthRatio;
+            }
+
+            //TODO: Create timer for saving user preferences
+            //if timer is active only refresh it.
+            if (TimerIsRunning)
+            {
+                TimerNeedsToBeRefreshed = true;
+            }
+            else
+            {
+                TimerIsRunning = true;
+                Debug.WriteLine("User started adjusting the windows size.");
+                OnResizeTimer.StartTimer();
+            }
+        }
+    }
+    /// <summary>
+    /// Saves the user preferences if user hasn't resized the window within 500ms
+    /// </summary>
+    public static class OnResizeTimer
+    {
+        public static async void StartTimer()
+        {
+            await Task.Delay(500);
+            while (WindowsSizer.TimerNeedsToBeRefreshed)
+            {
+                WindowsSizer.TimerNeedsToBeRefreshed = false;
+                await Task.Delay(500);
+            }
+
+            WindowsSizer.TimerIsRunning = false;
+            Debug.WriteLine("User stopped adjusting the windows size.");
+            UserPreferences.SaveUserPreferences();
+        }
     }
 
 
@@ -499,9 +581,6 @@ namespace PlayerColorsWithWpf
     {
         public static string PlayerColorPaletteLocation = Directory.GetCurrentDirectory() + @"\Palettes";
         public static int ActivePlayerColorPalette = 0;
-
-        private static readonly int DefaultWindowsWidth = 355;
-        private static readonly int DefaultWindowsHeight = 562;
 
         private static readonly string UserPreferenceFileLocation = Directory.GetCurrentDirectory() + @"\UserPreferences.json";
 
@@ -530,15 +609,15 @@ namespace PlayerColorsWithWpf
             else //Creates new user preferences if none is found.
             {
                 Debug.WriteLine("No user preference file found.");
-                System.Windows.Application.Current.MainWindow.Width = DefaultWindowsWidth;
-                System.Windows.Application.Current.MainWindow.Height = DefaultWindowsHeight;
+                System.Windows.Application.Current.MainWindow.Width = WindowsSizer.DefaultWidth;
+                System.Windows.Application.Current.MainWindow.Height = WindowsSizer.DefaultHeight;
 
                 UserPreferencesJSON NewPreferences = new UserPreferencesJSON
                 {
                     PaletteLocation = PlayerColorPaletteLocation,
                     ActiveColorPalette = ActivePlayerColorPalette,
-                    WindowsWidth = DefaultWindowsWidth,
-                    WindowsHeight = DefaultWindowsHeight
+                    WindowsWidth = (int)WindowsSizer.DefaultWidth,
+                    WindowsHeight = (int)WindowsSizer.DefaultHeight
                 };
 
                 File.WriteAllText(UserPreferenceFileLocation, System.Text.Json.JsonSerializer.Serialize(NewPreferences));
@@ -554,7 +633,9 @@ namespace PlayerColorsWithWpf
             UserPreferencesJSON NewPreferences = new UserPreferencesJSON
             {
                 PaletteLocation = PlayerColorPaletteLocation,
-                ActiveColorPalette = ActivePlayerColorPalette
+                ActiveColorPalette = ActivePlayerColorPalette,
+                WindowsWidth = (int)System.Windows.Application.Current.MainWindow.Width,
+                WindowsHeight = (int)System.Windows.Application.Current.MainWindow.Height
             };
 
             File.WriteAllText(UserPreferenceFileLocation, System.Text.Json.JsonSerializer.Serialize(NewPreferences));
