@@ -19,21 +19,13 @@ using System.Threading.Tasks;
 /// Has presets allowing easy color swaps between different color schemes.
 /// </summary>
 /// 
-/// <!-- TODO: Windows resize -->
-/// Allow windows resizing only in fixed ratio (355:562)
-/// 
-/// <!-- TODO: Update user preferences -->
-/// When user resizes the windows update "WindowsWidth" and "WindowsHeight" variables.
-/// Crete two new variables: "windowsLocationX" and "windowsLocationY".
-/// When user moves the windows save the new location into the user preferences.
-/// 
 /// <!-- TODO: Allow changing "compared to" colors -->
 /// Create drop down below the console screen.
 /// The drop down holds all the preset.
 /// 
 /// <!-- TODO: Major UI Rework -->
 /// Player colors now showcase all the shades of player color and not only the main colors.
-/// Create icon
+/// Create icon.
 /// Create blue colored buttons.
 /// Add brown background with a rough image. Remember to edit all pop ups.
 
@@ -63,7 +55,7 @@ namespace PlayerColorsWithWpf
         public MainWindow() //Initialize everything through here, this ensures all folders and actions are created after the UI is loaded.
         {
             InitializeComponent();
-            WindowsSizer.InitializeWindowsSizer();
+            WindowSizer.InitializeWindowSizer();
             UserPreferences.LoadPreferences();
             PalettePresets.InitializePresets();
             UpdatePresetComboBox(UserPreferences.ActivePlayerColorPalette);
@@ -484,35 +476,46 @@ namespace PlayerColorsWithWpf
 
         private void UserControl_SizeChanged(object sender, SizeChangedEventArgs args)
         {
-            WindowsSizer.UserChangedSize();
+            WindowSizer.UserChangedWindowSize();
+        }
+
+        private void Window_LocationChanged(object sender, EventArgs e)
+        {
+            WindowSizer.UserChangedWindowSize();
         }
     }
 
 
     /// <summary>
-    /// <br>Ensures the width height ratio stays same on resize.</br>
-    /// <br>Saves the final size to user preferences.</br>
+    /// <br>Records changes on windows location and saves the values into user preferences.</br>
+    /// <br>User can only scale the window in fixed ratio </br>
     /// </summary>
-    public static class WindowsSizer
+    public static class WindowSizer
     {
+        public static double DefaultLeft;
+        public static double DefaultTop;
         public static double DefaultWidth;
         public static double DefaultHeight;
+
         private static double WidthRatio;
         private static double HeightRatio;
 
         public static bool TimerIsRunning = false;
         public static bool TimerNeedsToBeRefreshed = false;
 
-        public static void InitializeWindowsSizer()
+        public static void InitializeWindowSizer()
         {
             DefaultWidth = System.Windows.Application.Current.MainWindow.MinWidth;
             DefaultHeight = System.Windows.Application.Current.MainWindow.MinHeight;
+
+            DefaultLeft = System.Windows.Application.Current.MainWindow.Left;
+            DefaultTop = System.Windows.Application.Current.MainWindow.Top;
 
             WidthRatio = DefaultWidth / DefaultHeight;
             HeightRatio = DefaultHeight / DefaultWidth;
         }
 
-        public static void UserChangedSize()
+        public static void UserChangedWindowSize()
         {
             double Width = System.Windows.Application.Current.MainWindow.Width;
             double Height = System.Windows.Application.Current.MainWindow.Height;
@@ -528,8 +531,11 @@ namespace PlayerColorsWithWpf
                 System.Windows.Application.Current.MainWindow.Width = Height * WidthRatio;
             }
 
-            //TODO: Create timer for saving user preferences
-            //if timer is active only refresh it.
+            DefaultLeft = System.Windows.Application.Current.MainWindow.Left;
+            DefaultTop = System.Windows.Application.Current.MainWindow.Top;
+
+            //Timer for saving user preferences.
+            //if timer is active only refreshes it.
             if (TimerIsRunning)
             {
                 TimerNeedsToBeRefreshed = true;
@@ -538,25 +544,20 @@ namespace PlayerColorsWithWpf
             {
                 TimerIsRunning = true;
                 Debug.WriteLine("User started adjusting the windows size.");
-                OnResizeTimer.StartTimer();
+                StartTimer();
             }
         }
-    }
-    /// <summary>
-    /// Saves the user preferences if user hasn't resized the window within 500ms
-    /// </summary>
-    public static class OnResizeTimer
-    {
+
         public static async void StartTimer()
         {
-            await Task.Delay(500);
-            while (WindowsSizer.TimerNeedsToBeRefreshed)
+            await Task.Delay(200);
+            while (TimerNeedsToBeRefreshed)
             {
-                WindowsSizer.TimerNeedsToBeRefreshed = false;
-                await Task.Delay(500);
+                TimerNeedsToBeRefreshed = false;
+                await Task.Delay(400);
             }
 
-            WindowsSizer.TimerIsRunning = false;
+            TimerIsRunning = false;
             Debug.WriteLine("User stopped adjusting the windows size.");
             UserPreferences.SaveUserPreferences();
         }
@@ -572,6 +573,8 @@ namespace PlayerColorsWithWpf
         public int ActiveColorPalette { get; set; }
         public int WindowsWidth { get; set; }
         public int WindowsHeight { get; set; }
+        public int WindowsLeft { get; set; }
+        public int WindowsTop { get; set; }
     }
 
     /// <summary>
@@ -604,20 +607,24 @@ namespace PlayerColorsWithWpf
                 ActivePlayerColorPalette = LoadedPreferencesAsObject.ActiveColorPalette;
                 System.Windows.Application.Current.MainWindow.Width = LoadedPreferencesAsObject.WindowsWidth;
                 System.Windows.Application.Current.MainWindow.Height = LoadedPreferencesAsObject.WindowsHeight;
+                System.Windows.Application.Current.MainWindow.Left = LoadedPreferencesAsObject.WindowsLeft;
+                System.Windows.Application.Current.MainWindow.Top = LoadedPreferencesAsObject.WindowsTop;
                 Debug.WriteLine("Previous user preference file found and loaded.");
             }
-            else //Creates new user preferences if none is found.
+            else
             {
                 Debug.WriteLine("No user preference file found.");
-                System.Windows.Application.Current.MainWindow.Width = WindowsSizer.DefaultWidth;
-                System.Windows.Application.Current.MainWindow.Height = WindowsSizer.DefaultHeight;
+                System.Windows.Application.Current.MainWindow.Width = WindowSizer.DefaultWidth;
+                System.Windows.Application.Current.MainWindow.Height = WindowSizer.DefaultHeight;
 
                 UserPreferencesJSON NewPreferences = new UserPreferencesJSON
                 {
                     PaletteLocation = PlayerColorPaletteLocation,
                     ActiveColorPalette = ActivePlayerColorPalette,
-                    WindowsWidth = (int)WindowsSizer.DefaultWidth,
-                    WindowsHeight = (int)WindowsSizer.DefaultHeight
+                    WindowsWidth = (int)WindowSizer.DefaultWidth,
+                    WindowsHeight = (int)WindowSizer.DefaultHeight,
+                    WindowsLeft = (int)WindowSizer.DefaultLeft,
+                    WindowsTop = (int)WindowSizer.DefaultTop
                 };
 
                 File.WriteAllText(UserPreferenceFileLocation, System.Text.Json.JsonSerializer.Serialize(NewPreferences));
@@ -635,7 +642,9 @@ namespace PlayerColorsWithWpf
                 PaletteLocation = PlayerColorPaletteLocation,
                 ActiveColorPalette = ActivePlayerColorPalette,
                 WindowsWidth = (int)System.Windows.Application.Current.MainWindow.Width,
-                WindowsHeight = (int)System.Windows.Application.Current.MainWindow.Height
+                WindowsHeight = (int)System.Windows.Application.Current.MainWindow.Height,
+                WindowsLeft = (int)WindowSizer.DefaultLeft,
+                WindowsTop = (int)WindowSizer.DefaultTop
             };
 
             File.WriteAllText(UserPreferenceFileLocation, System.Text.Json.JsonSerializer.Serialize(NewPreferences));

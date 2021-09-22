@@ -7,7 +7,9 @@
     mc:Ignorable="d"
     SizeChanged="UserControl_SizeChanged"
     Title="AOE:DE Custom Player Colors" 
-    MinWidth="355" MinHeight="562" ResizeMode="CanResizeWithGrip">
+    MinWidth="355" MinHeight="562" ResizeMode="CanResizeWithGrip"
+    Left="120" Top="120"
+    LocationChanged="Window_LocationChanged">
     <!-- Window MinWidth and MinHeight determine the aspect ratio -->
     <Viewbox MinWidth="345" MinHeight="490">
         <Grid Width="320" Height="485">
