@@ -668,7 +668,7 @@ namespace PlayerColorsWithWpf
     {
         public string PaletteLocation { get; set; }
         public int ActiveColorPalette { get; set; }
-        public int ActiveComparedToPalette { get; set; }
+        public int ActiveComparedTo { get; set; }
         public int WindowsWidth { get; set; }
         public int WindowsHeight { get; set; }
         public int WindowsLeft { get; set; }
@@ -704,7 +704,7 @@ namespace PlayerColorsWithWpf
 
                 PlayerColorPaletteLocation = LoadedPreferencesAsObject.PaletteLocation;
                 ActivePlayerColorPalette = LoadedPreferencesAsObject.ActiveColorPalette;
-                ActiveComparedToPalette = LoadedPreferencesAsObject.ActiveComparedToPalette;
+                ActiveComparedToPalette = LoadedPreferencesAsObject.ActiveComparedTo;
                 System.Windows.Application.Current.MainWindow.Width = LoadedPreferencesAsObject.WindowsWidth;
                 System.Windows.Application.Current.MainWindow.Height = LoadedPreferencesAsObject.WindowsHeight;
                 System.Windows.Application.Current.MainWindow.Left = LoadedPreferencesAsObject.WindowsLeft;
@@ -716,12 +716,13 @@ namespace PlayerColorsWithWpf
                 Debug.WriteLine("No user preference file found.");
                 System.Windows.Application.Current.MainWindow.Width = WindowSizer.DefaultWidth;
                 System.Windows.Application.Current.MainWindow.Height = WindowSizer.DefaultHeight;
+                ActiveComparedToPalette = 1;
 
                 UserPreferencesJSON NewPreferences = new UserPreferencesJSON
                 {
                     PaletteLocation = PlayerColorPaletteLocation,
                     ActiveColorPalette = ActivePlayerColorPalette,
-                    ActiveComparedToPalette = ActiveComparedToPalette,
+                    ActiveComparedTo = ActiveComparedToPalette,
                     WindowsWidth = (int)WindowSizer.DefaultWidth,
                     WindowsHeight = (int)WindowSizer.DefaultHeight,
                     WindowsLeft = (int)WindowSizer.DefaultLeft,
@@ -742,7 +743,7 @@ namespace PlayerColorsWithWpf
             {
                 PaletteLocation = PlayerColorPaletteLocation,
                 ActiveColorPalette = ActivePlayerColorPalette,
-                ActiveComparedToPalette = ActiveComparedToPalette,
+                ActiveComparedTo = ActiveComparedToPalette,
                 WindowsWidth = (int)System.Windows.Application.Current.MainWindow.Width,
                 WindowsHeight = (int)System.Windows.Application.Current.MainWindow.Height,
                 WindowsLeft = (int)WindowSizer.DefaultLeft,
