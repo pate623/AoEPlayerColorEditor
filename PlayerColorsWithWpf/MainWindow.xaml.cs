@@ -19,14 +19,13 @@ using System.Threading.Tasks;
 /// Has presets allowing easy color swaps between different color schemes.
 /// </summary>
 /// 
-/// <!-- TODO: compared to colors -->
-/// Save the last compared to color into the user preferences 
-/// 
 /// <!-- TODO: Major UI Rework -->
 /// Player colors now showcase all the shades of player color and not only the main colors.
+/// Create the player colors much larger, create the colors horizontally instead of vertically. 
 /// Create icon.
-/// Create blue colored buttons.
-/// Add brown background with a rough image. Remember to edit all pop ups.
+/// Create blue colored buttons. Add light brown background (remember to edit all pop ups).
+/// Use double line border for the buttons.
+/// Use a rough image for the buttons and to the window backgrounds. 
 
 
 namespace PlayerColorsWithWpf
@@ -60,7 +59,7 @@ namespace PlayerColorsWithWpf
             UpdatePresetComboBox(UserPreferences.ActivePlayerColorPalette);
             ShowNewlySelectedColors();
             SetUIPathToPalettes();
-            UpdateComparisonDropwDownChoices(1); //TODO: Add the default compared to index into the user preferences
+            UpdateComparisonDropwDownChoices(UserPreferences.ActiveComparedToPalette);
             Debug.WriteLine("Program booted successfully.");
         }
         ///<!-- End of Main(args[]) -->
@@ -449,6 +448,7 @@ namespace PlayerColorsWithWpf
             if (PresetSelection.SelectedIndex != -1) //Don't update colors when nothing is selected.
             {
                 Debug.WriteLine("New preset selected for compared to colors, with index: {0}.", PresetSelection.SelectedIndex);
+                UserPreferences.ActiveComparedToPalette = PresetSelection.SelectedIndex;
                 SetComparisonColorBoxes(PresetSelection.SelectedIndex);
             }
         }
@@ -489,6 +489,8 @@ namespace PlayerColorsWithWpf
             TealPlayer.Fill = (Brush)Converter.ConvertFromString("#FF" + ((byte)AllColorPalettePresets[presetID].TealPlayerColor[0]).ToString("X2") + ((byte)AllColorPalettePresets[presetID].TealPlayerColor[1]).ToString("X2") + ((byte)AllColorPalettePresets[presetID].TealPlayerColor[2]).ToString("X2"));
 
             Debug.WriteLine("UI compared to player colors updated.");
+            UserPreferences.SaveUserPreferences();
+
         }
 
         private void UpdateComparisonDropwDownChoices(int presetID)
@@ -504,6 +506,9 @@ namespace PlayerColorsWithWpf
 
             ((System.Windows.Controls.ComboBox)PresetsComboBox).SelectedIndex = presetID;
             Debug.WriteLine("Preset list in compared to drop down updated.");
+
+            UserPreferences.ActiveComparedToPalette = presetID;
+            UserPreferences.SaveUserPreferences();
         }
 
         private void UpdateComparisonDropwDownOnSaveAndDelete()
@@ -516,11 +521,13 @@ namespace PlayerColorsWithWpf
             if (AllColorPalettePresets.Count <= ToBesetIndex)
             {
                 Debug.WriteLine("Index too big for comparison drop down, reseted to index 1");
+                UserPreferences.ActiveComparedToPalette = 1;
                 UpdateComparisonDropwDownChoices(1);
                 SetComparisonColorBoxes(1);
             }
             else
             {
+                UserPreferences.ActiveComparedToPalette = ToBesetIndex;
                 UpdateComparisonDropwDownChoices(ToBesetIndex);
                 SetComparisonColorBoxes(ToBesetIndex);
             }
@@ -661,6 +668,7 @@ namespace PlayerColorsWithWpf
     {
         public string PaletteLocation { get; set; }
         public int ActiveColorPalette { get; set; }
+        public int ActiveComparedToPalette { get; set; }
         public int WindowsWidth { get; set; }
         public int WindowsHeight { get; set; }
         public int WindowsLeft { get; set; }
@@ -674,6 +682,7 @@ namespace PlayerColorsWithWpf
     {
         public static string PlayerColorPaletteLocation = Directory.GetCurrentDirectory() + @"\Palettes";
         public static int ActivePlayerColorPalette = 0;
+        public static int ActiveComparedToPalette = 1;
 
         private static readonly string UserPreferenceFileLocation = Directory.GetCurrentDirectory() + @"\UserPreferences.json";
 
@@ -695,6 +704,7 @@ namespace PlayerColorsWithWpf
 
                 PlayerColorPaletteLocation = LoadedPreferencesAsObject.PaletteLocation;
                 ActivePlayerColorPalette = LoadedPreferencesAsObject.ActiveColorPalette;
+                ActiveComparedToPalette = LoadedPreferencesAsObject.ActiveComparedToPalette;
                 System.Windows.Application.Current.MainWindow.Width = LoadedPreferencesAsObject.WindowsWidth;
                 System.Windows.Application.Current.MainWindow.Height = LoadedPreferencesAsObject.WindowsHeight;
                 System.Windows.Application.Current.MainWindow.Left = LoadedPreferencesAsObject.WindowsLeft;
@@ -711,6 +721,7 @@ namespace PlayerColorsWithWpf
                 {
                     PaletteLocation = PlayerColorPaletteLocation,
                     ActiveColorPalette = ActivePlayerColorPalette,
+                    ActiveComparedToPalette = ActiveComparedToPalette,
                     WindowsWidth = (int)WindowSizer.DefaultWidth,
                     WindowsHeight = (int)WindowSizer.DefaultHeight,
                     WindowsLeft = (int)WindowSizer.DefaultLeft,
@@ -731,6 +742,7 @@ namespace PlayerColorsWithWpf
             {
                 PaletteLocation = PlayerColorPaletteLocation,
                 ActiveColorPalette = ActivePlayerColorPalette,
+                ActiveComparedToPalette = ActiveComparedToPalette,
                 WindowsWidth = (int)System.Windows.Application.Current.MainWindow.Width,
                 WindowsHeight = (int)System.Windows.Application.Current.MainWindow.Height,
                 WindowsLeft = (int)WindowSizer.DefaultLeft,
