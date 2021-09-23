@@ -19,9 +19,8 @@ using System.Threading.Tasks;
 /// Has presets allowing easy color swaps between different color schemes.
 /// </summary>
 /// 
-/// <!-- TODO: Allow changing "compared to" colors -->
-/// Create drop down below the console screen.
-/// The drop down holds all the preset.
+/// <!-- TODO: compared to colors -->
+/// Save the last compared to color into the user preferences 
 /// 
 /// <!-- TODO: Major UI Rework -->
 /// Player colors now showcase all the shades of player color and not only the main colors.
@@ -45,7 +44,7 @@ namespace PlayerColorsWithWpf
 
         public static readonly string[] PaletteFolderDefaultLocations = { @"C:\Program Files (x86)\Steam\steamapps\common\AoEDE\Assets\Palettes", @"D:\SteamLibrary\steamapps\common\AoEDE\Assets\Palettes", @"E:\SteamLibrary\steamapps\common\AoEDE\Assets\Palettes", @"C:\SteamLibrary\steamapps\common\AoEDE\Assets\Palettes", @"F:\SteamLibrary\steamapps\common\AoEDE\Assets\Palettes" };
 
-        public static int MaxLineCountInConsole = 4;
+        public static int MaxLineCountInConsole = 5;
 
         /// <summary>
         /// This is the currently active color scheme across the whole project.
@@ -61,6 +60,7 @@ namespace PlayerColorsWithWpf
             UpdatePresetComboBox(UserPreferences.ActivePlayerColorPalette);
             ShowNewlySelectedColors();
             SetUIPathToPalettes();
+            UpdateComparisonDropwDownChoices(1); //TODO: Add the default compared to index into the user preferences
             Debug.WriteLine("Program booted successfully.");
         }
         ///<!-- End of Main(args[]) -->
@@ -223,6 +223,7 @@ namespace PlayerColorsWithWpf
 
             UpdatePresetComboBox(0);
             ShowNewlySelectedColors();
+            UpdateComparisonDropwDownOnSaveAndDelete();
             UpdateCustomConsole("Deleted palette preset");
         }
         ///<!-- End of delete presets button -->
@@ -248,6 +249,7 @@ namespace PlayerColorsWithWpf
             AllColorPalettePresets[PresetSelection.SelectedIndex].TealPlayerColor = new int[] { (int)NewPlayerColors[7].X, (int)NewPlayerColors[7].Y, (int)NewPlayerColors[7].Z };
 
             PalettePresets.SaveColorPresetsToDisk();
+            UpdateComparisonDropwDownOnSaveAndDelete();
             UpdateCustomConsole("Saved palette preset");
             Debug.WriteLine("Saved palette preset.");
         }
@@ -323,6 +325,7 @@ namespace PlayerColorsWithWpf
 
             StackPanel PresetNameBox = FindName("PresetNamePopUp") as StackPanel;
             PresetNameBox.Visibility = Visibility.Collapsed;
+            UpdateComparisonDropwDownOnSaveAndDelete();
             UpdateCustomConsole("Created new palette preset");
         }
         ///<!-- End of Save presets As button -->
@@ -399,8 +402,6 @@ namespace PlayerColorsWithWpf
                 DeletePresetButton.IsEnabled = currentlyActivePresetIndex >= CountOfUnchangeableColorPresets;
             }
         }
-        ///<!-- End of player color presets selection -->
-
 
         /// <summary>
         /// Updates the "Your Edit" player colors shown in the UI.
@@ -436,6 +437,96 @@ namespace PlayerColorsWithWpf
 
             Debug.WriteLine("UI player colors updated.");
         }
+        ///<!-- End of player color presets selection -->
+
+
+        ///<!-- Compared to colors -->
+        private void ComparedToColors_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            //Can't get index from the selected ComboBox item, has to use the ComboBox from the XAML to get access to the index.
+            System.Windows.Controls.ComboBox PresetSelection = FindName("ComparedToColorSelection") as System.Windows.Controls.ComboBox;
+
+            if (PresetSelection.SelectedIndex != -1) //Don't update colors when nothing is selected.
+            {
+                Debug.WriteLine("New preset selected for compared to colors, with index: {0}.", PresetSelection.SelectedIndex);
+                SetComparisonColorBoxes(PresetSelection.SelectedIndex);
+            }
+        }
+
+        private void SetComparisonColorBoxes(int presetID)
+        {
+            if (AllColorPalettePresets.Count <= presetID)
+            {
+                Debug.WriteLine("Index for compared to colors is too big");
+                return;
+            }
+
+            //Convert vector values to .NET framework color values and showcase them in UI.
+            BrushConverter Converter = new BrushConverter();
+
+            Rectangle BluePlayer = FindName("BlueComparedToColor") as Rectangle;
+            BluePlayer.Fill = (Brush)Converter.ConvertFromString("#FF" + ((byte)AllColorPalettePresets[presetID].BluePlayerColor[0]).ToString("X2") + ((byte)AllColorPalettePresets[presetID].BluePlayerColor[1]).ToString("X2") + ((byte)AllColorPalettePresets[presetID].BluePlayerColor[2]).ToString("X2"));
+
+            Rectangle RedPlayer = FindName("RedComparedToColor") as Rectangle;
+            RedPlayer.Fill = (Brush)Converter.ConvertFromString("#FF" + ((byte)AllColorPalettePresets[presetID].RedPlayerColor[0]).ToString("X2") + ((byte)AllColorPalettePresets[presetID].RedPlayerColor[1]).ToString("X2") + ((byte)AllColorPalettePresets[presetID].RedPlayerColor[2]).ToString("X2"));
+
+            Rectangle YellowPlayer = FindName("YellowComparedToColor") as Rectangle;
+            YellowPlayer.Fill = (Brush)Converter.ConvertFromString("#FF" + ((byte)AllColorPalettePresets[presetID].YellowPlayerColor[0]).ToString("X2") + ((byte)AllColorPalettePresets[presetID].YellowPlayerColor[1]).ToString("X2") + ((byte)AllColorPalettePresets[presetID].YellowPlayerColor[2]).ToString("X2"));
+
+            Rectangle BrownPlayer = FindName("BrownComparedToColor") as Rectangle;
+            BrownPlayer.Fill = (Brush)Converter.ConvertFromString("#FF" + ((byte)AllColorPalettePresets[presetID].BrownPlayerColor[0]).ToString("X2") + ((byte)AllColorPalettePresets[presetID].BrownPlayerColor[1]).ToString("X2") + ((byte)AllColorPalettePresets[presetID].BrownPlayerColor[2]).ToString("X2"));
+
+            Rectangle OrangePlayer = FindName("OrangeComparedToColor") as Rectangle;
+            OrangePlayer.Fill = (Brush)Converter.ConvertFromString("#FF" + ((byte)AllColorPalettePresets[presetID].OrangePlayerColor[0]).ToString("X2") + ((byte)AllColorPalettePresets[presetID].OrangePlayerColor[1]).ToString("X2") + ((byte)AllColorPalettePresets[presetID].OrangePlayerColor[2]).ToString("X2"));
+
+            Rectangle GreenPlayer = FindName("GreenComparedToColor") as Rectangle;
+            GreenPlayer.Fill = (Brush)Converter.ConvertFromString("#FF" + ((byte)AllColorPalettePresets[presetID].GreenPlayerColor[0]).ToString("X2") + ((byte)AllColorPalettePresets[presetID].GreenPlayerColor[1]).ToString("X2") + ((byte)AllColorPalettePresets[presetID].GreenPlayerColor[2]).ToString("X2"));
+
+            Rectangle PurplePlayer = FindName("PurpleComparedToColor") as Rectangle;
+            PurplePlayer.Fill = (Brush)Converter.ConvertFromString("#FF" + ((byte)AllColorPalettePresets[presetID].PurplePlayerColor[0]).ToString("X2") + ((byte)AllColorPalettePresets[presetID].PurplePlayerColor[1]).ToString("X2") + ((byte)AllColorPalettePresets[presetID].PurplePlayerColor[2]).ToString("X2"));
+
+            Rectangle TealPlayer = FindName("TealComparedToColor") as Rectangle;
+            TealPlayer.Fill = (Brush)Converter.ConvertFromString("#FF" + ((byte)AllColorPalettePresets[presetID].TealPlayerColor[0]).ToString("X2") + ((byte)AllColorPalettePresets[presetID].TealPlayerColor[1]).ToString("X2") + ((byte)AllColorPalettePresets[presetID].TealPlayerColor[2]).ToString("X2"));
+
+            Debug.WriteLine("UI compared to player colors updated.");
+        }
+
+        private void UpdateComparisonDropwDownChoices(int presetID)
+        {
+            object PresetsComboBox = FindName("ComparedToColorSelection");
+
+            ((System.Windows.Controls.ComboBox)PresetsComboBox).Items.Clear();
+
+            foreach (PlayerColorPreset currentColorPreset in AllColorPalettePresets)
+            {
+                _ = ((System.Windows.Controls.ComboBox)PresetsComboBox).Items.Add(currentColorPreset.PresetName);
+            }
+
+            ((System.Windows.Controls.ComboBox)PresetsComboBox).SelectedIndex = presetID;
+            Debug.WriteLine("Preset list in compared to drop down updated.");
+        }
+
+        private void UpdateComparisonDropwDownOnSaveAndDelete()
+        {
+            //Can't get index from the selected ComboBox item, has to use the ComboBox from the XAML to get access to the index.
+            System.Windows.Controls.ComboBox PresetSelection = FindName("ComparedToColorSelection") as System.Windows.Controls.ComboBox;
+
+            int ToBesetIndex = PresetSelection.SelectedIndex;
+
+            if (AllColorPalettePresets.Count <= ToBesetIndex)
+            {
+                Debug.WriteLine("Index too big for comparison drop down, reseted to index 1");
+                UpdateComparisonDropwDownChoices(1);
+                SetComparisonColorBoxes(1);
+            }
+            else
+            {
+                UpdateComparisonDropwDownChoices(ToBesetIndex);
+                SetComparisonColorBoxes(ToBesetIndex);
+            }
+        }
+        ///<!-- End of compared to colors -->
+
 
         /// <summary>
         /// <para>Add a line of text to the console windows.</para>
@@ -488,7 +579,7 @@ namespace PlayerColorsWithWpf
 
     /// <summary>
     /// <br>Records changes on windows location and saves the values into user preferences.</br>
-    /// <br>User can only scale the window in fixed ratio </br>
+    /// <br>Users can only scale the window in fixed ratio.</br>
     /// </summary>
     public static class WindowSizer
     {
@@ -547,7 +638,6 @@ namespace PlayerColorsWithWpf
                 StartTimer();
             }
         }
-
         public static async void StartTimer()
         {
             await Task.Delay(200);

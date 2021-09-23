@@ -23,9 +23,9 @@
             </StackPanel>
 
             <!-- Console -->
-            <TextBlock HorizontalAlignment="Right" Margin="0,31,85,0" Text="Console" VerticalAlignment="Top" FontSize="10"/>
+            <TextBlock HorizontalAlignment="Right" Margin="0,34,105,0" Text="Console" VerticalAlignment="Top" FontSize="10"/>
 
-            <TextBlock x:Name="CustomConsole" HorizontalAlignment="Right" Margin="0,48,20,0" Text="" VerticalAlignment="Top" FontSize="11" LineHeight="18"/>
+            <TextBlock x:Name="CustomConsole" Width="145" HorizontalAlignment="Right" Margin="0,48,3,0" Text="" VerticalAlignment="Top" FontSize="11" LineHeight="18"/>
 
             <!-- Player color text and header text -->
             <TextBlock HorizontalAlignment="Left" Margin="10,12,0,0" TextWrapping="Wrap" Text="Color" VerticalAlignment="Top" FontSize="12"/>
@@ -38,7 +38,7 @@
             <TextBlock HorizontalAlignment="Left" Margin="10,190,0,0" TextWrapping="Wrap" Text="Purple" VerticalAlignment="Top"/>
             <TextBlock HorizontalAlignment="Left" Margin="10,215,0,0" TextWrapping="Wrap" Text="Teal" VerticalAlignment="Top"/>
 
-            <TextBlock HorizontalAlignment="Left" Margin="60,10,0,0" TextWrapping="Wrap" Text="Your Edit | Default" VerticalAlignment="Top" FontSize="14"/>
+            <TextBlock HorizontalAlignment="Left" Margin="60,10,0,0" TextWrapping="Wrap" Text="Your Edit | Comparison" VerticalAlignment="Top" FontSize="14"/>
 
             <!-- User changeable color boxes -->
             <Rectangle x:Name="BluePlayerColor" MouseDown="BluePlayer_MouseDown" Width="20" Height="20" HorizontalAlignment="Left" Margin="95,40,0,0" VerticalAlignment="Top" Cursor="Hand" Fill="#FF2D2DF5">
@@ -60,47 +60,56 @@
 
 
             <!-- Compared to color boxes -->
-            <Rectangle Width="20" Height="20" HorizontalAlignment="Left" Margin="125,40,0,0" VerticalAlignment="Top">
+            <Rectangle x:Name="BlueComparedToColor" Width="20" Height="20" HorizontalAlignment="Left" Margin="125,40,0,0" VerticalAlignment="Top">
                 <Rectangle.Fill>
                     <SolidColorBrush Color="#FF2D2DF5" />
                 </Rectangle.Fill>
             </Rectangle>
-            <Rectangle Width="20" Height="20" HorizontalAlignment="Left" Margin="125,65,0,0" VerticalAlignment="Top">
+            <Rectangle x:Name="RedComparedToColor" Width="20" Height="20" HorizontalAlignment="Left" Margin="125,65,0,0" VerticalAlignment="Top">
                 <Rectangle.Fill>
                     <SolidColorBrush Color="#FFD22828" />
                 </Rectangle.Fill>
             </Rectangle>
-            <Rectangle Width="20" Height="20" HorizontalAlignment="Left" Margin="125,90,0,0" VerticalAlignment="Top">
+            <Rectangle x:Name="YellowComparedToColor" Width="20" Height="20" HorizontalAlignment="Left" Margin="125,90,0,0" VerticalAlignment="Top">
                 <Rectangle.Fill>
                     <SolidColorBrush Color="#FFD7D61E" />
                 </Rectangle.Fill>
             </Rectangle>
-            <Rectangle Width="20" Height="20" HorizontalAlignment="Left" Margin="125,115,0,0" VerticalAlignment="Top">
+            <Rectangle x:Name="BrownComparedToColor" Width="20" Height="20" HorizontalAlignment="Left" Margin="125,115,0,0" VerticalAlignment="Top">
                 <Rectangle.Fill>
                     <SolidColorBrush Color="#FF8E5B00" />
                 </Rectangle.Fill>
             </Rectangle>
-            <Rectangle Width="20" Height="20" HorizontalAlignment="Left" Margin="125,140,0,0" VerticalAlignment="Top">
+            <Rectangle x:Name="OrangeComparedToColor" Width="20" Height="20" HorizontalAlignment="Left" Margin="125,140,0,0" VerticalAlignment="Top">
                 <Rectangle.Fill>
                     <SolidColorBrush Color="#FFFF9605" />
                 </Rectangle.Fill>
             </Rectangle>
-            <Rectangle Width="20" Height="20" HorizontalAlignment="Left" Margin="125,165,0,0" VerticalAlignment="Top">
+            <Rectangle x:Name="GreenComparedToColor" Width="20" Height="20" HorizontalAlignment="Left" Margin="125,165,0,0" VerticalAlignment="Top">
                 <Rectangle.Fill>
                     <SolidColorBrush Color="#FF04A514" />
                 </Rectangle.Fill>
             </Rectangle>
-            <Rectangle Width="20" Height="20" HorizontalAlignment="Left" Margin="125,190,0,0" VerticalAlignment="Top">
+            <Rectangle x:Name="PurpleComparedToColor" Width="20" Height="20" HorizontalAlignment="Left" Margin="125,190,0,0" VerticalAlignment="Top">
                 <Rectangle.Fill>
                     <SolidColorBrush Color="#FF960FFA" />
                 </Rectangle.Fill>
             </Rectangle>
-            <Rectangle Width="20" Height="20" HorizontalAlignment="Left" Margin="125,215,0,0" VerticalAlignment="Top" Grid.Row="0">
+            <Rectangle x:Name="TealComparedToColor" Width="20" Height="20" HorizontalAlignment="Left" Margin="125,215,0,0" VerticalAlignment="Top" Grid.Row="0">
                 <Rectangle.Fill>
                     <SolidColorBrush Color="#FF7EF2E1" />
                 </Rectangle.Fill>
             </Rectangle>
 
+            <!-- Compared to colors switch -->
+            <TextBlock HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,173,39,0" TextWrapping="Wrap" Text="Compared to Colors" FontSize="11" />
+
+            <ComboBox x:Name="ComparedToColorSelection" SelectionChanged="ComparedToColors_SelectionChanged" HorizontalAlignment="Right" VerticalAlignment="Top"  Width="131" Margin="0,190,21,0" >
+                <ComboBoxItem IsSelected="True" Content="Choice 1"></ComboBoxItem>
+                <ComboBoxItem Content="Choice 2"></ComboBoxItem>
+                <ComboBoxItem Content="Choice 3"></ComboBoxItem>
+            </ComboBox>
+            
             <!-- Palette folder location -->
             <TextBlock HorizontalAlignment="Left" Margin="10,251,0,0" TextWrapping="Wrap" Text="Color Palette Location:" VerticalAlignment="Top" FontSize="12" />
 
