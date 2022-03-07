@@ -14,7 +14,7 @@
     <Viewbox MinWidth="345" MinHeight="490">
         <Grid Width="320" Height="485">
             <!-- "?" button -->
-            <Button x:Name="Info" Content="?" IsEnabled="True" HorizontalAlignment="Right" Margin="0,8,15,0" VerticalAlignment="Top" Width="25" Click="Info_Click" />
+            <Button x:Name="Info" Content="?" IsEnabled="True" HorizontalAlignment="Right" Margin="0,8,15,0" VerticalAlignment="Top" Width="25" Click="EditorInfo_Click" />
 
             <StackPanel x:Name="InfoPopUp" Visibility="Collapsed" HorizontalAlignment="Right" Margin="0,27,15,0" VerticalAlignment="Top" Width="296" Height="211" Background="White"  ZIndex="3">
                 <Border BorderBrush="#999" BorderThickness="1" Padding="3">
@@ -120,7 +120,7 @@
             <!-- Edit and switch palette presets -->
             <TextBlock HorizontalAlignment="Center" Margin="0,0,0,150" TextWrapping="Wrap" Text="Currently Active Player Color Preset" VerticalAlignment="Bottom" FontSize="12" />
 
-            <ComboBox x:Name="PresetSelectionDropdown" SelectionChanged="PresetDropdown_SelectionChanged" HorizontalAlignment="Center" Margin="0,0,0,120" VerticalAlignment="Bottom" Width="140" >
+            <ComboBox x:Name="PresetSelectionDropdown" SelectionChanged="ColorPresetDropdown_SelectionChanged" HorizontalAlignment="Center" Margin="0,0,0,120" VerticalAlignment="Bottom" Width="140" >
                 <ComboBoxItem IsSelected="True" Content="Choice 1"></ComboBoxItem>
                 <ComboBoxItem Content="Choice 2"></ComboBoxItem>
                 <ComboBoxItem Content="Choice 3"></ComboBoxItem>
