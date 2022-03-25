@@ -31,6 +31,15 @@ namespace PlayerColorsWithWpf
 {
     public partial class MainWindow : Window
     {
+        public const int CountOfUnchangeableColorPresets = 3;
+        public static int MaxLineCountInConsole = 5;
+        
+        public static List<PalettePresetJSON> AllColorPalettePresets = new List<PalettePresetJSON>();
+
+        public static readonly string[] PaletteFolderDefaultLocations = { @"C:\Program Files (x86)\Steam\steamapps\common\AoEDE\Assets\Palettes", @"D:\SteamLibrary\steamapps\common\AoEDE\Assets\Palettes", @"E:\SteamLibrary\steamapps\common\AoEDE\Assets\Palettes", @"C:\SteamLibrary\steamapps\common\AoEDE\Assets\Palettes", @"F:\SteamLibrary\steamapps\common\AoEDE\Assets\Palettes" };
+
+        public static readonly Vector3[] CurrentlyActivePlayerColors = { new Vector3(15, 70, 245), new Vector3(220, 35, 35), new Vector3(215, 215, 30), new Vector3(115, 60, 0), new Vector3(245, 135, 25), new Vector3(4, 165, 20), new Vector3(245, 95, 240), new Vector3(65, 245, 230) };
+
         public MainWindow()
         {
             InitializeComponent();
@@ -39,25 +48,15 @@ namespace PlayerColorsWithWpf
             PalettePresets.InitializePresets();
             UpdateCurrenltyActivePresetComboBox(UserPreferences.ActivePlayerColorPalette);
             ShowNewlySelectedColors();
-            SetUIColorPalettesFolderLocation();
-            UpdateComparedToDropwDownChoices(UserPreferences.ActiveComparedToPalette);
+            UpdateUIColorPalettesFolderLocation();
+            UpdateComparedToPlayerColorDropDownChoices(UserPreferences.ActiveComparedToPalette);
             Debug.WriteLine("Program booted successfully.");
         }
 
-        public static List<PalettePresetJSON> AllColorPalettePresets = new List<PalettePresetJSON>();
-
-        public const int CountOfUnchangeableColorPresets = 3;
-
-        public static readonly string[] PaletteFolderDefaultLocations = { @"C:\Program Files (x86)\Steam\steamapps\common\AoEDE\Assets\Palettes", @"D:\SteamLibrary\steamapps\common\AoEDE\Assets\Palettes", @"E:\SteamLibrary\steamapps\common\AoEDE\Assets\Palettes", @"C:\SteamLibrary\steamapps\common\AoEDE\Assets\Palettes", @"F:\SteamLibrary\steamapps\common\AoEDE\Assets\Palettes" };
-
-        public static int MaxLineCountInConsole = 5;
-
-        public static readonly Vector3[] CurrentlyActivePlayerColors = { new Vector3(15, 70, 245), new Vector3(220, 35, 35), new Vector3(215, 215, 30), new Vector3(115, 60, 0), new Vector3(245, 135, 25), new Vector3(4, 165, 20), new Vector3(245, 95, 240), new Vector3(65, 245, 230) };
-
         private void EditorInfo_Click(object sender, RoutedEventArgs e)
         {
-            StackPanel InfoPopUp = FindName("InfoPopUp") as StackPanel;
-            InfoPopUp.Visibility = InfoPopUp.Visibility == Visibility.Collapsed ? Visibility.Visible : Visibility.Collapsed;
+            var infoPopUp = FindName("InfoPopUp") as StackPanel;
+            infoPopUp.Visibility = infoPopUp.Visibility == Visibility.Collapsed ? Visibility.Visible : Visibility.Collapsed;
         }
 
         /// <!-- Change colors in "NewPlayerColors" -->
@@ -97,19 +96,20 @@ namespace PlayerColorsWithWpf
         {
             OpenColorPicker(7);
         }
+
         private void OpenColorPicker(int selectedPlayerColor)
         {
             Debug.WriteLine("Color picker opened with player color id: " + selectedPlayerColor);
 
-            ColorDialog PlayerColorPicker = new ColorDialog
+            var playerColorPicker = new ColorDialog
             {
                 Color = System.Drawing.ColorTranslator.FromHtml("#FF" + ((byte)CurrentlyActivePlayerColors[selectedPlayerColor].X).ToString("X2") + ((byte)CurrentlyActivePlayerColors[selectedPlayerColor].Y).ToString("X2") + ((byte)CurrentlyActivePlayerColors[selectedPlayerColor].Z).ToString("X2"))
             };
 
-            _ = PlayerColorPicker.ShowDialog();
-            CurrentlyActivePlayerColors[selectedPlayerColor] = new Vector3(PlayerColorPicker.Color.R, PlayerColorPicker.Color.G, PlayerColorPicker.Color.B);
+            _ = playerColorPicker.ShowDialog();
+            CurrentlyActivePlayerColors[selectedPlayerColor] = new Vector3(playerColorPicker.Color.R, playerColorPicker.Color.G, playerColorPicker.Color.B);
 
-            PlayerColorPicker.Dispose();
+            playerColorPicker.Dispose();
             Debug.WriteLine("Player colors edited by the user.");
 
             ShowNewlySelectedColors();
@@ -121,38 +121,42 @@ namespace PlayerColorsWithWpf
         /// </summary>
         public void UpdateCustomConsole(string textToBeAdded)
         {
-            TextBlock CustomConsole = FindName("CustomConsole") as TextBlock;
-            string ConsoleText = CustomConsole.Text;
-            int Limit = MaxLineCountInConsole - 1;
-            string NewConsoleText = textToBeAdded == "" || textToBeAdded == null ? "" : textToBeAdded + "\n";
+            var customConsole = FindName("CustomConsole") as TextBlock;
+            string consoleText = customConsole.Text;
+            int limit = MaxLineCountInConsole - 1;
+            string newConsoleText = textToBeAdded == "" || textToBeAdded == null ? "" : textToBeAdded + "\n";
 
-            foreach (char c in ConsoleText)
+            foreach (char c in consoleText)
             {
                 if (c == '\n')
                 {
-                    if (--Limit <= 0)
+                    if (--limit <= 0)
                     {
                         break;
                     }
                 }
-                NewConsoleText += c;
+                newConsoleText += c;
             }
-            CustomConsole.Text = NewConsoleText;
+            customConsole.Text = newConsoleText;
         }
 
-        private void ComparedToColors_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void ComparedToPlayerColors_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             // Can't get index from the selected ComboBox item, has to use the ComboBox from the XAML to get access to the index.
-            System.Windows.Controls.ComboBox PresetSelection = FindName("ComparedToColorSelection") as System.Windows.Controls.ComboBox;
+            var presetSelection = FindName("ComparedToColorSelection") as System.Windows.Controls.ComboBox;
 
-            if (PresetSelection.SelectedIndex != -1)
+            if (presetSelection.SelectedIndex != -1)
             {
-                Debug.WriteLine("New preset selected for compared to colors, with index: {0}.", PresetSelection.SelectedIndex);
-                UserPreferences.ActiveComparedToPalette = PresetSelection.SelectedIndex;
-                SetComparedToColorBoxes(PresetSelection.SelectedIndex);
+                Debug.WriteLine("New preset selected for compared to colors, with index: {0}.", presetSelection.SelectedIndex);
+                UserPreferences.ActiveComparedToPalette = presetSelection.SelectedIndex;
+                SetComparedToPlayerColorBoxes(presetSelection.SelectedIndex);
             }
         }
-        private void SetComparedToColorBoxes(int presetID)
+
+        /// <summary>
+        /// Changes UI to showcase the newly selected player colors.
+        /// </summary>
+        private void SetComparedToPlayerColorBoxes(int presetID)
         {
             if (AllColorPalettePresets.Count <= presetID)
             {
@@ -160,107 +164,115 @@ namespace PlayerColorsWithWpf
                 return;
             }
             // Convert vector values to .NET framework color values and showcase them in UI.
-            BrushConverter Converter = new BrushConverter();
+            var converter = new BrushConverter();
 
-            Rectangle BluePlayer = FindName("BlueComparedToColor") as Rectangle;
-            BluePlayer.Fill = (Brush)Converter.ConvertFromString("#FF" + ((byte)AllColorPalettePresets[presetID].BluePlayerColor[0]).ToString("X2") + ((byte)AllColorPalettePresets[presetID].BluePlayerColor[1]).ToString("X2") + ((byte)AllColorPalettePresets[presetID].BluePlayerColor[2]).ToString("X2"));
+            var bluePlayer = FindName("BlueComparedToColor") as Rectangle;
+            bluePlayer.Fill = (Brush)converter.ConvertFromString("#FF" + ((byte)AllColorPalettePresets[presetID].BluePlayerColor[0]).ToString("X2") + ((byte)AllColorPalettePresets[presetID].BluePlayerColor[1]).ToString("X2") + ((byte)AllColorPalettePresets[presetID].BluePlayerColor[2]).ToString("X2"));
 
-            Rectangle RedPlayer = FindName("RedComparedToColor") as Rectangle;
-            RedPlayer.Fill = (Brush)Converter.ConvertFromString("#FF" + ((byte)AllColorPalettePresets[presetID].RedPlayerColor[0]).ToString("X2") + ((byte)AllColorPalettePresets[presetID].RedPlayerColor[1]).ToString("X2") + ((byte)AllColorPalettePresets[presetID].RedPlayerColor[2]).ToString("X2"));
+            var redPlayer = FindName("RedComparedToColor") as Rectangle;
+            redPlayer.Fill = (Brush)converter.ConvertFromString("#FF" + ((byte)AllColorPalettePresets[presetID].RedPlayerColor[0]).ToString("X2") + ((byte)AllColorPalettePresets[presetID].RedPlayerColor[1]).ToString("X2") + ((byte)AllColorPalettePresets[presetID].RedPlayerColor[2]).ToString("X2"));
 
-            Rectangle YellowPlayer = FindName("YellowComparedToColor") as Rectangle;
-            YellowPlayer.Fill = (Brush)Converter.ConvertFromString("#FF" + ((byte)AllColorPalettePresets[presetID].YellowPlayerColor[0]).ToString("X2") + ((byte)AllColorPalettePresets[presetID].YellowPlayerColor[1]).ToString("X2") + ((byte)AllColorPalettePresets[presetID].YellowPlayerColor[2]).ToString("X2"));
+            var yellowPlayer = FindName("YellowComparedToColor") as Rectangle;
+            yellowPlayer.Fill = (Brush)converter.ConvertFromString("#FF" + ((byte)AllColorPalettePresets[presetID].YellowPlayerColor[0]).ToString("X2") + ((byte)AllColorPalettePresets[presetID].YellowPlayerColor[1]).ToString("X2") + ((byte)AllColorPalettePresets[presetID].YellowPlayerColor[2]).ToString("X2"));
 
-            Rectangle BrownPlayer = FindName("BrownComparedToColor") as Rectangle;
-            BrownPlayer.Fill = (Brush)Converter.ConvertFromString("#FF" + ((byte)AllColorPalettePresets[presetID].BrownPlayerColor[0]).ToString("X2") + ((byte)AllColorPalettePresets[presetID].BrownPlayerColor[1]).ToString("X2") + ((byte)AllColorPalettePresets[presetID].BrownPlayerColor[2]).ToString("X2"));
+            var brownPlayer = FindName("BrownComparedToColor") as Rectangle;
+            brownPlayer.Fill = (Brush)converter.ConvertFromString("#FF" + ((byte)AllColorPalettePresets[presetID].BrownPlayerColor[0]).ToString("X2") + ((byte)AllColorPalettePresets[presetID].BrownPlayerColor[1]).ToString("X2") + ((byte)AllColorPalettePresets[presetID].BrownPlayerColor[2]).ToString("X2"));
 
-            Rectangle OrangePlayer = FindName("OrangeComparedToColor") as Rectangle;
-            OrangePlayer.Fill = (Brush)Converter.ConvertFromString("#FF" + ((byte)AllColorPalettePresets[presetID].OrangePlayerColor[0]).ToString("X2") + ((byte)AllColorPalettePresets[presetID].OrangePlayerColor[1]).ToString("X2") + ((byte)AllColorPalettePresets[presetID].OrangePlayerColor[2]).ToString("X2"));
+            var orangePlayer = FindName("OrangeComparedToColor") as Rectangle;
+            orangePlayer.Fill = (Brush)converter.ConvertFromString("#FF" + ((byte)AllColorPalettePresets[presetID].OrangePlayerColor[0]).ToString("X2") + ((byte)AllColorPalettePresets[presetID].OrangePlayerColor[1]).ToString("X2") + ((byte)AllColorPalettePresets[presetID].OrangePlayerColor[2]).ToString("X2"));
 
-            Rectangle GreenPlayer = FindName("GreenComparedToColor") as Rectangle;
-            GreenPlayer.Fill = (Brush)Converter.ConvertFromString("#FF" + ((byte)AllColorPalettePresets[presetID].GreenPlayerColor[0]).ToString("X2") + ((byte)AllColorPalettePresets[presetID].GreenPlayerColor[1]).ToString("X2") + ((byte)AllColorPalettePresets[presetID].GreenPlayerColor[2]).ToString("X2"));
+            var greenPlayer = FindName("GreenComparedToColor") as Rectangle;
+            greenPlayer.Fill = (Brush)converter.ConvertFromString("#FF" + ((byte)AllColorPalettePresets[presetID].GreenPlayerColor[0]).ToString("X2") + ((byte)AllColorPalettePresets[presetID].GreenPlayerColor[1]).ToString("X2") + ((byte)AllColorPalettePresets[presetID].GreenPlayerColor[2]).ToString("X2"));
 
-            Rectangle PurplePlayer = FindName("PurpleComparedToColor") as Rectangle;
-            PurplePlayer.Fill = (Brush)Converter.ConvertFromString("#FF" + ((byte)AllColorPalettePresets[presetID].PurplePlayerColor[0]).ToString("X2") + ((byte)AllColorPalettePresets[presetID].PurplePlayerColor[1]).ToString("X2") + ((byte)AllColorPalettePresets[presetID].PurplePlayerColor[2]).ToString("X2"));
+            var purplePlayer = FindName("PurpleComparedToColor") as Rectangle;
+            purplePlayer.Fill = (Brush)converter.ConvertFromString("#FF" + ((byte)AllColorPalettePresets[presetID].PurplePlayerColor[0]).ToString("X2") + ((byte)AllColorPalettePresets[presetID].PurplePlayerColor[1]).ToString("X2") + ((byte)AllColorPalettePresets[presetID].PurplePlayerColor[2]).ToString("X2"));
 
-            Rectangle TealPlayer = FindName("TealComparedToColor") as Rectangle;
-            TealPlayer.Fill = (Brush)Converter.ConvertFromString("#FF" + ((byte)AllColorPalettePresets[presetID].TealPlayerColor[0]).ToString("X2") + ((byte)AllColorPalettePresets[presetID].TealPlayerColor[1]).ToString("X2") + ((byte)AllColorPalettePresets[presetID].TealPlayerColor[2]).ToString("X2"));
+            var tealPlayer = FindName("TealComparedToColor") as Rectangle;
+            tealPlayer.Fill = (Brush)converter.ConvertFromString("#FF" + ((byte)AllColorPalettePresets[presetID].TealPlayerColor[0]).ToString("X2") + ((byte)AllColorPalettePresets[presetID].TealPlayerColor[1]).ToString("X2") + ((byte)AllColorPalettePresets[presetID].TealPlayerColor[2]).ToString("X2"));
 
             Debug.WriteLine("UI compared to player colors updated.");
             UserPreferences.SaveUserPreferences();
         }
-        private void UpdateComparedToDropwDownChoices(int presetID)
+
+        /// <summary>
+        /// <br>Updates the users newly selected "compared to player colors".</br>
+        /// <br>Updates the UI, and saves the currently active selection to the user preferences.</br>
+        /// </summary>
+        private void UpdateComparedToPlayerColorDropDownChoices(int presetID)
         {
-            object PresetsComboBox = FindName("ComparedToColorSelection");
-            ((System.Windows.Controls.ComboBox)PresetsComboBox).Items.Clear();
+            var presetsComboBox = FindName("ComparedToColorSelection");
+            ((System.Windows.Controls.ComboBox)presetsComboBox).Items.Clear();
 
             foreach (PalettePresetJSON currentColorPreset in AllColorPalettePresets)
             {
-                _ = ((System.Windows.Controls.ComboBox)PresetsComboBox).Items.Add(currentColorPreset.PresetName);
+                _ = ((System.Windows.Controls.ComboBox)presetsComboBox).Items.Add(currentColorPreset.PresetName);
             }
 
-            ((System.Windows.Controls.ComboBox)PresetsComboBox).SelectedIndex = presetID;
+            ((System.Windows.Controls.ComboBox)presetsComboBox).SelectedIndex = presetID;
             Debug.WriteLine("Preset list in compared to drop down updated.");
 
             UserPreferences.ActiveComparedToPalette = presetID;
             UserPreferences.SaveUserPreferences();
         }
-        private void UpdateComparedToDropwDownOnSaveAndDelete()
+
+        /// <summary>
+        /// <br>Updates the compared to player colors drop down to showcase the new player color choices.</br>
+        /// <br>Call to this after user saves or deletes a color preset.</br>
+        /// </summary>
+        private void RefreshComparedToPlayerColorsDropwDown()
         {
-            // Can't get index from the selected ComboBox item, has to use the ComboBox from the XAML to get access to the index.
-            System.Windows.Controls.ComboBox PresetSelection = FindName("ComparedToColorSelection") as System.Windows.Controls.ComboBox;
+            var presetSelection = FindName("ComparedToColorSelection") as System.Windows.Controls.ComboBox;
 
-            int ToBesetIndex = PresetSelection.SelectedIndex;
+            int toBesetIndex = presetSelection.SelectedIndex;
 
-            if (AllColorPalettePresets.Count <= ToBesetIndex)
+            if (AllColorPalettePresets.Count <= toBesetIndex)
             {
                 Debug.WriteLine("Index too big for comparison drop down, reseted to index 1");
                 UserPreferences.ActiveComparedToPalette = 1;
-                UpdateComparedToDropwDownChoices(1);
-                SetComparedToColorBoxes(1);
+                UpdateComparedToPlayerColorDropDownChoices(1);
+                SetComparedToPlayerColorBoxes(1);
             }
             else
             {
-                UserPreferences.ActiveComparedToPalette = ToBesetIndex;
-                UpdateComparedToDropwDownChoices(ToBesetIndex);
-                SetComparedToColorBoxes(ToBesetIndex);
+                UserPreferences.ActiveComparedToPalette = toBesetIndex;
+                UpdateComparedToPlayerColorDropDownChoices(toBesetIndex);
+                SetComparedToPlayerColorBoxes(toBesetIndex);
             }
         }
 
         private void LocateColorPalettes_Click(object sender, RoutedEventArgs e)
         {
-            FolderBrowserDialog FindPaletteFolder = new FolderBrowserDialog();
+            var findPaletteFolder = new FolderBrowserDialog();
 
             for (int i = 0; i < PaletteFolderDefaultLocations.Length; i++)
             {
                 if (Directory.Exists(PaletteFolderDefaultLocations[i]))
                 {
-                    FindPaletteFolder.SelectedPath = PaletteFolderDefaultLocations[i];
+                    findPaletteFolder.SelectedPath = PaletteFolderDefaultLocations[i];
                     Debug.WriteLine("Palette location found automatically.");
                     break;
                 }
             }
 
-            DialogResult BrowseFileResult = FindPaletteFolder.ShowDialog();
-            if (System.Windows.Forms.DialogResult.OK == BrowseFileResult)
+            var browseFileResult = findPaletteFolder.ShowDialog();
+
+            if (browseFileResult == System.Windows.Forms.DialogResult.OK)
             {
-                UserPreferences.PlayerColorPaletteLocation = FindPaletteFolder.SelectedPath;
+                UserPreferences.PlayerColorPaletteLocation = findPaletteFolder.SelectedPath;
                 Debug.WriteLine("Palette location changed. New palette location is:");
                 Debug.WriteLine(UserPreferences.PlayerColorPaletteLocation);
             }
 
-            FindPaletteFolder.Dispose();
-            SetUIColorPalettesFolderLocation();
+            findPaletteFolder.Dispose();
+            UpdateUIColorPalettesFolderLocation();
             UserPreferences.SaveUserPreferences();
         }
-        /// <summary>
-        /// Only updates the UI palette location string.
-        /// </summary>
-        public void SetUIColorPalettesFolderLocation()
-        {
-            TextBlock ColorPalettePathText = FindName("ColorPalettesLocation") as TextBlock;
 
-            ColorPalettePathText.Text = UserPreferences.PlayerColorPaletteLocation;
+        public void UpdateUIColorPalettesFolderLocation()
+        {
+            var colorPalettePathText = FindName("ColorPalettesLocation") as TextBlock;
+
+            colorPalettePathText.Text = UserPreferences.PlayerColorPaletteLocation;
             Debug.WriteLine("UI Palette location string updated.");
         }
 
@@ -268,29 +280,16 @@ namespace PlayerColorsWithWpf
         private void ColorPresetDropdown_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             // Can't get index from the selected ComboBox item, has to use the ComboBox from the XAML to get access to the index.
-            System.Windows.Controls.ComboBox PresetSelection = FindName("PresetSelectionDropdown") as System.Windows.Controls.ComboBox;
+            var presetSelection = FindName("PresetSelectionDropdown") as System.Windows.Controls.ComboBox;
 
-            if (PresetSelection.SelectedIndex != -1)
+            if (presetSelection.SelectedIndex != -1)
             {
-                Debug.WriteLine("New preset selected from combo box, with index: " + PresetSelection.SelectedIndex + ".");
-                UpdateDataToSelectedPreseset(PresetSelection.SelectedIndex);
+                Debug.WriteLine("New preset selected from combo box, with index: " + presetSelection.SelectedIndex + ".");
+                UpdateDataToSelectedPreseset(presetSelection.SelectedIndex);
                 ShowNewlySelectedColors();
             }
         }
-        private void UpdateCurrenltyActivePresetComboBox(int activePresetIndex)
-        {
-            object PresetsComboBox = FindName("PresetSelectionDropdown");
 
-            ((System.Windows.Controls.ComboBox)PresetsComboBox).Items.Clear();
-
-            foreach (PalettePresetJSON currentColorPreset in AllColorPalettePresets)
-            {
-                _ = ((System.Windows.Controls.ComboBox)PresetsComboBox).Items.Add(currentColorPreset.PresetName);
-            }
-
-            ((System.Windows.Controls.ComboBox)PresetsComboBox).SelectedIndex = activePresetIndex;
-            Debug.WriteLine("Preset list in ComboBox updated.");
-        }
         /// <summary>
         /// <para>Used to load the color preset after it has been selected from the drop down.</para>
         /// <br>Updates both; the UI and the code.</br>
@@ -325,45 +324,64 @@ namespace PlayerColorsWithWpf
             }
 
             // If currently selected preset is one of the default presets then disable save and delete buttons.
-            // Otherwise enable the save and delete buttons.
-            if (FindName("SavePreset") is System.Windows.Controls.Button SavePresetButton)
+            if (FindName("SavePreset") is System.Windows.Controls.Button savePresetButton)
             {
-                System.Windows.Controls.Button DeletePresetButton = FindName("DeletePreset") as System.Windows.Controls.Button;
-                SavePresetButton.IsEnabled = currentlyActivePresetIndex >= CountOfUnchangeableColorPresets;
-                DeletePresetButton.IsEnabled = currentlyActivePresetIndex >= CountOfUnchangeableColorPresets;
+                var deletePresetButton = FindName("DeletePreset") as System.Windows.Controls.Button;
+                savePresetButton.IsEnabled = currentlyActivePresetIndex >= CountOfUnchangeableColorPresets;
+                deletePresetButton.IsEnabled = currentlyActivePresetIndex >= CountOfUnchangeableColorPresets;
             }
         }
+
+        /// <summary>
+        /// <br>Updates the UI to reflect users selected player colors.</br>
+        /// <br>Call this after user picks a player color preset from the combo box.</br>
+        /// </summary>
+        private void UpdateCurrenltyActivePresetComboBox(int activePresetIndex)
+        {
+            var presetsComboBox = FindName("PresetSelectionDropdown");
+
+            ((System.Windows.Controls.ComboBox)presetsComboBox).Items.Clear();
+
+            foreach (PalettePresetJSON currentColorPreset in AllColorPalettePresets)
+            {
+                _ = ((System.Windows.Controls.ComboBox)presetsComboBox).Items.Add(currentColorPreset.PresetName);
+            }
+
+            ((System.Windows.Controls.ComboBox)presetsComboBox).SelectedIndex = activePresetIndex;
+            Debug.WriteLine("Preset list in ComboBox updated.");
+        }
+
         /// <summary>
         /// Updates the "Your Edit" player colors shown in the UI.
         /// </summary>
         private void ShowNewlySelectedColors()
         {
             // Convert vector values to .NET framework color values and showcase them in UI.
-            BrushConverter Converter = new BrushConverter();
+            var converter = new BrushConverter();
 
-            Rectangle BluePlayer = FindName("BluePlayerColor") as Rectangle;
-            BluePlayer.Fill = (Brush)Converter.ConvertFromString("#FF" + ((byte)CurrentlyActivePlayerColors[0].X).ToString("X2") + ((byte)CurrentlyActivePlayerColors[0].Y).ToString("X2") + ((byte)CurrentlyActivePlayerColors[0].Z).ToString("X2"));
+            var bluePlayer = FindName("BluePlayerColor") as Rectangle;
+            bluePlayer.Fill = (Brush)converter.ConvertFromString("#FF" + ((byte)CurrentlyActivePlayerColors[0].X).ToString("X2") + ((byte)CurrentlyActivePlayerColors[0].Y).ToString("X2") + ((byte)CurrentlyActivePlayerColors[0].Z).ToString("X2"));
 
-            Rectangle RedPlayer = FindName("RedPlayerColor") as Rectangle;
-            RedPlayer.Fill = (Brush)Converter.ConvertFromString("#FF" + ((byte)CurrentlyActivePlayerColors[1].X).ToString("X2") + ((byte)CurrentlyActivePlayerColors[1].Y).ToString("X2") + ((byte)CurrentlyActivePlayerColors[1].Z).ToString("X2"));
+            var redPlayer = FindName("RedPlayerColor") as Rectangle;
+            redPlayer.Fill = (Brush)converter.ConvertFromString("#FF" + ((byte)CurrentlyActivePlayerColors[1].X).ToString("X2") + ((byte)CurrentlyActivePlayerColors[1].Y).ToString("X2") + ((byte)CurrentlyActivePlayerColors[1].Z).ToString("X2"));
 
-            Rectangle YellowPlayer = FindName("YellowPlayerColor") as Rectangle;
-            YellowPlayer.Fill = (Brush)Converter.ConvertFromString("#FF" + ((byte)CurrentlyActivePlayerColors[2].X).ToString("X2") + ((byte)CurrentlyActivePlayerColors[2].Y).ToString("X2") + ((byte)CurrentlyActivePlayerColors[2].Z).ToString("X2"));
+            var yellowPlayer = FindName("YellowPlayerColor") as Rectangle;
+            yellowPlayer.Fill = (Brush)converter.ConvertFromString("#FF" + ((byte)CurrentlyActivePlayerColors[2].X).ToString("X2") + ((byte)CurrentlyActivePlayerColors[2].Y).ToString("X2") + ((byte)CurrentlyActivePlayerColors[2].Z).ToString("X2"));
 
-            Rectangle BrownPlayer = FindName("BrownPlayerColor") as Rectangle;
-            BrownPlayer.Fill = (Brush)Converter.ConvertFromString("#FF" + ((byte)CurrentlyActivePlayerColors[3].X).ToString("X2") + ((byte)CurrentlyActivePlayerColors[3].Y).ToString("X2") + ((byte)CurrentlyActivePlayerColors[3].Z).ToString("X2"));
+            var brownPlayer = FindName("BrownPlayerColor") as Rectangle;
+            brownPlayer.Fill = (Brush)converter.ConvertFromString("#FF" + ((byte)CurrentlyActivePlayerColors[3].X).ToString("X2") + ((byte)CurrentlyActivePlayerColors[3].Y).ToString("X2") + ((byte)CurrentlyActivePlayerColors[3].Z).ToString("X2"));
 
-            Rectangle OrangePlayer = FindName("OrangePlayerColor") as Rectangle;
-            OrangePlayer.Fill = (Brush)Converter.ConvertFromString("#FF" + ((byte)CurrentlyActivePlayerColors[4].X).ToString("X2") + ((byte)CurrentlyActivePlayerColors[4].Y).ToString("X2") + ((byte)CurrentlyActivePlayerColors[4].Z).ToString("X2"));
+            var orangePlayer = FindName("OrangePlayerColor") as Rectangle;
+            orangePlayer.Fill = (Brush)converter.ConvertFromString("#FF" + ((byte)CurrentlyActivePlayerColors[4].X).ToString("X2") + ((byte)CurrentlyActivePlayerColors[4].Y).ToString("X2") + ((byte)CurrentlyActivePlayerColors[4].Z).ToString("X2"));
 
-            Rectangle GreenPlayer = FindName("GreenPlayerColor") as Rectangle;
-            GreenPlayer.Fill = (Brush)Converter.ConvertFromString("#FF" + ((byte)CurrentlyActivePlayerColors[5].X).ToString("X2") + ((byte)CurrentlyActivePlayerColors[5].Y).ToString("X2") + ((byte)CurrentlyActivePlayerColors[5].Z).ToString("X2"));
+            var greenPlayer = FindName("GreenPlayerColor") as Rectangle;
+            greenPlayer.Fill = (Brush)converter.ConvertFromString("#FF" + ((byte)CurrentlyActivePlayerColors[5].X).ToString("X2") + ((byte)CurrentlyActivePlayerColors[5].Y).ToString("X2") + ((byte)CurrentlyActivePlayerColors[5].Z).ToString("X2"));
 
-            Rectangle PurplePlayer = FindName("PurplePlayerColor") as Rectangle;
-            PurplePlayer.Fill = (Brush)Converter.ConvertFromString("#FF" + ((byte)CurrentlyActivePlayerColors[6].X).ToString("X2") + ((byte)CurrentlyActivePlayerColors[6].Y).ToString("X2") + ((byte)CurrentlyActivePlayerColors[6].Z).ToString("X2"));
+            var purplePlayer = FindName("PurplePlayerColor") as Rectangle;
+            purplePlayer.Fill = (Brush)converter.ConvertFromString("#FF" + ((byte)CurrentlyActivePlayerColors[6].X).ToString("X2") + ((byte)CurrentlyActivePlayerColors[6].Y).ToString("X2") + ((byte)CurrentlyActivePlayerColors[6].Z).ToString("X2"));
 
-            Rectangle TealPlayer = FindName("TealPlayerColor") as Rectangle;
-            TealPlayer.Fill = (Brush)Converter.ConvertFromString("#FF" + ((byte)CurrentlyActivePlayerColors[7].X).ToString("X2") + ((byte)CurrentlyActivePlayerColors[7].Y).ToString("X2") + ((byte)CurrentlyActivePlayerColors[7].Z).ToString("X2"));
+            var tealPlayer = FindName("TealPlayerColor") as Rectangle;
+            tealPlayer.Fill = (Brush)converter.ConvertFromString("#FF" + ((byte)CurrentlyActivePlayerColors[7].X).ToString("X2") + ((byte)CurrentlyActivePlayerColors[7].Y).ToString("X2") + ((byte)CurrentlyActivePlayerColors[7].Z).ToString("X2"));
 
             Debug.WriteLine("UI player colors updated.");
         }
@@ -374,20 +392,20 @@ namespace PlayerColorsWithWpf
         /// </summary>
         private void SavePreset_Click(object sender, RoutedEventArgs e)
         {
-            System.Windows.Controls.ComboBox PresetSelection = FindName("PresetSelectionDropdown") as System.Windows.Controls.ComboBox;
+            var presetSelection = FindName("PresetSelectionDropdown") as System.Windows.Controls.ComboBox;
 
-            AllColorPalettePresets[PresetSelection.SelectedIndex].BluePlayerColor = new int[] { (int)CurrentlyActivePlayerColors[0].X, (int)CurrentlyActivePlayerColors[0].Y, (int)CurrentlyActivePlayerColors[0].Z };
-            AllColorPalettePresets[PresetSelection.SelectedIndex].RedPlayerColor = new int[] { (int)CurrentlyActivePlayerColors[1].X, (int)CurrentlyActivePlayerColors[1].Y, (int)CurrentlyActivePlayerColors[1].Z };
-            AllColorPalettePresets[PresetSelection.SelectedIndex].YellowPlayerColor = new int[] { (int)CurrentlyActivePlayerColors[2].X, (int)CurrentlyActivePlayerColors[2].Y, (int)CurrentlyActivePlayerColors[2].Z };
-            AllColorPalettePresets[PresetSelection.SelectedIndex].BrownPlayerColor = new int[] { (int)CurrentlyActivePlayerColors[3].X, (int)CurrentlyActivePlayerColors[3].Y, (int)CurrentlyActivePlayerColors[3].Z };
+            AllColorPalettePresets[presetSelection.SelectedIndex].BluePlayerColor = new int[] { (int)CurrentlyActivePlayerColors[0].X, (int)CurrentlyActivePlayerColors[0].Y, (int)CurrentlyActivePlayerColors[0].Z };
+            AllColorPalettePresets[presetSelection.SelectedIndex].RedPlayerColor = new int[] { (int)CurrentlyActivePlayerColors[1].X, (int)CurrentlyActivePlayerColors[1].Y, (int)CurrentlyActivePlayerColors[1].Z };
+            AllColorPalettePresets[presetSelection.SelectedIndex].YellowPlayerColor = new int[] { (int)CurrentlyActivePlayerColors[2].X, (int)CurrentlyActivePlayerColors[2].Y, (int)CurrentlyActivePlayerColors[2].Z };
+            AllColorPalettePresets[presetSelection.SelectedIndex].BrownPlayerColor = new int[] { (int)CurrentlyActivePlayerColors[3].X, (int)CurrentlyActivePlayerColors[3].Y, (int)CurrentlyActivePlayerColors[3].Z };
 
-            AllColorPalettePresets[PresetSelection.SelectedIndex].OrangePlayerColor = new int[] { (int)CurrentlyActivePlayerColors[4].X, (int)CurrentlyActivePlayerColors[4].Y, (int)CurrentlyActivePlayerColors[4].Z };
-            AllColorPalettePresets[PresetSelection.SelectedIndex].GreenPlayerColor = new int[] { (int)CurrentlyActivePlayerColors[5].X, (int)CurrentlyActivePlayerColors[5].Y, (int)CurrentlyActivePlayerColors[5].Z };
-            AllColorPalettePresets[PresetSelection.SelectedIndex].PurplePlayerColor = new int[] { (int)CurrentlyActivePlayerColors[6].X, (int)CurrentlyActivePlayerColors[6].Y, (int)CurrentlyActivePlayerColors[6].Z };
-            AllColorPalettePresets[PresetSelection.SelectedIndex].TealPlayerColor = new int[] { (int)CurrentlyActivePlayerColors[7].X, (int)CurrentlyActivePlayerColors[7].Y, (int)CurrentlyActivePlayerColors[7].Z };
+            AllColorPalettePresets[presetSelection.SelectedIndex].OrangePlayerColor = new int[] { (int)CurrentlyActivePlayerColors[4].X, (int)CurrentlyActivePlayerColors[4].Y, (int)CurrentlyActivePlayerColors[4].Z };
+            AllColorPalettePresets[presetSelection.SelectedIndex].GreenPlayerColor = new int[] { (int)CurrentlyActivePlayerColors[5].X, (int)CurrentlyActivePlayerColors[5].Y, (int)CurrentlyActivePlayerColors[5].Z };
+            AllColorPalettePresets[presetSelection.SelectedIndex].PurplePlayerColor = new int[] { (int)CurrentlyActivePlayerColors[6].X, (int)CurrentlyActivePlayerColors[6].Y, (int)CurrentlyActivePlayerColors[6].Z };
+            AllColorPalettePresets[presetSelection.SelectedIndex].TealPlayerColor = new int[] { (int)CurrentlyActivePlayerColors[7].X, (int)CurrentlyActivePlayerColors[7].Y, (int)CurrentlyActivePlayerColors[7].Z };
 
             PalettePresets.SaveColorPresetsToDisk();
-            UpdateComparedToDropwDownOnSaveAndDelete();
+            RefreshComparedToPlayerColorsDropwDown();
             UpdateCustomConsole("Saved palette preset");
             Debug.WriteLine("Saved palette preset.");
         }
@@ -397,41 +415,45 @@ namespace PlayerColorsWithWpf
         /// </summary>
         private void SavePresetAs_Click(object sender, RoutedEventArgs e)
         {
-            StackPanel PresetNameBox = FindName("PresetNamePopUp") as StackPanel;
-            PresetNameBox.Visibility = Visibility.Visible;
+            var presetNameBox = FindName("PresetNamePopUp") as StackPanel;
+            presetNameBox.Visibility = Visibility.Visible;
 
-            System.Windows.Controls.ComboBox PresetDropdown = FindName("PresetSelectionDropdown") as System.Windows.Controls.ComboBox;
-            PresetDropdown.IsEnabled = false;
+            var presetDropdown = FindName("PresetSelectionDropdown") as System.Windows.Controls.ComboBox;
+            presetDropdown.IsEnabled = false;
 
-            System.Windows.Controls.ComboBox CurrentlySelectedPreset = FindName("PresetSelectionDropdown") as System.Windows.Controls.ComboBox;
+            var currentlySelectedPreset = FindName("PresetSelectionDropdown") as System.Windows.Controls.ComboBox;
 
-            System.Windows.Controls.TextBox NewPresetName = FindName("NewPresetNameInput") as System.Windows.Controls.TextBox;
-            NewPresetName.Text = AllColorPalettePresets[CurrentlySelectedPreset.SelectedIndex].PresetName;
+            var newPresetName = FindName("NewPresetNameInput") as System.Windows.Controls.TextBox;
+            newPresetName.Text = AllColorPalettePresets[currentlySelectedPreset.SelectedIndex].PresetName;
+
             Debug.WriteLine("Save preset as pop up opened.");
         }
+
         /// <summary>
         /// Closes the pop up asking a name for new preset without creating new preset.
         /// </summary>
         private void CancelNewPresetCreation_Click(object sender, RoutedEventArgs e)
         {
-            StackPanel PresetNameBox = FindName("PresetNamePopUp") as StackPanel;
-            PresetNameBox.Visibility = Visibility.Collapsed;
+            var presetNameBox = FindName("PresetNamePopUp") as StackPanel;
+            presetNameBox.Visibility = Visibility.Collapsed;
 
-            System.Windows.Controls.ComboBox PresetDropdown = FindName("PresetSelectionDropdown") as System.Windows.Controls.ComboBox;
-            PresetDropdown.IsEnabled = true;
+            var presetDropdown = FindName("PresetSelectionDropdown") as System.Windows.Controls.ComboBox;
+            presetDropdown.IsEnabled = true;
+
             Debug.WriteLine("Save preset as pop up closed.");
         }
+
         /// <summary>
         /// Creates new color preset from "NewPlayerColors" array.
         /// </summary>
         private void AcceptNewPresetName_Click(object sender, RoutedEventArgs e)
         {
-            System.Windows.Controls.TextBox PresetNameString = FindName("NewPresetNameInput") as System.Windows.Controls.TextBox;
+            var presetNameString = FindName("NewPresetNameInput") as System.Windows.Controls.TextBox;
 
             // Add new color preset to the "AllPalettePresets" list and save it to the JSON file.
-            PalettePresetJSON NewPreset = new PalettePresetJSON
+            var newPreset = new PalettePresetJSON
             {
-                PresetName = PresetNameString.Text,
+                PresetName = presetNameString.Text,
 
                 BluePlayerColor = new int[] { (int)CurrentlyActivePlayerColors[0].X, (int)CurrentlyActivePlayerColors[0].Y, (int)CurrentlyActivePlayerColors[0].Z },
                 RedPlayerColor = new int[] { (int)CurrentlyActivePlayerColors[1].X, (int)CurrentlyActivePlayerColors[1].Y, (int)CurrentlyActivePlayerColors[1].Z },
@@ -444,19 +466,21 @@ namespace PlayerColorsWithWpf
                 TealPlayerColor = new int[] { (int)CurrentlyActivePlayerColors[7].X, (int)CurrentlyActivePlayerColors[7].Y, (int)CurrentlyActivePlayerColors[7].Z },
             };
 
-            AllColorPalettePresets.Add(NewPreset);
+            AllColorPalettePresets.Add(newPreset);
+
             PalettePresets.SaveColorPresetsToDisk();
             Debug.WriteLine("Created new palette preset.");
 
             // Update UI to reflect all changes.
             UpdateCurrenltyActivePresetComboBox(AllColorPalettePresets.Count - 1);
 
-            System.Windows.Controls.ComboBox PresetDropdown = FindName("PresetSelectionDropdown") as System.Windows.Controls.ComboBox;
-            PresetDropdown.IsEnabled = true;
+            var presetDropdown = FindName("PresetSelectionDropdown") as System.Windows.Controls.ComboBox;
+            presetDropdown.IsEnabled = true;
 
-            StackPanel PresetNameBox = FindName("PresetNamePopUp") as StackPanel;
-            PresetNameBox.Visibility = Visibility.Collapsed;
-            UpdateComparedToDropwDownOnSaveAndDelete();
+            var presetNameBox = FindName("PresetNamePopUp") as StackPanel;
+            presetNameBox.Visibility = Visibility.Collapsed;
+
+            RefreshComparedToPlayerColorsDropwDown();
             UpdateCustomConsole("Created new palette preset");
         }
 
@@ -465,47 +489,51 @@ namespace PlayerColorsWithWpf
         /// </summary>
         private void DeletePreset_Click(object sender, RoutedEventArgs e)
         {
-            StackPanel DeletePopup = FindName("PresetDeletePopUp") as StackPanel;
-            DeletePopup.Visibility = Visibility.Visible;
+            var deletePopup = FindName("PresetDeletePopUp") as StackPanel;
+            deletePopup.Visibility = Visibility.Visible;
 
-            System.Windows.Controls.ComboBox PresetDropdown = FindName("PresetSelectionDropdown") as System.Windows.Controls.ComboBox;
-            PresetDropdown.IsEnabled = false;
+            var presetDropdown = FindName("PresetSelectionDropdown") as System.Windows.Controls.ComboBox;
+            presetDropdown.IsEnabled = false;
+
             Debug.WriteLine("Delete preset pop up opened.");
         }
+
         /// <summary>
         /// Closes the "delete preset" pop up without deleting the presets.
         /// </summary>
         private void CancelRemoval_Click(object sender, RoutedEventArgs e)
         {
-            StackPanel DeletePopup = FindName("PresetDeletePopUp") as StackPanel;
-            DeletePopup.Visibility = Visibility.Collapsed;
+            var deletePopup = FindName("PresetDeletePopUp") as StackPanel;
+            deletePopup.Visibility = Visibility.Collapsed;
 
-            System.Windows.Controls.ComboBox PresetDropdown = FindName("PresetSelectionDropdown") as System.Windows.Controls.ComboBox;
-            PresetDropdown.IsEnabled = true;
+            var presetDropdown = FindName("PresetSelectionDropdown") as System.Windows.Controls.ComboBox;
+            presetDropdown.IsEnabled = true;
+
             Debug.WriteLine("Delete preset pop up closed.");
         }
+
         /// <summary>
         /// Closes the "delete preset" pop up and deletes the presets.
         /// </summary>
         private void AcceptRemoval_Click(object sender, RoutedEventArgs e)
         {
-            StackPanel DeletePopup = FindName("PresetDeletePopUp") as StackPanel;
-            DeletePopup.Visibility = Visibility.Collapsed;
+            var deletePopup = FindName("PresetDeletePopUp") as StackPanel;
+            deletePopup.Visibility = Visibility.Collapsed;
 
-            System.Windows.Controls.ComboBox PresetDropdown = FindName("PresetSelectionDropdown") as System.Windows.Controls.ComboBox;
-            PresetDropdown.IsEnabled = true;
+            var presetDropdown = FindName("PresetSelectionDropdown") as System.Windows.Controls.ComboBox;
+            presetDropdown.IsEnabled = true;
 
             // Get the index of currently selected preset and remove it from the list.
-            System.Windows.Controls.ComboBox PresetSelection = FindName("PresetSelectionDropdown") as System.Windows.Controls.ComboBox;
+            var presetSelection = FindName("PresetSelectionDropdown") as System.Windows.Controls.ComboBox;
 
-            AllColorPalettePresets.RemoveAt(PresetSelection.SelectedIndex);
+            AllColorPalettePresets.RemoveAt(presetSelection.SelectedIndex);
 
             PalettePresets.SaveColorPresetsToDisk();
             Debug.WriteLine("Player color preset deleted.");
 
             UpdateCurrenltyActivePresetComboBox(0);
             ShowNewlySelectedColors();
-            UpdateComparedToDropwDownOnSaveAndDelete();
+            RefreshComparedToPlayerColorsDropwDown();
             UpdateCustomConsole("Deleted palette preset");
         }
 
@@ -519,6 +547,7 @@ namespace PlayerColorsWithWpf
         {
             WindowSizer.UserChangedWindowSize();
         }
+
         private void Window_LocationChanged(object sender, EventArgs e)
         {
             WindowSizer.UserChangedWindowSize();
@@ -556,18 +585,18 @@ namespace PlayerColorsWithWpf
 
         public static void UserChangedWindowSize()
         {
-            double Width = System.Windows.Application.Current.MainWindow.Width;
-            double Height = System.Windows.Application.Current.MainWindow.Height;
+            double width = System.Windows.Application.Current.MainWindow.Width;
+            double height = System.Windows.Application.Current.MainWindow.Height;
 
-            if (Width * DefaultWidth > Height * DefaultHeight)
+            if (width * DefaultWidth > height * DefaultHeight)
             {
-                System.Windows.Application.Current.MainWindow.Width = Width;
-                System.Windows.Application.Current.MainWindow.Height = Width * HeightRatio;
+                System.Windows.Application.Current.MainWindow.Width = width;
+                System.Windows.Application.Current.MainWindow.Height = width * HeightRatio;
             }
             else
             {
-                System.Windows.Application.Current.MainWindow.Height = Height;
-                System.Windows.Application.Current.MainWindow.Width = Height * WidthRatio;
+                System.Windows.Application.Current.MainWindow.Height = height;
+                System.Windows.Application.Current.MainWindow.Width = height * WidthRatio;
             }
 
             DefaultLeft = System.Windows.Application.Current.MainWindow.Left;
@@ -586,6 +615,7 @@ namespace PlayerColorsWithWpf
                 StartTimer();
             }
         }
+
         public static async void StartTimer()
         {
             await Task.Delay(200);
@@ -637,18 +667,18 @@ namespace PlayerColorsWithWpf
             if (File.Exists(UserPreferenceFileLocation))
             {
                 // Load user preferences.
-                string LoadedPreferences = File.ReadAllText(UserPreferenceFileLocation);
+                string loadedPreferences = File.ReadAllText(UserPreferenceFileLocation);
 
                 // Convert JSON string back to object.
-                UserPreferencesJSON LoadedPreferencesAsObject = System.Text.Json.JsonSerializer.Deserialize<UserPreferencesJSON>(LoadedPreferences);
+                var loadedPreferencesAsObject = System.Text.Json.JsonSerializer.Deserialize<UserPreferencesJSON>(loadedPreferences);
 
-                PlayerColorPaletteLocation = LoadedPreferencesAsObject.PaletteLocation;
-                ActivePlayerColorPalette = LoadedPreferencesAsObject.ActiveColorPalette;
-                ActiveComparedToPalette = LoadedPreferencesAsObject.ActiveComparedTo;
-                System.Windows.Application.Current.MainWindow.Width = LoadedPreferencesAsObject.WindowsWidth;
-                System.Windows.Application.Current.MainWindow.Height = LoadedPreferencesAsObject.WindowsHeight;
-                System.Windows.Application.Current.MainWindow.Left = LoadedPreferencesAsObject.WindowsLeft;
-                System.Windows.Application.Current.MainWindow.Top = LoadedPreferencesAsObject.WindowsTop;
+                PlayerColorPaletteLocation = loadedPreferencesAsObject.PaletteLocation;
+                ActivePlayerColorPalette = loadedPreferencesAsObject.ActiveColorPalette;
+                ActiveComparedToPalette = loadedPreferencesAsObject.ActiveComparedTo;
+                System.Windows.Application.Current.MainWindow.Width = loadedPreferencesAsObject.WindowsWidth;
+                System.Windows.Application.Current.MainWindow.Height = loadedPreferencesAsObject.WindowsHeight;
+                System.Windows.Application.Current.MainWindow.Left = loadedPreferencesAsObject.WindowsLeft;
+                System.Windows.Application.Current.MainWindow.Top = loadedPreferencesAsObject.WindowsTop;
                 Debug.WriteLine("Previous user preference file found and loaded.");
             }
             else
@@ -658,7 +688,7 @@ namespace PlayerColorsWithWpf
                 System.Windows.Application.Current.MainWindow.Height = WindowSizer.DefaultHeight;
                 ActiveComparedToPalette = 1;
 
-                UserPreferencesJSON NewPreferences = new UserPreferencesJSON
+                var newPreferences = new UserPreferencesJSON
                 {
                     PaletteLocation = PlayerColorPaletteLocation,
                     ActiveColorPalette = ActivePlayerColorPalette,
@@ -669,14 +699,19 @@ namespace PlayerColorsWithWpf
                     WindowsTop = (int)WindowSizer.DefaultTop
                 };
 
-                File.WriteAllText(UserPreferenceFileLocation, System.Text.Json.JsonSerializer.Serialize(NewPreferences));
+                File.WriteAllText(UserPreferenceFileLocation, System.Text.Json.JsonSerializer.Serialize(newPreferences));
+
                 Debug.WriteLine("New user preferences created.");
             }
         }
 
+        /// <summary>
+        /// <br>Locates all the values to be saved.</br>
+        /// <br>Always overwrites the whole JSON regardless how many actual values were changed.</br>
+        /// </summary>
         public static void SaveUserPreferences()
         {
-            UserPreferencesJSON NewPreferences = new UserPreferencesJSON
+            var newPreferences = new UserPreferencesJSON
             {
                 PaletteLocation = PlayerColorPaletteLocation,
                 ActiveColorPalette = ActivePlayerColorPalette,
@@ -687,7 +722,8 @@ namespace PlayerColorsWithWpf
                 WindowsTop = (int)WindowSizer.DefaultTop
             };
 
-            File.WriteAllText(UserPreferenceFileLocation, System.Text.Json.JsonSerializer.Serialize(NewPreferences));
+            File.WriteAllText(UserPreferenceFileLocation, System.Text.Json.JsonSerializer.Serialize(newPreferences));
+
             Debug.WriteLine("User preferences saved.");
         }
     }
@@ -721,27 +757,29 @@ namespace PlayerColorsWithWpf
 
         private static IEnumerable<T> DeserializeObjects<T>(string input)
         {
-            Newtonsoft.Json.JsonSerializer Serializer = new Newtonsoft.Json.JsonSerializer();
-            using StringReader Strreader = new StringReader(input);
-            using JsonTextReader Jsonreader = new JsonTextReader(Strreader);
-            Jsonreader.SupportMultipleContent = true;
-            while (Jsonreader.Read())
+            var serializer = new Newtonsoft.Json.JsonSerializer();
+            using StringReader strreader = new StringReader(input);
+            using JsonTextReader jsonreader = new JsonTextReader(strreader);
+            jsonreader.SupportMultipleContent = true;
+            while (jsonreader.Read())
             {
-                yield return Serializer.Deserialize<T>(Jsonreader);
+                yield return serializer.Deserialize<T>(jsonreader);
             }
         }
 
         public static async void SaveColorPresetsToDisk()
         {
-            JsonSerializerOptions Options = new JsonSerializerOptions { WriteIndented = true };
-            string JsonTextToWriteInTheFile = "";
+            var options = new JsonSerializerOptions { WriteIndented = true };
+
+            string jsonTextToWriteInTheFile = "";
 
             for (int i = 0; i < MainWindow.AllColorPalettePresets.Count; i++)
             {
-                JsonTextToWriteInTheFile += System.Text.Json.JsonSerializer.Serialize(MainWindow.AllColorPalettePresets[i], Options);
+                jsonTextToWriteInTheFile += System.Text.Json.JsonSerializer.Serialize(MainWindow.AllColorPalettePresets[i], options);
             }
 
-            await File.WriteAllTextAsync(PlayerColorPresetFileLocation, JsonTextToWriteInTheFile);
+            await File.WriteAllTextAsync(PlayerColorPresetFileLocation, jsonTextToWriteInTheFile);
+
             Debug.WriteLine("Preset JSON created.");
         }
 
@@ -758,7 +796,7 @@ namespace PlayerColorsWithWpf
             }
             else
             {
-                PalettePresetJSON EditorDefaultPlayerColors = new PalettePresetJSON
+                var editorDefaultPlayerColors = new PalettePresetJSON
                 {
                     PresetName = "Editor Default",
 
@@ -772,7 +810,7 @@ namespace PlayerColorsWithWpf
                     PurplePlayerColor = new int[] { 210, 55, 200 },
                     TealPlayerColor = new int[] { 126, 242, 225 }
                 };
-                PalettePresetJSON GameDefaultPlayerColors = new PalettePresetJSON
+                var gameDefaultPlayerColors = new PalettePresetJSON
                 {
                     PresetName = "AOE:DE Default",
 
@@ -786,7 +824,7 @@ namespace PlayerColorsWithWpf
                     PurplePlayerColor = new int[] { 150, 15, 250 },
                     TealPlayerColor = new int[] { 126, 242, 225 }
                 };
-                PalettePresetJSON HighContrastPlayerColors = new PalettePresetJSON
+                var highContrastPlayerColors = new PalettePresetJSON
                 {
                     PresetName = "High Contrast",
 
@@ -801,9 +839,9 @@ namespace PlayerColorsWithWpf
                     TealPlayerColor = new int[] { 103, 252, 252 }
                 };
 
-                MainWindow.AllColorPalettePresets.Add(EditorDefaultPlayerColors);
-                MainWindow.AllColorPalettePresets.Add(GameDefaultPlayerColors);
-                MainWindow.AllColorPalettePresets.Add(HighContrastPlayerColors);
+                MainWindow.AllColorPalettePresets.Add(editorDefaultPlayerColors);
+                MainWindow.AllColorPalettePresets.Add(gameDefaultPlayerColors);
+                MainWindow.AllColorPalettePresets.Add(highContrastPlayerColors);
 
                 SaveColorPresetsToDisk();
 
@@ -837,7 +875,7 @@ namespace PlayerColorsWithWpf
         private static readonly string ColorCodeSeperator = " ";
         private static readonly string RGBColorSeperator = Environment.NewLine;
 
-        private const int ColorInterpolationCount = 15; // Total of 16 colors if counting both starting and ending colors.
+        private const int ColorInterpolationCount = 15; // Total of this +1 colors if counting both starting and ending colors.
 
         private static readonly Vector3[] InterpolatingIntoColors = { new Vector3(0, 0, 0), new Vector3(32, 32, 32), new Vector3(64, 64, 64), new Vector3(128, 128, 128), new Vector3(192, 192, 192), new Vector3(224, 224, 224), new Vector3(255, 255, 255), new Vector3(128, 96, 64) };
 
@@ -852,9 +890,9 @@ namespace PlayerColorsWithWpf
         {
             static async void CreatePlayerColorPalette(Vector3 playerColor, string paletteName)
             {
-                string TextToWriteInPaletteFile = "";
+                string textToWriteInPaletteFile = "";
 
-                TextToWriteInPaletteFile += PaletteStartingText;
+                textToWriteInPaletteFile += PaletteStartingText;
 
                 // Going through the target colors.
                 foreach (Vector3 colorToInterpolateInto in InterpolatingIntoColors)
@@ -862,29 +900,29 @@ namespace PlayerColorsWithWpf
                     // Each step in interpolation.
                     for (int i = 0; i <= ColorInterpolationCount; i++)
                     {
-                        TextToWriteInPaletteFile += RGBColorSeperator;
+                        textToWriteInPaletteFile += RGBColorSeperator;
 
                         // Count the interpolation based on "i", "ColorToInterpolateInto" and "playerColor" variables.
                         // Go from "playerColor" to "ColorToInterpolateInto", do this linearly.
-                        TextToWriteInPaletteFile += Math.Round((playerColor.X * (ColorInterpolationCount - i) / ColorInterpolationCount) + (colorToInterpolateInto.X * i / ColorInterpolationCount));
-                        TextToWriteInPaletteFile += ColorCodeSeperator;
-                        TextToWriteInPaletteFile += Math.Round((playerColor.Y * (ColorInterpolationCount - i) / ColorInterpolationCount) + (colorToInterpolateInto.Y * i / ColorInterpolationCount));
-                        TextToWriteInPaletteFile += ColorCodeSeperator;
-                        TextToWriteInPaletteFile += Math.Round((playerColor.Z * (ColorInterpolationCount - i) / ColorInterpolationCount) + (colorToInterpolateInto.Z * i / ColorInterpolationCount));
+                        textToWriteInPaletteFile += Math.Round((playerColor.X * (ColorInterpolationCount - i) / ColorInterpolationCount) + (colorToInterpolateInto.X * i / ColorInterpolationCount));
+                        textToWriteInPaletteFile += ColorCodeSeperator;
+                        textToWriteInPaletteFile += Math.Round((playerColor.Y * (ColorInterpolationCount - i) / ColorInterpolationCount) + (colorToInterpolateInto.Y * i / ColorInterpolationCount));
+                        textToWriteInPaletteFile += ColorCodeSeperator;
+                        textToWriteInPaletteFile += Math.Round((playerColor.Z * (ColorInterpolationCount - i) / ColorInterpolationCount) + (colorToInterpolateInto.Z * i / ColorInterpolationCount));
                     }
                 }
 
                 // Fill in "0 0 0" line to get a total of 256 lines in color data.
                 for (int i = 0; i < 128; i++)
                 {
-                    TextToWriteInPaletteFile += RGBColorSeperator;
-                    TextToWriteInPaletteFile += "0 0 0";
+                    textToWriteInPaletteFile += RGBColorSeperator;
+                    textToWriteInPaletteFile += "0 0 0";
                 }
 
                 // Original palette files had an empty line in the end so this one will also have one.
-                TextToWriteInPaletteFile += RGBColorSeperator;
+                textToWriteInPaletteFile += RGBColorSeperator;
 
-                await File.WriteAllTextAsync(UserPreferences.PlayerColorPaletteLocation + @"\" + paletteName, TextToWriteInPaletteFile);
+                await File.WriteAllTextAsync(UserPreferences.PlayerColorPaletteLocation + @"\" + paletteName, textToWriteInPaletteFile);
             };
 
             ///<!-- Logic Starts Here -->
