@@ -1,5 +1,5 @@
 ﻿<!-- MinWidth and MinHeight determine the fixed aspect ratio -->
-<Window x:Class="PlayerColorsWithWpf.MainWindow" 
+<Window x:Class="PlayerColorsWithWpf.MainWindow"
         SizeChanged="UserControl_SizeChanged" LocationChanged="Window_LocationChanged"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -16,7 +16,6 @@
             
             <!-- "?" button -->
             <Button x:Name="Info" Click="EditorInfo_Click"
-                IsEnabled="True"
                 HorizontalAlignment="Right" VerticalAlignment="Top"
                 Margin="0,8,15,0"
                 Width="25"
@@ -36,14 +35,16 @@
                     <TextBlock 
                         HorizontalAlignment="Left"
                         TextWrapping="Wrap"
-                        Margin="0"
-                        Text='If AoE:DE is installed in the default steam folder the 
-                        "Locate Color Palettes" button will automatically select the right folder. 
-                        &#x0a;If you don&apos;t select a folder the palettes will be created in the same 
-                        folder as this executable.&#x0a;&#x0a;You can edit the player colors by clicking 
-                        the color boxes under &quot;Your Edit&quot; text. &#x0a;&#x0a;You can change and 
-                        test different color schemes while the game is open. You just have to be in the 
-                        main menu when creating the new colors.'/>
+                        Margin="0">
+                        <Span>If AoE:DE is installed in the default steam folder the "Locate Color Palettes"
+                        button will automatically select the right folder. If you don&apos;t select a folder 
+                        the palettes will be created in the same folder as this executable.
+                        <LineBreak/><LineBreak/>
+                        You can edit the player colors by clicking the color boxes under "Your Edit" text.
+                        <LineBreak/><LineBreak/>
+                        You can change and test different color schemes while the game is open. You just 
+                        have to be in the main menu when creating the new colors.</Span>
+                    </TextBlock>
                 </Border>
             </StackPanel>
 
@@ -52,20 +53,19 @@
                 HorizontalAlignment="Right" VerticalAlignment="Top"
                 Margin="0,34,105,0"
                 FontSize="10"
-                Text="Console" />
+                Text="Console"/>
 
             <TextBlock x:Name="CustomConsole"
                 HorizontalAlignment="Right" VerticalAlignment="Top"
                 Margin="0,48,3,0"
                 Width="145"
                 FontSize="11" LineHeight="18"
-                Text="" />
+                Text=""/>
 
             <!-- Player color headers text boxes -->
             <TextBlock 
                 HorizontalAlignment="Left" VerticalAlignment="Top"
                 Margin="60,10,0,0"
-                TextWrapping="Wrap"
                 FontSize="14"
                 Text="Your Edit | Comparison"/>
 
@@ -79,49 +79,41 @@
             <TextBlock 
                 HorizontalAlignment="Left" VerticalAlignment="Top"
                 Margin="10,40,0,0"
-                TextWrapping="Wrap"
                 Text="Blue"/>
             
             <TextBlock 
                 HorizontalAlignment="Left" VerticalAlignment="Top"
                 Margin="10,65,0,0"
-                TextWrapping="Wrap"
                 Text="Red"/>
             
             <TextBlock 
                 HorizontalAlignment="Left" VerticalAlignment="Top"
                 Margin="10,90,0,0"
-                TextWrapping="Wrap"
                 Text="Yellow"/>
             
             <TextBlock 
                 HorizontalAlignment="Left" VerticalAlignment="Top"
                 Margin="10,115,0,0"
-                TextWrapping="Wrap"
                 Text="Brown"/>
             
             <TextBlock 
                 HorizontalAlignment="Left" VerticalAlignment="Top"
                 Margin="10,140,0,0"
-                TextWrapping="Wrap"
                 Text="Orange"/>
             
             <TextBlock 
                 HorizontalAlignment="Left" VerticalAlignment="Top"
                 Margin="10,165,0,0"
-                TextWrapping="Wrap"
                 Text="Green"/>
             
             <TextBlock 
                 HorizontalAlignment="Left" VerticalAlignment="Top"
                 Margin="10,190,0,0"
-                TextWrapping="Wrap"
                 Text="Purple"/>
             
             <TextBlock 
                 HorizontalAlignment="Left" VerticalAlignment="Top"
                 Margin="10,215,0,0"
-                TextWrapping="Wrap"
                 Text="Teal"/>
 
             <!-- User changeable "Your Edit" color boxes -->
@@ -234,13 +226,12 @@
             <TextBlock 
                 HorizontalAlignment="Right" VerticalAlignment="Top"
                 Margin="0,171,22,0"
-                TextWrapping="Wrap"
                 FontSize="11"
                 Text="Compared to player Colors"/>
 
             <ComboBox x:Name="ComparedToColorSelection" SelectionChanged="ComparedToPlayerColors_SelectionChanged"
                 HorizontalAlignment="Right" VerticalAlignment="Top"
-                Margin="0,190,21,0"  
+                Margin="0,190,21,0"
                 Width="131">
                 <ComboBoxItem IsSelected="True" Content="Choice 1"></ComboBoxItem>
                 <ComboBoxItem Content="Choice 2"></ComboBoxItem>
@@ -251,7 +242,6 @@
             <TextBlock 
                 HorizontalAlignment="Left" VerticalAlignment="Top"
                 Margin="10,251,0,0"
-                TextWrapping="Wrap"
                 FontSize="12"
                 Text="Color Palette Location:"/>
 
@@ -274,7 +264,6 @@
             <TextBlock 
                 HorizontalAlignment="Center" VerticalAlignment="Bottom"
                 Margin="0,0,0,150"
-                TextWrapping="Wrap"
                 FontSize="12"
                 Text="Currently Active Player Color Preset"/>
 
@@ -314,8 +303,7 @@
                 Content="Create Colors"/>
 
             
-            <!-- Pop ups, place them all here so there is no need to play with Z-axis -->
-
+            <!-- Pop ups, place them here so there is no need to play with Z-axis -->
             <!-- Create new color preset pop up -->
             <StackPanel x:Name="PresetNamePopUp"
                 Visibility="Collapsed"
