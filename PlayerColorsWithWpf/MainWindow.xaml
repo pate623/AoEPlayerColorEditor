@@ -229,7 +229,8 @@
                 FontSize="11"
                 Text="Compared to player Colors"/>
 
-            <ComboBox x:Name="ComparedToColorSelection" SelectionChanged="ComparedToPlayerColors_SelectionChanged"
+            <ComboBox x:Name="ComparedToColorSelection" 
+                      SelectionChanged="ComparedToPlayerColors_SelectionChanged"
                 HorizontalAlignment="Right" VerticalAlignment="Top"
                 Margin="0,190,21,0"
                 Width="131">
@@ -267,7 +268,8 @@
                 FontSize="12"
                 Text="Currently Active Player Color Preset"/>
 
-            <ComboBox x:Name="PresetSelectionDropdown" SelectionChanged="ColorPresetDropdown_SelectionChanged"
+            <ComboBox x:Name="PresetSelectionDropdown" 
+                      SelectionChanged="ColorPresetDropdown_SelectionChanged"
                 HorizontalAlignment="Center" VerticalAlignment="Bottom"
                 Margin="0,0,0,120"
                 Width="140">
@@ -302,8 +304,6 @@
                 Width="100"
                 Content="Create Colors"/>
 
-            
-            <!-- Pop ups, place them here so there is no need to play with Z-axis -->
             <!-- Create new color preset pop up -->
             <StackPanel x:Name="PresetNamePopUp"
                 Visibility="Collapsed"

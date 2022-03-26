@@ -71,7 +71,8 @@ namespace PlayerColorsWithWpf
         private void EditorInfo_Click(object sender, RoutedEventArgs e)
         {
             var infoPopUp = FindName("InfoPopUp") as StackPanel;
-            infoPopUp.Visibility = infoPopUp.Visibility == Visibility.Collapsed ? Visibility.Visible : Visibility.Collapsed;
+            infoPopUp.Visibility = 
+                infoPopUp.Visibility == Visibility.Collapsed ? Visibility.Visible : Visibility.Collapsed;
         }
 
         /// <!-- Change colors in "NewPlayerColors" -->
@@ -163,12 +164,14 @@ namespace PlayerColorsWithWpf
 
         private void ComparedToPlayerColors_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            // Can't get index from the selected ComboBox item, has to use the ComboBox from the XAML to get access to the index.
+            // Can't get index from the selected ComboBox item,
+            // has to use the ComboBox from the XAML to get access to the index.
             var presetSelection = FindName("ComparedToColorSelection") as System.Windows.Controls.ComboBox;
 
             if (presetSelection.SelectedIndex != -1)
             {
-                Debug.WriteLine("New preset selected for compared to colors, with index: {0}.", presetSelection.SelectedIndex);
+                Debug.WriteLine("New preset selected for compared to colors, with index: {0}.", 
+                    presetSelection.SelectedIndex);
                 UserPreferences.ActiveComparedToPalette = presetSelection.SelectedIndex;
                 SetComparedToPlayerColorBoxes(presetSelection.SelectedIndex);
             }
@@ -324,12 +327,14 @@ namespace PlayerColorsWithWpf
         ///<!-- Player color presets selection -->
         private void ColorPresetDropdown_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            // Can't get index from the selected ComboBox item, has to use the ComboBox from the XAML to get access to the index.
+            // Can't get index from the selected ComboBox item,
+            // has to use the ComboBox from the XAML to get access to the index.
             var presetSelection = FindName("PresetSelectionDropdown") as System.Windows.Controls.ComboBox;
 
             if (presetSelection.SelectedIndex != -1)
             {
-                Debug.WriteLine("New preset selected from combo box, with index: " + presetSelection.SelectedIndex + ".");
+                Debug.WriteLine("New preset selected from combo box, with index: " + 
+                    presetSelection.SelectedIndex + ".");
                 UpdateDataToSelectedPreseset(presetSelection.SelectedIndex);
                 ShowNewlySelectedColors();
             }
@@ -826,7 +831,8 @@ namespace PlayerColorsWithWpf
         public static int ActivePlayerColorPalette = 0;
         public static int ActiveComparedToPalette = 1;
 
-        private static readonly string UserPreferenceFileLocation = Directory.GetCurrentDirectory() + @"\UserPreferences.json";
+        private static readonly string UserPreferenceFileLocation = 
+            Directory.GetCurrentDirectory() + @"\UserPreferences.json";
 
         /// <summary>
         /// <br>Loads user preferences from disk to memory.</br>
@@ -842,7 +848,8 @@ namespace PlayerColorsWithWpf
                 string loadedPreferences = File.ReadAllText(UserPreferenceFileLocation);
 
                 // Convert JSON string back to object.
-                var loadedPreferencesAsObject = System.Text.Json.JsonSerializer.Deserialize<UserPreferencesJSON>(loadedPreferences);
+                var loadedPreferencesAsObject = 
+                    System.Text.Json.JsonSerializer.Deserialize<UserPreferencesJSON>(loadedPreferences);
 
                 PlayerColorPaletteLocation = loadedPreferencesAsObject.PaletteLocation;
                 ActivePlayerColorPalette = loadedPreferencesAsObject.ActiveColorPalette;
@@ -871,7 +878,9 @@ namespace PlayerColorsWithWpf
                     WindowsTop = (int)WindowSizer.DefaultTop
                 };
 
-                File.WriteAllText(UserPreferenceFileLocation, System.Text.Json.JsonSerializer.Serialize(newPreferences));
+                File.WriteAllText(
+                    UserPreferenceFileLocation, 
+                    System.Text.Json.JsonSerializer.Serialize(newPreferences));
 
                 Debug.WriteLine("New user preferences created.");
             }
@@ -894,7 +903,9 @@ namespace PlayerColorsWithWpf
                 WindowsTop = (int)WindowSizer.DefaultTop
             };
 
-            File.WriteAllText(UserPreferenceFileLocation, System.Text.Json.JsonSerializer.Serialize(newPreferences));
+            File.WriteAllText(
+                UserPreferenceFileLocation, 
+                System.Text.Json.JsonSerializer.Serialize(newPreferences));
 
             Debug.WriteLine("User preferences saved.");
         }
@@ -1023,7 +1034,7 @@ namespace PlayerColorsWithWpf
 
                 Debug.WriteLine("No Preset JSON found, new presets JSON file created and loaded into memory.");
             }
-            Debug.WriteLine("Current number of palette presets: " + MainWindow.AllColorPalettePresets.Count + ".");
+            Debug.WriteLine("Current number of palette presets: {0}.", MainWindow.AllColorPalettePresets.Count);
         }
     }
 
