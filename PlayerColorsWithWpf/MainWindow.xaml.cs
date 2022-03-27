@@ -716,8 +716,14 @@ namespace PlayerColorsWithWpf
 
         private void CreateColors_Click(object sender, RoutedEventArgs e)
         {
-            ColorPaletteCreation.CreateColors(CurrentlyActivePlayerColors);
-            UpdateCustomConsole("Created the color palettes");
+            if (ColorPaletteCreation.CreateColors(CurrentlyActivePlayerColors))
+            {
+                UpdateCustomConsole("Created the color palettes");
+            }
+            else
+            {
+                UpdateCustomConsole("Failed to create color palettes");
+            }
         }
 
         private void UserControl_SizeChanged(object sender, SizeChangedEventArgs args)
@@ -1095,9 +1101,15 @@ namespace PlayerColorsWithWpf
         /// <br>The palette location is stored in the player preferences.</br>
         /// </summary>
         /// <param name="playerColors">Holds 8 player colors.</param>
-        public static void CreateColors(Vector3[] playerColors)
+        /// <returns>True if palette files were successfully created.</returns>
+        public static bool CreateColors(Vector3[] playerColors)
         {
-            static async void CreatePlayerColorPalette(Vector3 playerColor, string paletteName)
+            /// <summary>
+            /// Creates a single color palette files. Saves that file to the disk.
+            /// <param name="playerColor">Holds the main color (RGB).</param>
+            /// <returns>True if palette file was successfully created.</returns>
+            /// </summary>
+            static bool CreatePlayerColorPalette(Vector3 playerColor, string paletteName)
             {
                 string textToWriteInPaletteFile = "";
 
@@ -1138,19 +1150,35 @@ namespace PlayerColorsWithWpf
 
                 // Original palette files had an empty line in the end so this one will also have one.
                 textToWriteInPaletteFile += RGBColorSeperator;
-
-                await File.WriteAllTextAsync(UserPreferences.PlayerColorPaletteLocation + 
-                    @"\" + paletteName, textToWriteInPaletteFile);
+                try
+                {
+                    File.WriteAllText(UserPreferences.PlayerColorPaletteLocation +
+                        @"\" + paletteName, textToWriteInPaletteFile);
+                    return true;
+                }
+                catch
+                {
+                    return false;
+                }
             };
 
             ///<!-- Logic Starts Here -->
             if (Directory.Exists(UserPreferences.PlayerColorPaletteLocation))
             {
-                for (int i = 0; i < 8; i++)
+                try
                 {
-                    File.Delete(UserPreferences.PlayerColorPaletteLocation + @"\" + PaletteNames[i]);
+                    for (int i = 0; i < 8; i++)
+                    {
+                        File.Delete(UserPreferences.PlayerColorPaletteLocation + @"\" + PaletteNames[i]);
+                    }
+                    Debug.WriteLine("Previous player colors palettes removed");
+
                 }
-                Debug.WriteLine("Previous player colors palettes removed");
+                catch
+                {
+                    Debug.WriteLine("Can't delete currently existing palette files");
+                    return false;
+                }
             }
             else
             {
@@ -1160,9 +1188,14 @@ namespace PlayerColorsWithWpf
 
             for (int i = 0; i < 8; i++)
             {
-                CreatePlayerColorPalette(playerColors[i], PaletteNames[i]);
+                if(!CreatePlayerColorPalette(playerColors[i], PaletteNames[i]))
+                {
+                    Debug.WriteLine("Writing a palette file to disk failed: " + PaletteNames[i]);
+                    return false;
+                }
             }
             Debug.WriteLine("All player colors created.");
+            return true;
         }
     }
 }
