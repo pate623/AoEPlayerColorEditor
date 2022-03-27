@@ -42,8 +42,8 @@
                         <LineBreak/><LineBreak/>
                         You can edit the player colors by clicking the color boxes under "Your Edit" text.
                         <LineBreak/><LineBreak/>
-                        You can change and test different color schemes while the game is open. You just 
-                        have to be in the main menu when creating the new colors.</Span>
+                        You can change and test different color schemes while the game is open. You only 
+                        need to reload the scenario to apply new colors.</Span>
                     </TextBlock>
                 </Border>
             </StackPanel>
