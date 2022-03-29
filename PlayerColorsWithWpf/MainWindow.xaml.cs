@@ -118,10 +118,10 @@ namespace PlayerColorsWithWpf
             Debug.WriteLine("Color picker opened with player color id: " + selectedPlayerColor);
 
             var playerColorPicker = new ColorDialog{
-                Color = System.Drawing.ColorTranslator.FromHtml("#FF" +
-                ((byte)CurrentlyActivePlayerColors[selectedPlayerColor].X).ToString("X2") +
-                ((byte)CurrentlyActivePlayerColors[selectedPlayerColor].Y).ToString("X2") +
-                ((byte)CurrentlyActivePlayerColors[selectedPlayerColor].Z).ToString("X2"))
+                Color = System.Drawing.Color.FromArgb(0,
+                (byte)CurrentlyActivePlayerColors[selectedPlayerColor].X,
+                (byte)CurrentlyActivePlayerColors[selectedPlayerColor].Y,
+                (byte)CurrentlyActivePlayerColors[selectedPlayerColor].Z)
             };
 
             _ = playerColorPicker.ShowDialog();
@@ -178,7 +178,7 @@ namespace PlayerColorsWithWpf
         }
 
         /// <summary>
-        /// Changes UI to showcase the newly selected player colors.
+        /// Changes UI to showcase the newly selected compared to player colors.
         /// </summary>
         private void SetComparedToPlayerColorBoxes(int presetID)
         {
@@ -187,56 +187,54 @@ namespace PlayerColorsWithWpf
                 Debug.WriteLine("Index for compared to colors is too big");
                 return;
             }
-            // Convert vector values to .NET framework color values and showcase them in UI.
-            var converter = new BrushConverter();
 
             var bluePlayer = FindName("BlueComparedToColor") as Rectangle;
-            bluePlayer.Fill = (Brush)converter.ConvertFromString("#FF" +
-                ((byte)AllColorPalettePresets[presetID].BluePlayerColor[0]).ToString("X2") +
-                ((byte)AllColorPalettePresets[presetID].BluePlayerColor[1]).ToString("X2") +
-                ((byte)AllColorPalettePresets[presetID].BluePlayerColor[2]).ToString("X2"));
+            bluePlayer.Fill = new SolidColorBrush(Color.FromRgb(
+                (byte)AllColorPalettePresets[presetID].BluePlayerColor[0],
+                (byte)AllColorPalettePresets[presetID].BluePlayerColor[1],
+                (byte)AllColorPalettePresets[presetID].BluePlayerColor[2]));
 
             var redPlayer = FindName("RedComparedToColor") as Rectangle;
-            redPlayer.Fill = (Brush)converter.ConvertFromString("#FF" +
-                ((byte)AllColorPalettePresets[presetID].RedPlayerColor[0]).ToString("X2") +
-                ((byte)AllColorPalettePresets[presetID].RedPlayerColor[1]).ToString("X2") +
-                ((byte)AllColorPalettePresets[presetID].RedPlayerColor[2]).ToString("X2"));
+            redPlayer.Fill = new SolidColorBrush(Color.FromRgb(
+                (byte)AllColorPalettePresets[presetID].RedPlayerColor[0],
+                (byte)AllColorPalettePresets[presetID].RedPlayerColor[1],
+                (byte)AllColorPalettePresets[presetID].RedPlayerColor[2]));
 
             var yellowPlayer = FindName("YellowComparedToColor") as Rectangle;
-            yellowPlayer.Fill = (Brush)converter.ConvertFromString("#FF" +
-                ((byte)AllColorPalettePresets[presetID].YellowPlayerColor[0]).ToString("X2") +
-                ((byte)AllColorPalettePresets[presetID].YellowPlayerColor[1]).ToString("X2") +
-                ((byte)AllColorPalettePresets[presetID].YellowPlayerColor[2]).ToString("X2"));
+            yellowPlayer.Fill = new SolidColorBrush(Color.FromRgb(
+                (byte)AllColorPalettePresets[presetID].YellowPlayerColor[0],
+                (byte)AllColorPalettePresets[presetID].YellowPlayerColor[1],
+                (byte)AllColorPalettePresets[presetID].YellowPlayerColor[2]));
 
             var brownPlayer = FindName("BrownComparedToColor") as Rectangle;
-            brownPlayer.Fill = (Brush)converter.ConvertFromString("#FF" +
-                ((byte)AllColorPalettePresets[presetID].BrownPlayerColor[0]).ToString("X2") +
-                ((byte)AllColorPalettePresets[presetID].BrownPlayerColor[1]).ToString("X2") +
-                ((byte)AllColorPalettePresets[presetID].BrownPlayerColor[2]).ToString("X2"));
+            brownPlayer.Fill = new SolidColorBrush(Color.FromRgb(
+                (byte)AllColorPalettePresets[presetID].BrownPlayerColor[0],
+                (byte)AllColorPalettePresets[presetID].BrownPlayerColor[1],
+                (byte)AllColorPalettePresets[presetID].BrownPlayerColor[2]));
 
             var orangePlayer = FindName("OrangeComparedToColor") as Rectangle;
-            orangePlayer.Fill = (Brush)converter.ConvertFromString("#FF" +
-                ((byte)AllColorPalettePresets[presetID].OrangePlayerColor[0]).ToString("X2") +
-                ((byte)AllColorPalettePresets[presetID].OrangePlayerColor[1]).ToString("X2") +
-                ((byte)AllColorPalettePresets[presetID].OrangePlayerColor[2]).ToString("X2"));
+            orangePlayer.Fill = new SolidColorBrush(Color.FromRgb(
+                (byte)AllColorPalettePresets[presetID].OrangePlayerColor[0],
+                (byte)AllColorPalettePresets[presetID].OrangePlayerColor[1],
+                (byte)AllColorPalettePresets[presetID].OrangePlayerColor[2]));
 
             var greenPlayer = FindName("GreenComparedToColor") as Rectangle;
-            greenPlayer.Fill = (Brush)converter.ConvertFromString("#FF" +
-                ((byte)AllColorPalettePresets[presetID].GreenPlayerColor[0]).ToString("X2") +
-                ((byte)AllColorPalettePresets[presetID].GreenPlayerColor[1]).ToString("X2") +
-                ((byte)AllColorPalettePresets[presetID].GreenPlayerColor[2]).ToString("X2"));
+            greenPlayer.Fill = new SolidColorBrush(Color.FromRgb(
+                (byte)AllColorPalettePresets[presetID].GreenPlayerColor[0],
+                (byte)AllColorPalettePresets[presetID].GreenPlayerColor[1],
+                (byte)AllColorPalettePresets[presetID].GreenPlayerColor[2]));
 
             var purplePlayer = FindName("PurpleComparedToColor") as Rectangle;
-            purplePlayer.Fill = (Brush)converter.ConvertFromString("#FF" +
-                ((byte)AllColorPalettePresets[presetID].PurplePlayerColor[0]).ToString("X2") +
-                ((byte)AllColorPalettePresets[presetID].PurplePlayerColor[1]).ToString("X2") +
-                ((byte)AllColorPalettePresets[presetID].PurplePlayerColor[2]).ToString("X2"));
+            purplePlayer.Fill = new SolidColorBrush(Color.FromRgb(
+                (byte)AllColorPalettePresets[presetID].PurplePlayerColor[0],
+                (byte)AllColorPalettePresets[presetID].PurplePlayerColor[1],
+                (byte)AllColorPalettePresets[presetID].PurplePlayerColor[2]));
 
             var tealPlayer = FindName("TealComparedToColor") as Rectangle;
-            tealPlayer.Fill = (Brush)converter.ConvertFromString("#FF" +
-                ((byte)AllColorPalettePresets[presetID].TealPlayerColor[0]).ToString("X2") +
-                ((byte)AllColorPalettePresets[presetID].TealPlayerColor[1]).ToString("X2") +
-                ((byte)AllColorPalettePresets[presetID].TealPlayerColor[2]).ToString("X2"));
+            tealPlayer.Fill = new SolidColorBrush(Color.FromRgb(
+                (byte)AllColorPalettePresets[presetID].TealPlayerColor[0],
+                (byte)AllColorPalettePresets[presetID].TealPlayerColor[1],
+                (byte)AllColorPalettePresets[presetID].TealPlayerColor[2]));
 
             Debug.WriteLine("UI compared to player colors updated.");
             UserPreferences.SaveUserPreferences();
@@ -438,56 +436,53 @@ namespace PlayerColorsWithWpf
         /// </summary>
         private void ShowNewlySelectedColors()
         {
-            // Convert vector values to .NET framework color values and showcase them in UI.
-            var converter = new BrushConverter();
-
             var bluePlayer = FindName("BluePlayerColor") as Rectangle;
-            bluePlayer.Fill = (Brush)converter.ConvertFromString("#FF" +
-                ((byte)CurrentlyActivePlayerColors[0].X).ToString("X2") +
-                ((byte)CurrentlyActivePlayerColors[0].Y).ToString("X2") +
-                ((byte)CurrentlyActivePlayerColors[0].Z).ToString("X2"));
+            bluePlayer.Fill = new SolidColorBrush(Color.FromRgb(
+                (byte)CurrentlyActivePlayerColors[0].X,
+                (byte)CurrentlyActivePlayerColors[0].Y,
+                (byte)CurrentlyActivePlayerColors[0].Z));
 
             var redPlayer = FindName("RedPlayerColor") as Rectangle;
-            redPlayer.Fill = (Brush)converter.ConvertFromString("#FF" +
-                ((byte)CurrentlyActivePlayerColors[1].X).ToString("X2") +
-                ((byte)CurrentlyActivePlayerColors[1].Y).ToString("X2") +
-                ((byte)CurrentlyActivePlayerColors[1].Z).ToString("X2"));
+            redPlayer.Fill = new SolidColorBrush(Color.FromRgb(
+                (byte)CurrentlyActivePlayerColors[1].X,
+                (byte)CurrentlyActivePlayerColors[1].Y,
+                (byte)CurrentlyActivePlayerColors[1].Z));
 
             var yellowPlayer = FindName("YellowPlayerColor") as Rectangle;
-            yellowPlayer.Fill = (Brush)converter.ConvertFromString("#FF" +
-                ((byte)CurrentlyActivePlayerColors[2].X).ToString("X2") +
-                ((byte)CurrentlyActivePlayerColors[2].Y).ToString("X2") +
-                ((byte)CurrentlyActivePlayerColors[2].Z).ToString("X2"));
+            yellowPlayer.Fill = new SolidColorBrush(Color.FromRgb(
+                (byte)CurrentlyActivePlayerColors[2].X,
+                (byte)CurrentlyActivePlayerColors[2].Y,
+                (byte)CurrentlyActivePlayerColors[2].Z));
 
             var brownPlayer = FindName("BrownPlayerColor") as Rectangle;
-            brownPlayer.Fill = (Brush)converter.ConvertFromString("#FF" +
-                ((byte)CurrentlyActivePlayerColors[3].X).ToString("X2") +
-                ((byte)CurrentlyActivePlayerColors[3].Y).ToString("X2") +
-                ((byte)CurrentlyActivePlayerColors[3].Z).ToString("X2"));
+            brownPlayer.Fill = new SolidColorBrush(Color.FromRgb(
+                (byte)CurrentlyActivePlayerColors[3].X,
+                (byte)CurrentlyActivePlayerColors[3].Y,
+                (byte)CurrentlyActivePlayerColors[3].Z));
 
             var orangePlayer = FindName("OrangePlayerColor") as Rectangle;
-            orangePlayer.Fill = (Brush)converter.ConvertFromString("#FF" +
-                ((byte)CurrentlyActivePlayerColors[4].X).ToString("X2") +
-                ((byte)CurrentlyActivePlayerColors[4].Y).ToString("X2") +
-                ((byte)CurrentlyActivePlayerColors[4].Z).ToString("X2"));
+            orangePlayer.Fill = new SolidColorBrush(Color.FromRgb(
+                (byte)CurrentlyActivePlayerColors[4].X,
+                (byte)CurrentlyActivePlayerColors[4].Y,
+                (byte)CurrentlyActivePlayerColors[4].Z));
 
             var greenPlayer = FindName("GreenPlayerColor") as Rectangle;
-            greenPlayer.Fill = (Brush)converter.ConvertFromString("#FF" +
-                ((byte)CurrentlyActivePlayerColors[5].X).ToString("X2") +
-                ((byte)CurrentlyActivePlayerColors[5].Y).ToString("X2") +
-                ((byte)CurrentlyActivePlayerColors[5].Z).ToString("X2"));
+            greenPlayer.Fill = new SolidColorBrush(Color.FromRgb(
+                (byte)CurrentlyActivePlayerColors[5].X,
+                (byte)CurrentlyActivePlayerColors[5].Y,
+                (byte)CurrentlyActivePlayerColors[5].Z));
 
             var purplePlayer = FindName("PurplePlayerColor") as Rectangle;
-            purplePlayer.Fill = (Brush)converter.ConvertFromString("#FF" +
-                ((byte)CurrentlyActivePlayerColors[6].X).ToString("X2") +
-                ((byte)CurrentlyActivePlayerColors[6].Y).ToString("X2") +
-                ((byte)CurrentlyActivePlayerColors[6].Z).ToString("X2"));
+            purplePlayer.Fill = new SolidColorBrush(Color.FromRgb(
+                (byte)CurrentlyActivePlayerColors[6].X,
+                (byte)CurrentlyActivePlayerColors[6].Y,
+                (byte)CurrentlyActivePlayerColors[6].Z));
 
             var tealPlayer = FindName("TealPlayerColor") as Rectangle;
-            tealPlayer.Fill = (Brush)converter.ConvertFromString("#FF" +
-                ((byte)CurrentlyActivePlayerColors[7].X).ToString("X2") +
-                ((byte)CurrentlyActivePlayerColors[7].Y).ToString("X2") +
-                ((byte)CurrentlyActivePlayerColors[7].Z).ToString("X2"));
+            tealPlayer.Fill = new SolidColorBrush(Color.FromRgb(
+                (byte)CurrentlyActivePlayerColors[7].X,
+                (byte)CurrentlyActivePlayerColors[7].Y,
+                (byte)CurrentlyActivePlayerColors[7].Z));
 
             Debug.WriteLine("UI player colors updated.");
         }
