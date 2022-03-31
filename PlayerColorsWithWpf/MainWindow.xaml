@@ -59,8 +59,7 @@
                 HorizontalAlignment="Right" VerticalAlignment="Top"
                 Margin="0,48,3,0"
                 Width="145"
-                FontSize="11" LineHeight="18"
-                Text=""/>
+                FontSize="11" LineHeight="18"/>
 
             <!-- Player color headers text boxes -->
             <TextBlock

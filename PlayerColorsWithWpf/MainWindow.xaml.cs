@@ -8,6 +8,7 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Documents;
 using System.Windows.Forms;
 using System.Windows.Media;
 using System.Windows.Shapes;
@@ -141,25 +142,50 @@ namespace PlayerColorsWithWpf
         /// <para>Add a line of text to the console windows.</para>
         /// <para>Use empty line as parameter to apply the new maximum line count.</para>
         /// </summary>
-        public void UpdateCustomConsole(string textToBeAdded)
+        public void UpdateCustomConsole(string textToBeAdded, Color? textColor = null)
         {
-            var customConsole = FindName("CustomConsole") as TextBlock;
-            string consoleText = customConsole.Text;
-            int limit = MaxLineCountInConsole - 1;
-            string newConsoleText = textToBeAdded == "" || textToBeAdded == null ? "" : textToBeAdded + "\n";
+            // Optional parameter has to be constant, have to declare default text color value here.
+            textColor = textColor == null ? Color.FromRgb(0, 0, 0) : textColor;
 
-            foreach (char c in consoleText)
+            Run newText = new Run(textToBeAdded + "\n")
             {
-                if (c == '\n')
-                {
-                    if (--limit <= 0)
-                    {
-                        break;
-                    }
-                }
-                newConsoleText += c;
+                Foreground = new SolidColorBrush((Color)textColor)
+            };
+
+            var customConsole = FindName("CustomConsole") as TextBlock;
+
+            /*
+            * Copy old text from the console to auxiliary A list
+            * Then use the text box as a temporary storage+formatting for the new console text
+            * Add the new text to auxiliary B list
+            * Append the run elements to the new console test list.
+            * Then append the console text to the screen.
+            */
+            List<Inline> consoleText_AuxiliaryA = customConsole.Inlines.ToList();
+
+            customConsole.Inlines.Clear();
+            customConsole.Inlines.Add(newText);
+
+            List<Inline> consoleTextAuxiliaryB = customConsole.Inlines.ToList();
+
+            List<Inline> consoleTextC = new List<Inline>();
+
+            foreach (Inline console in consoleTextAuxiliaryB)
+            {
+                consoleTextC.Add(console);
             }
-            customConsole.Text = newConsoleText;
+            foreach (Inline console in consoleText_AuxiliaryA)
+            {
+                consoleTextC.Add(console);
+            }
+
+            // Clear all auxiliary text and append the final texts
+            customConsole.Inlines.Clear();
+
+            for (int i = 0; i < consoleTextC.Count && i < MaxLineCountInConsole; i++)
+            {
+                customConsole.Inlines.Add(consoleTextC[i]);
+            }
         }
 
         private void ComparedToPlayerColors_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -706,7 +732,7 @@ namespace PlayerColorsWithWpf
             UpdateCurrenltyActivePresetComboBox(0);
             ShowNewlySelectedColors();
             RefreshComparedToPlayerColorsDropwDown();
-            UpdateCustomConsole("Deleted palette preset");
+            UpdateCustomConsole("Deleted palette preset", Color.FromRgb(190, 20, 20));
         }
 
         private void CreateColors_Click(object sender, RoutedEventArgs e)
