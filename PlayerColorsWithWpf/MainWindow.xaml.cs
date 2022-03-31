@@ -139,7 +139,7 @@ namespace PlayerColorsWithWpf
         }
 
         /// <summary>
-        /// <para>Add a line of text to the console windows.</para>
+        /// <para>Add a line of text to the console window.</para>
         /// <para>Use empty line as parameter to apply the new maximum line count.</para>
         /// </summary>
         public void UpdateCustomConsole(string textToBeAdded, Color? textColor = null)
@@ -147,44 +147,21 @@ namespace PlayerColorsWithWpf
             // Optional parameter has to be constant, have to declare default text color value here.
             textColor = textColor == null ? Color.FromRgb(0, 0, 0) : textColor;
 
-            Run newText = new Run(textToBeAdded + "\n")
+            var newText = new Run(textToBeAdded + "\n")
             {
                 Foreground = new SolidColorBrush((Color)textColor)
             };
 
+            // Get old text from the console, add it to a list and then insert the new text to that list (at index 0).
+            // Clear the console window and then add all the lines from the list to it. Doesn't exceed max line count.
             var customConsole = FindName("CustomConsole") as TextBlock;
-
-            /*
-            * Copy old text from the console to auxiliary A list
-            * Then use the text box as a temporary storage+formatting for the new console text
-            * Add the new text to auxiliary B list
-            * Append the run elements to the new console test list.
-            * Then append the console text to the screen.
-            */
-            List<Inline> consoleText_AuxiliaryA = customConsole.Inlines.ToList();
-
-            customConsole.Inlines.Clear();
-            customConsole.Inlines.Add(newText);
-
-            List<Inline> consoleTextAuxiliaryB = customConsole.Inlines.ToList();
-
-            List<Inline> consoleTextC = new List<Inline>();
-
-            foreach (Inline console in consoleTextAuxiliaryB)
-            {
-                consoleTextC.Add(console);
-            }
-            foreach (Inline console in consoleText_AuxiliaryA)
-            {
-                consoleTextC.Add(console);
-            }
-
-            // Clear all auxiliary text and append the final texts
+            List<Inline> consoleText = customConsole.Inlines.ToList();
+            consoleText.Insert(0, newText);
             customConsole.Inlines.Clear();
 
-            for (int i = 0; i < consoleTextC.Count && i < MaxLineCountInConsole; i++)
+            for (int i = 0; i < consoleText.Count && i < MaxLineCountInConsole; i++)
             {
-                customConsole.Inlines.Add(consoleTextC[i]);
+                customConsole.Inlines.Add(consoleText[i]);
             }
         }
 
@@ -739,11 +716,11 @@ namespace PlayerColorsWithWpf
         {
             if (ColorPaletteCreation.CreateColors(CurrentlyActivePlayerColors))
             {
-                UpdateCustomConsole("Created the color palettes");
+                UpdateCustomConsole("Created the color palettes", Color.FromRgb(12, 180, 12));
             }
             else
             {
-                UpdateCustomConsole("Failed to create color palettes");
+                UpdateCustomConsole("Failed to create color palettes", Color.FromRgb(255, 0, 0));
             }
         }
 
