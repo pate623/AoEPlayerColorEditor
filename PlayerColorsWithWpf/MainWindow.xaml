@@ -231,7 +231,6 @@
 
             <ComboBox x:Name="ComparedToColorSelection"
                       SelectionChanged="ComparedToPlayerColors_SelectionChanged"
-                Opacity="0.75"
                 HorizontalAlignment="Left" VerticalAlignment="Top"
                 Margin="171,205,0,0"
                 FontSize="10"
