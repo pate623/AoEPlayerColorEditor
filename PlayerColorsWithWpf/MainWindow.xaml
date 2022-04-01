@@ -10,10 +10,10 @@
     MinWidth="355" MinHeight="562"
     Left="120" Top="120"
     Title="AOE:DE Custom Player Colors">
-    
+
     <Viewbox MinWidth="345" MinHeight="490">
         <Grid Width="320" Height="485">
-            
+
             <!-- "?" button -->
             <Button x:Name="Info" Click="EditorInfo_Click"
                 HorizontalAlignment="Right" VerticalAlignment="Top"
@@ -74,42 +74,42 @@
                 TextWrapping="Wrap"
                 FontSize="12"
                 Text="Color"/>
-            
+
             <TextBlock
                 HorizontalAlignment="Left" VerticalAlignment="Top"
                 Margin="10,40,0,0"
                 Text="Blue"/>
-            
+
             <TextBlock
                 HorizontalAlignment="Left" VerticalAlignment="Top"
                 Margin="10,65,0,0"
                 Text="Red"/>
-            
+
             <TextBlock
                 HorizontalAlignment="Left" VerticalAlignment="Top"
                 Margin="10,90,0,0"
                 Text="Yellow"/>
-            
+
             <TextBlock
                 HorizontalAlignment="Left" VerticalAlignment="Top"
                 Margin="10,115,0,0"
                 Text="Brown"/>
-            
+
             <TextBlock
                 HorizontalAlignment="Left" VerticalAlignment="Top"
                 Margin="10,140,0,0"
                 Text="Orange"/>
-            
+
             <TextBlock
                 HorizontalAlignment="Left" VerticalAlignment="Top"
                 Margin="10,165,0,0"
                 Text="Green"/>
-            
+
             <TextBlock
                 HorizontalAlignment="Left" VerticalAlignment="Top"
                 Margin="10,190,0,0"
                 Text="Purple"/>
-            
+
             <TextBlock
                 HorizontalAlignment="Left" VerticalAlignment="Top"
                 Margin="10,215,0,0"
@@ -224,15 +224,18 @@
             <!-- Compared to colors switch -->
             <TextBlock
                 HorizontalAlignment="Right" VerticalAlignment="Top"
-                Margin="0,171,22,0"
+                Opacity="0.9"
+                Margin="0,188,25,0"
                 FontSize="11"
-                Text="Compared to player Colors"/>
+                Text="Compared to Player Colors"/>
 
             <ComboBox x:Name="ComparedToColorSelection"
                       SelectionChanged="ComparedToPlayerColors_SelectionChanged"
-                HorizontalAlignment="Right" VerticalAlignment="Top"
-                Margin="0,190,21,0"
-                Width="131">
+                Opacity="0.75"
+                HorizontalAlignment="Left" VerticalAlignment="Top"
+                Margin="171,205,0,0"
+                FontSize="10"
+                Width="116">
                 <ComboBoxItem IsSelected="True" Content="Choice 1"></ComboBoxItem>
                 <ComboBoxItem Content="Choice 2"></ComboBoxItem>
                 <ComboBoxItem Content="Choice 3"></ComboBoxItem>
@@ -263,7 +266,7 @@
             <!-- Edit and switch palette presets -->
             <TextBlock
                 HorizontalAlignment="Center" VerticalAlignment="Bottom"
-                Margin="0,0,0,150"
+                Margin="0,0,0,145"
                 FontSize="12"
                 Text="Currently Active Player Color Preset"/>
 
@@ -271,7 +274,7 @@
                       SelectionChanged="ColorPresetDropdown_SelectionChanged"
                 HorizontalAlignment="Center" VerticalAlignment="Bottom"
                 Margin="0,0,0,120"
-                Width="140">
+                Width="160">
                 <ComboBoxItem IsSelected="True" Content="Choice 1"></ComboBoxItem>
                 <ComboBoxItem Content="Choice 2"></ComboBoxItem>
                 <ComboBoxItem Content="Choice 3"></ComboBoxItem>
@@ -310,16 +313,16 @@
                 Margin="0,135,0,0"
                 Width="320" Height="125"
                 Background="White">
-                
+
                 <TextBlock
                     HorizontalAlignment="Center"
                     Margin="0,10,0,2"
                     Text="Enter Name For The New Preset"/>
-                
+
                 <TextBox x:Name="NewPresetNameInput"
                     Margin="10,0"
                     Text="New Preset Name"/>
-                
+
                 <Button Click="AcceptNewPresetName_Click"
                     VerticalAlignment="bottom"
                     Margin="0,20,0,0"
@@ -338,7 +341,7 @@
                 Margin="0,175,0,0"
                 Width="320" Height="100"
                 Background="White">
-                
+
                 <TextBlock 
                     HorizontalAlignment="Center"
                     Margin="0,4,0,2"
