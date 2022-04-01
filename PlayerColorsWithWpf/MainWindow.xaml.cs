@@ -32,7 +32,7 @@ namespace PlayerColorsWithWpf
 {
     public partial class MainWindow : Window
     {
-        public const int CountOfUnchangeableColorPresets = 3;
+        public const int CountOfUnchangeableColorPresets = 2;
         public static int MaxLineCountInConsole = 5;
         
         public static List<PalettePresetJSON> AllColorPalettePresets = new List<PalettePresetJSON>();
@@ -549,7 +549,7 @@ namespace PlayerColorsWithWpf
 
             PalettePresets.SaveColorPresetsToDisk();
             RefreshComparedToPlayerColorsDropwDown();
-            UpdateCustomConsole("Saved palette preset");
+            UpdateCustomConsole("Saved palette preset", Color.FromRgb(50, 50, 50));
             Debug.WriteLine("Saved palette preset.");
         }
 
@@ -656,7 +656,7 @@ namespace PlayerColorsWithWpf
             presetNameBox.Visibility = Visibility.Collapsed;
 
             RefreshComparedToPlayerColorsDropwDown();
-            UpdateCustomConsole("Created new palette preset");
+            UpdateCustomConsole("Created new palette preset", Color.FromRgb(50, 50, 50));
         }
 
         /// <summary>
@@ -716,7 +716,7 @@ namespace PlayerColorsWithWpf
         {
             if (ColorPaletteCreation.CreateColors(CurrentlyActivePlayerColors))
             {
-                UpdateCustomConsole("Created the color palettes", Color.FromRgb(12, 180, 12));
+                UpdateCustomConsole("Created the color palettes", Color.FromRgb(0, 102, 221));
             }
             else
             {
@@ -1019,15 +1019,15 @@ namespace PlayerColorsWithWpf
                 {
                     PresetName = "High Contrast",
 
-                    BluePlayerColor = new int[] { 15, 70, 245 },
-                    RedPlayerColor = new int[] { 235, 18, 18 },
-                    YellowPlayerColor = new int[] { 240, 240, 20 },
-                    BrownPlayerColor = new int[] { 95, 50, 0 },
+                    BluePlayerColor = new int[] { 43, 63, 247 },
+                    RedPlayerColor = new int[] { 224, 27, 27 },
+                    YellowPlayerColor = new int[] { 230, 234, 53 },
+                    BrownPlayerColor = new int[] { 96, 43, 11 },
 
-                    OrangePlayerColor = new int[] { 255, 150, 5 },
-                    GreenPlayerColor = new int[] { 4, 165, 20 },
-                    PurplePlayerColor = new int[] { 250, 30, 245 },
-                    TealPlayerColor = new int[] { 103, 252, 252 }
+                    OrangePlayerColor = new int[] { 234, 128, 21 },
+                    GreenPlayerColor = new int[] { 30, 165, 5 },
+                    PurplePlayerColor = new int[] { 218, 3, 186 },
+                    TealPlayerColor = new int[] { 126, 241, 184 }
                 };
 
                 MainWindow.AllColorPalettePresets.Add(editorDefaultPlayerColors);
