@@ -25,9 +25,9 @@ namespace PlayerColorsWithWpf
 
         public static readonly string[] PaletteFolderDefaultLocations = {
             @"C:\Program Files (x86)\Steam\steamapps\common\AoEDE\Assets\Palettes",
+            @"C:\SteamLibrary\steamapps\common\AoEDE\Assets\Palettes",
             @"D:\SteamLibrary\steamapps\common\AoEDE\Assets\Palettes",
             @"E:\SteamLibrary\steamapps\common\AoEDE\Assets\Palettes",
-            @"C:\SteamLibrary\steamapps\common\AoEDE\Assets\Palettes",
             @"F:\SteamLibrary\steamapps\common\AoEDE\Assets\Palettes"};
 
         public static readonly Vector3[] CurrentlyActivePlayerColors = {
@@ -53,11 +53,10 @@ namespace PlayerColorsWithWpf
             Debug.WriteLine("Program booted successfully.");
         }
 
-        private void EditorInfo_Click(object sender, RoutedEventArgs e)
+        private void Info_Click(object sender, RoutedEventArgs e)
         {
-            var infoPopUp = FindName("InfoPopUp") as StackPanel;
-            infoPopUp.Visibility =
-                infoPopUp.Visibility == Visibility.Collapsed ? Visibility.Visible : Visibility.Collapsed;
+            var info = FindName("InfoPopUp") as StackPanel;
+            info.Visibility = info.Visibility == Visibility.Collapsed ? Visibility.Visible : Visibility.Collapsed;
         }
 
         private void BluePlayer_MouseDown(object sender, RoutedEventArgs e)
@@ -261,7 +260,6 @@ namespace PlayerColorsWithWpf
         private void ApplyPickedComparedToColors()
         {
             var presetSelection = FindName("ComparedToColorSelection") as System.Windows.Controls.ComboBox;
-
             int toBeSetIndex = presetSelection.SelectedIndex;
 
             if (AllColorPalettePresets.Count <= toBeSetIndex)
@@ -403,11 +401,12 @@ namespace PlayerColorsWithWpf
             }
 
             // If currently selected preset is one of the default presets then disable save and delete buttons.
-            // Makes sure this doesn't get executed before all window elements are loaded. 
+            // Makes sure this doesn't get executed before all window elements are loaded.
             if (FindName("SavePreset") is System.Windows.Controls.Button savePresetButton)
             {
-                var deletePresetButton = FindName("DeletePreset") as System.Windows.Controls.Button;
                 savePresetButton.IsEnabled = currentlyActivePresetIndex >= CountOfUnchangeableColorPresets;
+
+                var deletePresetButton = FindName("DeletePreset") as System.Windows.Controls.Button;
                 deletePresetButton.IsEnabled = currentlyActivePresetIndex >= CountOfUnchangeableColorPresets;
             }
         }
@@ -831,6 +830,7 @@ namespace PlayerColorsWithWpf
         public int WindowsLeft { get; set; }
         public int WindowsTop { get; set; }
     }
+
     /// <summary>
     /// User preferences are stored in a JSON file at the root of this program.
     /// </summary>
@@ -938,7 +938,7 @@ namespace PlayerColorsWithWpf
     }
 
     /// <summary>
-    /// <br>All presets are stored in a JSON file, which is stored in the root of this program.</br>
+    /// <br>All presets are stored in a JSON file at the root of this program.</br>
     /// <br>In the code side files are stored in a JSON compatible object.</br>
     /// </summary>
     public static class PalettePresets
@@ -1160,8 +1160,8 @@ namespace PlayerColorsWithWpf
                 textToWriteInPaletteFile += RGBColorSeperator;
                 try
                 {
-                    File.WriteAllText(UserPreferences.PlayerColorPaletteLocation +
-                        @"\" + paletteName, textToWriteInPaletteFile);
+                    File.WriteAllText(UserPreferences.PlayerColorPaletteLocation + @"\" + paletteName,
+                        textToWriteInPaletteFile);
                     return true;
                 }
                 catch
@@ -1201,6 +1201,7 @@ namespace PlayerColorsWithWpf
                     return false;
                 }
             }
+
             Debug.WriteLine("All player colors created.");
             return true;
         }

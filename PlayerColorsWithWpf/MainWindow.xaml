@@ -15,7 +15,7 @@
         <Grid Width="320" Height="485">
 
             <!-- "?" button -->
-            <Button x:Name="Info" Click="EditorInfo_Click"
+            <Button x:Name="Info" Click="Info_Click"
                 HorizontalAlignment="Right" VerticalAlignment="Top"
                 Margin="0,8,15,0"
                 Width="25"
