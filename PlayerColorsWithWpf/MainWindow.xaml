@@ -230,7 +230,7 @@
                 Text="Compared to Player Colors"/>
 
             <ComboBox x:Name="ComparedToColorSelection"
-                      SelectionChanged="ComparedToPlayerColors_SelectionChanged"
+                      SelectionChanged="ComparedToColors_SelectionChanged"
                 HorizontalAlignment="Left" VerticalAlignment="Top"
                 Margin="171,205,0,0"
                 FontSize="10"
@@ -247,7 +247,7 @@
                 FontSize="12"
                 Text="Color Palette Location:"/>
 
-            <Button x:Name="LocateColorPalettesButton" Click="LocateColorPalettes_Click"
+            <Button x:Name="LocateColorPalettes" Click="LocateColorPalettes_Click"
                 HorizontalAlignment="Left" VerticalAlignment="Top"
                 Margin="140,250,0,0"
                 Width="110"
@@ -269,8 +269,8 @@
                 FontSize="12"
                 Text="Currently Active Player Color Preset"/>
 
-            <ComboBox x:Name="PresetSelectionDropdown"
-                      SelectionChanged="ColorPresetDropdown_SelectionChanged"
+            <ComboBox x:Name="PresetSelection"
+                      SelectionChanged="ColorPreset_SelectionChanged"
                 HorizontalAlignment="Center" VerticalAlignment="Bottom"
                 Margin="0,0,0,120"
                 Width="160">
@@ -318,7 +318,7 @@
                     Margin="0,10,0,2"
                     Text="Enter Name For The New Preset"/>
 
-                <TextBox x:Name="NewPresetNameInput"
+                <TextBox x:Name="NewPresetName"
                     Margin="10,0"
                     Text="New Preset Name"/>
 
