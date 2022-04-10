@@ -29,13 +29,16 @@ namespace PlayerColorsWithWpf
         public static int MaxLineCountInConsole = 5;
         public static EInterpolationStyles PlyerColorInterpolationStyle = EInterpolationStyles.Default;
 
-        public static List<PalettePresetJSON> AllColorPalettePresets = new List<PalettePresetJSON>();
-
         /// <summary>
         /// Some UI element trigger selection changes on load.
         /// These triggers can cause the boot order to change which can cause this program to crash.
         /// </summary>
-        public bool ProgramBooted = false;
+        public static bool ProgramBooted = false;
+
+        public static List<PalettePresetJSON> AllColorPalettePresets = new List<PalettePresetJSON>();
+
+        public static List<Rectangle> PlayerColorBoxes = new List<Rectangle>();
+        public static List<Rectangle> CompraredToColorBoxes = new List<Rectangle>();
 
         public static readonly string[] PaletteFolderDefaultLocations = {
             @"C:\Program Files (x86)\Steam\steamapps\common\AoEDE\Assets\Palettes",
@@ -57,6 +60,7 @@ namespace PlayerColorsWithWpf
         public MainWindow()
         {
             InitializeComponent();
+            LocatePlayerColorBoxes();
             WindowSizer.Initialize();
             UserPreferences.Initialize();
             PalettePresets.Initialize();
@@ -67,6 +71,36 @@ namespace PlayerColorsWithWpf
             DisplayComparedToColorChoices(UserPreferences.ActiveComparedToPalette);
             ProgramBooted = true;
             Debug.WriteLine("Program booted successfully.");
+        }
+
+        /// <summary>
+        /// <br>Locates all player color squares and adds them to static lists.</br>
+        /// <br>This way the colors can be set in a loop and the scripts needn't locate
+        /// the color squares each time they need to be changed.</br>
+        /// </summary>
+        private void LocatePlayerColorBoxes()
+        {
+            // All player color squares
+            PlayerColorBoxes.Add(FindName("BluePlayerColor") as Rectangle);
+            PlayerColorBoxes.Add(FindName("RedPlayerColor") as Rectangle);
+            PlayerColorBoxes.Add(FindName("YellowPlayerColor") as Rectangle);
+            PlayerColorBoxes.Add(FindName("BrownPlayerColor") as Rectangle);
+
+            PlayerColorBoxes.Add(FindName("OrangePlayerColor") as Rectangle);
+            PlayerColorBoxes.Add(FindName("GreenPlayerColor") as Rectangle);
+            PlayerColorBoxes.Add(FindName("PurplePlayerColor") as Rectangle);
+            PlayerColorBoxes.Add(FindName("TealPlayerColor") as Rectangle);
+
+            // All compared to player color squares
+            CompraredToColorBoxes.Add(FindName("BlueComparedToColor") as Rectangle);
+            CompraredToColorBoxes.Add(FindName("RedComparedToColor") as Rectangle);
+            CompraredToColorBoxes.Add(FindName("YellowComparedToColor") as Rectangle);
+            CompraredToColorBoxes.Add(FindName("BrownComparedToColor") as Rectangle);
+
+            CompraredToColorBoxes.Add(FindName("OrangeComparedToColor") as Rectangle);
+            CompraredToColorBoxes.Add(FindName("GreenComparedToColor") as Rectangle);
+            CompraredToColorBoxes.Add(FindName("PurpleComparedToColor") as Rectangle);
+            CompraredToColorBoxes.Add(FindName("TealComparedToColor") as Rectangle);
         }
 
         private void Info_Click(object sender, RoutedEventArgs e)
@@ -192,53 +226,13 @@ namespace PlayerColorsWithWpf
                 return;
             }
 
-            var bluePlayer = FindName("BlueComparedToColor") as Rectangle;
-            bluePlayer.Fill = new SolidColorBrush(Color.FromRgb(
-                (byte)AllColorPalettePresets[presetID].BluePlayerColor[0],
-                (byte)AllColorPalettePresets[presetID].BluePlayerColor[1],
-                (byte)AllColorPalettePresets[presetID].BluePlayerColor[2]));
-
-            var redPlayer = FindName("RedComparedToColor") as Rectangle;
-            redPlayer.Fill = new SolidColorBrush(Color.FromRgb(
-                (byte)AllColorPalettePresets[presetID].RedPlayerColor[0],
-                (byte)AllColorPalettePresets[presetID].RedPlayerColor[1],
-                (byte)AllColorPalettePresets[presetID].RedPlayerColor[2]));
-
-            var yellowPlayer = FindName("YellowComparedToColor") as Rectangle;
-            yellowPlayer.Fill = new SolidColorBrush(Color.FromRgb(
-                (byte)AllColorPalettePresets[presetID].YellowPlayerColor[0],
-                (byte)AllColorPalettePresets[presetID].YellowPlayerColor[1],
-                (byte)AllColorPalettePresets[presetID].YellowPlayerColor[2]));
-
-            var brownPlayer = FindName("BrownComparedToColor") as Rectangle;
-            brownPlayer.Fill = new SolidColorBrush(Color.FromRgb(
-                (byte)AllColorPalettePresets[presetID].BrownPlayerColor[0],
-                (byte)AllColorPalettePresets[presetID].BrownPlayerColor[1],
-                (byte)AllColorPalettePresets[presetID].BrownPlayerColor[2]));
-
-            var orangePlayer = FindName("OrangeComparedToColor") as Rectangle;
-            orangePlayer.Fill = new SolidColorBrush(Color.FromRgb(
-                (byte)AllColorPalettePresets[presetID].OrangePlayerColor[0],
-                (byte)AllColorPalettePresets[presetID].OrangePlayerColor[1],
-                (byte)AllColorPalettePresets[presetID].OrangePlayerColor[2]));
-
-            var greenPlayer = FindName("GreenComparedToColor") as Rectangle;
-            greenPlayer.Fill = new SolidColorBrush(Color.FromRgb(
-                (byte)AllColorPalettePresets[presetID].GreenPlayerColor[0],
-                (byte)AllColorPalettePresets[presetID].GreenPlayerColor[1],
-                (byte)AllColorPalettePresets[presetID].GreenPlayerColor[2]));
-
-            var purplePlayer = FindName("PurpleComparedToColor") as Rectangle;
-            purplePlayer.Fill = new SolidColorBrush(Color.FromRgb(
-                (byte)AllColorPalettePresets[presetID].PurplePlayerColor[0],
-                (byte)AllColorPalettePresets[presetID].PurplePlayerColor[1],
-                (byte)AllColorPalettePresets[presetID].PurplePlayerColor[2]));
-
-            var tealPlayer = FindName("TealComparedToColor") as Rectangle;
-            tealPlayer.Fill = new SolidColorBrush(Color.FromRgb(
-                (byte)AllColorPalettePresets[presetID].TealPlayerColor[0],
-                (byte)AllColorPalettePresets[presetID].TealPlayerColor[1],
-                (byte)AllColorPalettePresets[presetID].TealPlayerColor[2]));
+            for (int i = 0; i < CompraredToColorBoxes.Count; i++)
+            {
+                CompraredToColorBoxes[i].Fill = new SolidColorBrush(Color.FromRgb(
+                    (byte)AllColorPalettePresets[presetID].GetPlayerColor(i).X,
+                    (byte)AllColorPalettePresets[presetID].GetPlayerColor(i).Y,
+                    (byte)AllColorPalettePresets[presetID].GetPlayerColor(i).Z));
+            }
 
             Debug.WriteLine("UI compared to player colors updated.");
             UserPreferences.SaveToDisk();
@@ -363,46 +357,13 @@ namespace PlayerColorsWithWpf
         {
             if (currentlyActivePresetIndex < AllColorPalettePresets.Count && currentlyActivePresetIndex >= 0)
             {
-                CurrentlyActivePlayerColors[0] = new Vector3(
-                    AllColorPalettePresets[currentlyActivePresetIndex].BluePlayerColor[0],
-                    AllColorPalettePresets[currentlyActivePresetIndex].BluePlayerColor[1],
-                    AllColorPalettePresets[currentlyActivePresetIndex].BluePlayerColor[2]);
-
-                CurrentlyActivePlayerColors[1] = new Vector3(
-                    AllColorPalettePresets[currentlyActivePresetIndex].RedPlayerColor[0],
-                    AllColorPalettePresets[currentlyActivePresetIndex].RedPlayerColor[1],
-                    AllColorPalettePresets[currentlyActivePresetIndex].RedPlayerColor[2]);
-
-                CurrentlyActivePlayerColors[2] = new Vector3(
-                    AllColorPalettePresets[currentlyActivePresetIndex].YellowPlayerColor[0],
-                    AllColorPalettePresets[currentlyActivePresetIndex].YellowPlayerColor[1],
-                    AllColorPalettePresets[currentlyActivePresetIndex].YellowPlayerColor[2]);
-
-                CurrentlyActivePlayerColors[3] = new Vector3(
-                    AllColorPalettePresets[currentlyActivePresetIndex].BrownPlayerColor[0],
-                    AllColorPalettePresets[currentlyActivePresetIndex].BrownPlayerColor[1],
-                    AllColorPalettePresets[currentlyActivePresetIndex].BrownPlayerColor[2]);
-
-                CurrentlyActivePlayerColors[4] = new Vector3(
-                    AllColorPalettePresets[currentlyActivePresetIndex].OrangePlayerColor[0],
-                    AllColorPalettePresets[currentlyActivePresetIndex].OrangePlayerColor[1],
-                    AllColorPalettePresets[currentlyActivePresetIndex].OrangePlayerColor[2]);
-
-                CurrentlyActivePlayerColors[5] = new Vector3(
-                    AllColorPalettePresets[currentlyActivePresetIndex].GreenPlayerColor[0],
-                    AllColorPalettePresets[currentlyActivePresetIndex].GreenPlayerColor[1],
-                    AllColorPalettePresets[currentlyActivePresetIndex].GreenPlayerColor[2]);
-
-                CurrentlyActivePlayerColors[6] = new Vector3(
-                    AllColorPalettePresets[currentlyActivePresetIndex].PurplePlayerColor[0],
-                    AllColorPalettePresets[currentlyActivePresetIndex].PurplePlayerColor[1],
-                    AllColorPalettePresets[currentlyActivePresetIndex].PurplePlayerColor[2]);
-
-                CurrentlyActivePlayerColors[7] = new Vector3(
-                    AllColorPalettePresets[currentlyActivePresetIndex].TealPlayerColor[0],
-                    AllColorPalettePresets[currentlyActivePresetIndex].TealPlayerColor[1],
-                    AllColorPalettePresets[currentlyActivePresetIndex].TealPlayerColor[2]);
-
+                for (int i = 0; i < CurrentlyActivePlayerColors.Length; i++)
+                {
+                    CurrentlyActivePlayerColors[i] = new Vector3(
+                    AllColorPalettePresets[currentlyActivePresetIndex].GetPlayerColor(i).X,
+                    AllColorPalettePresets[currentlyActivePresetIndex].GetPlayerColor(i).Y,
+                    AllColorPalettePresets[currentlyActivePresetIndex].GetPlayerColor(i).Z);
+                }
                 Debug.WriteLine("Newly selected color updated to the Vector3[] NewPlayerColors.");
 
                 UserPreferences.ActivePlayerColorPalette = currentlyActivePresetIndex;
@@ -452,53 +413,13 @@ namespace PlayerColorsWithWpf
         /// </summary>
         private void DisplayNewlySelectedColors()
         {
-            var bluePlayer = FindName("BluePlayerColor") as Rectangle;
-            bluePlayer.Fill = new SolidColorBrush(Color.FromRgb(
-                (byte)CurrentlyActivePlayerColors[0].X,
-                (byte)CurrentlyActivePlayerColors[0].Y,
-                (byte)CurrentlyActivePlayerColors[0].Z));
-
-            var redPlayer = FindName("RedPlayerColor") as Rectangle;
-            redPlayer.Fill = new SolidColorBrush(Color.FromRgb(
-                (byte)CurrentlyActivePlayerColors[1].X,
-                (byte)CurrentlyActivePlayerColors[1].Y,
-                (byte)CurrentlyActivePlayerColors[1].Z));
-
-            var yellowPlayer = FindName("YellowPlayerColor") as Rectangle;
-            yellowPlayer.Fill = new SolidColorBrush(Color.FromRgb(
-                (byte)CurrentlyActivePlayerColors[2].X,
-                (byte)CurrentlyActivePlayerColors[2].Y,
-                (byte)CurrentlyActivePlayerColors[2].Z));
-
-            var brownPlayer = FindName("BrownPlayerColor") as Rectangle;
-            brownPlayer.Fill = new SolidColorBrush(Color.FromRgb(
-                (byte)CurrentlyActivePlayerColors[3].X,
-                (byte)CurrentlyActivePlayerColors[3].Y,
-                (byte)CurrentlyActivePlayerColors[3].Z));
-
-            var orangePlayer = FindName("OrangePlayerColor") as Rectangle;
-            orangePlayer.Fill = new SolidColorBrush(Color.FromRgb(
-                (byte)CurrentlyActivePlayerColors[4].X,
-                (byte)CurrentlyActivePlayerColors[4].Y,
-                (byte)CurrentlyActivePlayerColors[4].Z));
-
-            var greenPlayer = FindName("GreenPlayerColor") as Rectangle;
-            greenPlayer.Fill = new SolidColorBrush(Color.FromRgb(
-                (byte)CurrentlyActivePlayerColors[5].X,
-                (byte)CurrentlyActivePlayerColors[5].Y,
-                (byte)CurrentlyActivePlayerColors[5].Z));
-
-            var purplePlayer = FindName("PurplePlayerColor") as Rectangle;
-            purplePlayer.Fill = new SolidColorBrush(Color.FromRgb(
-                (byte)CurrentlyActivePlayerColors[6].X,
-                (byte)CurrentlyActivePlayerColors[6].Y,
-                (byte)CurrentlyActivePlayerColors[6].Z));
-
-            var tealPlayer = FindName("TealPlayerColor") as Rectangle;
-            tealPlayer.Fill = new SolidColorBrush(Color.FromRgb(
-                (byte)CurrentlyActivePlayerColors[7].X,
-                (byte)CurrentlyActivePlayerColors[7].Y,
-                (byte)CurrentlyActivePlayerColors[7].Z));
+            for (int i = 0; i < PlayerColorBoxes.Count(); i++)
+            {
+                PlayerColorBoxes[i].Fill = new SolidColorBrush(Color.FromRgb(
+                    (byte)CurrentlyActivePlayerColors[i].X,
+                    (byte)CurrentlyActivePlayerColors[i].Y,
+                    (byte)CurrentlyActivePlayerColors[i].Z));
+            }
 
             Debug.WriteLine("UI player colors updated.");
         }
@@ -512,45 +433,10 @@ namespace PlayerColorsWithWpf
             var presetSelection = FindName("PresetSelection") as System.Windows.Controls.ComboBox;
             int currentPreset = presetSelection.SelectedIndex;
 
-            AllColorPalettePresets[currentPreset].BluePlayerColor = new int[] {
-                (int)CurrentlyActivePlayerColors[0].X,
-                (int)CurrentlyActivePlayerColors[0].Y,
-                (int)CurrentlyActivePlayerColors[0].Z};
-
-            AllColorPalettePresets[currentPreset].RedPlayerColor = new int[] {
-                (int)CurrentlyActivePlayerColors[1].X,
-                (int)CurrentlyActivePlayerColors[1].Y,
-                (int)CurrentlyActivePlayerColors[1].Z};
-
-            AllColorPalettePresets[currentPreset].YellowPlayerColor = new int[] {
-                (int)CurrentlyActivePlayerColors[2].X,
-                (int)CurrentlyActivePlayerColors[2].Y,
-                (int)CurrentlyActivePlayerColors[2].Z};
-
-            AllColorPalettePresets[currentPreset].BrownPlayerColor = new int[] {
-                (int)CurrentlyActivePlayerColors[3].X,
-                (int)CurrentlyActivePlayerColors[3].Y,
-                (int)CurrentlyActivePlayerColors[3].Z};
-
-            AllColorPalettePresets[currentPreset].OrangePlayerColor = new int[] {
-                (int)CurrentlyActivePlayerColors[4].X,
-                (int)CurrentlyActivePlayerColors[4].Y,
-                (int)CurrentlyActivePlayerColors[4].Z};
-
-            AllColorPalettePresets[currentPreset].GreenPlayerColor = new int[] {
-                (int)CurrentlyActivePlayerColors[5].X,
-                (int)CurrentlyActivePlayerColors[5].Y,
-                (int)CurrentlyActivePlayerColors[5].Z};
-
-            AllColorPalettePresets[currentPreset].PurplePlayerColor = new int[] {
-                (int)CurrentlyActivePlayerColors[6].X,
-                (int)CurrentlyActivePlayerColors[6].Y,
-                (int)CurrentlyActivePlayerColors[6].Z};
-
-            AllColorPalettePresets[currentPreset].TealPlayerColor = new int[] {
-                (int)CurrentlyActivePlayerColors[7].X,
-                (int)CurrentlyActivePlayerColors[7].Y,
-                (int)CurrentlyActivePlayerColors[7].Z};
+            for (int i = 0; i < PlayerColorBoxes.Count(); i++)
+            {
+                AllColorPalettePresets[currentPreset].SetPlayerColor(CurrentlyActivePlayerColors[i], i); 
+            }
 
             PalettePresets.SaveToDisk();
             ApplyPickedComparedToColors();
@@ -600,50 +486,16 @@ namespace PlayerColorsWithWpf
         {
             var presetNameString = FindName("NewPresetName") as System.Windows.Controls.TextBox;
 
-            var newPreset = new PalettePresetJSON
-            {
-                PresetName = presetNameString.Text,
-
-                BluePlayerColor = new int[] {
-                    (int)CurrentlyActivePlayerColors[0].X,
-                    (int)CurrentlyActivePlayerColors[0].Y,
-                    (int)CurrentlyActivePlayerColors[0].Z},
-
-                RedPlayerColor = new int[] {
-                    (int)CurrentlyActivePlayerColors[1].X,
-                    (int)CurrentlyActivePlayerColors[1].Y,
-                    (int)CurrentlyActivePlayerColors[1].Z},
-
-                YellowPlayerColor = new int[] {
-                    (int)CurrentlyActivePlayerColors[2].X,
-                    (int)CurrentlyActivePlayerColors[2].Y,
-                    (int)CurrentlyActivePlayerColors[2].Z},
-
-                BrownPlayerColor = new int[] {
-                    (int)CurrentlyActivePlayerColors[3].X,
-                    (int)CurrentlyActivePlayerColors[3].Y,
-                    (int)CurrentlyActivePlayerColors[3].Z},
-
-                OrangePlayerColor = new int[] {
-                    (int)CurrentlyActivePlayerColors[4].X,
-                    (int)CurrentlyActivePlayerColors[4].Y,
-                    (int)CurrentlyActivePlayerColors[4].Z},
-
-                GreenPlayerColor = new int[] {
-                    (int)CurrentlyActivePlayerColors[5].X,
-                    (int)CurrentlyActivePlayerColors[5].Y,
-                    (int)CurrentlyActivePlayerColors[5].Z},
-
-                PurplePlayerColor = new int[] {
-                    (int)CurrentlyActivePlayerColors[6].X,
-                    (int)CurrentlyActivePlayerColors[6].Y,
-                    (int)CurrentlyActivePlayerColors[6].Z},
-
-                TealPlayerColor = new int[] {
-                    (int)CurrentlyActivePlayerColors[7].X,
-                    (int)CurrentlyActivePlayerColors[7].Y,
-                    (int)CurrentlyActivePlayerColors[7].Z}
-            };
+            var newPreset = new PalettePresetJSON(
+                presetNameString.Text,
+                CurrentlyActivePlayerColors[0],
+                CurrentlyActivePlayerColors[1],
+                CurrentlyActivePlayerColors[2],
+                CurrentlyActivePlayerColors[3],
+                CurrentlyActivePlayerColors[4],
+                CurrentlyActivePlayerColors[5],
+                CurrentlyActivePlayerColors[6],
+                CurrentlyActivePlayerColors[7]);
 
             AllColorPalettePresets.Add(newPreset);
 
@@ -976,6 +828,73 @@ namespace PlayerColorsWithWpf
         public int[] GreenPlayerColor { get; set; }
         public int[] PurplePlayerColor { get; set; }
         public int[] TealPlayerColor { get; set; }
+
+        public PalettePresetJSON() { }
+
+        public PalettePresetJSON(string name,
+            Vector3 blue, Vector3 red, Vector3 yellow, Vector3 brown,
+            Vector3 orange, Vector3 green, Vector3 purple, Vector3 teal)
+        {
+            PresetName = name;
+
+            BluePlayerColor = new int[] { (int)blue.X, (int)blue.Y, (int)blue.Z };
+            RedPlayerColor = new int[] { (int)red.X, (int)red.Y, (int)red.Z };
+            YellowPlayerColor = new int[] { (int)yellow.X, (int)yellow.Y, (int)yellow.Z };
+            BrownPlayerColor = new int[] { (int)brown.X, (int)brown.Y, (int)brown.Z };
+
+            OrangePlayerColor = new int[] { (int)orange.X, (int)orange.Y, (int)orange.Z };
+            GreenPlayerColor = new int[] { (int)green.X, (int)green.Y, (int)green.Z };
+            PurplePlayerColor = new int[] { (int)purple.X, (int)purple.Y, (int)purple.Z };
+            TealPlayerColor = new int[] { (int)teal.X, (int)teal.Y, (int)teal.Z };
+        }
+
+        public void SetPlayerColor(Vector3 playerColor, int playerIndex)
+        {
+            switch (playerIndex)
+            {
+                case 0:
+                    BluePlayerColor = new int[] { (int)playerColor.X, (int)playerColor.Y, (int)playerColor.Z };
+                    break;
+                case 1:
+                    RedPlayerColor = new int[] { (int)playerColor.X, (int)playerColor.Y, (int)playerColor.Z };
+                    break;
+                case 2:
+                    YellowPlayerColor = new int[] { (int)playerColor.X, (int)playerColor.Y, (int)playerColor.Z };
+                    break;
+                case 3:
+                    BrownPlayerColor = new int[] { (int)playerColor.X, (int)playerColor.Y, (int)playerColor.Z };
+                    break;
+
+                case 4:
+                    OrangePlayerColor = new int[] { (int)playerColor.X, (int)playerColor.Y, (int)playerColor.Z };
+                    break;
+                case 5:
+                    GreenPlayerColor = new int[] { (int)playerColor.X, (int)playerColor.Y, (int)playerColor.Z };
+                    break;
+                case 6:
+                    PurplePlayerColor = new int[] { (int)playerColor.X, (int)playerColor.Y, (int)playerColor.Z };
+                    break;
+                case 7:
+                    TealPlayerColor = new int[] { (int)playerColor.X, (int)playerColor.Y, (int)playerColor.Z };
+                    break;
+            }
+        }
+
+        public Vector3 GetPlayerColor(int index)
+        {
+            return index switch
+            {
+                0 => new Vector3(BluePlayerColor[0], BluePlayerColor[1], BluePlayerColor[2]),
+                1 => new Vector3(RedPlayerColor[0], RedPlayerColor[1], RedPlayerColor[2]),
+                2 => new Vector3(YellowPlayerColor[0], YellowPlayerColor[1], YellowPlayerColor[2]),
+                3 => new Vector3(BrownPlayerColor[0], BrownPlayerColor[1], BrownPlayerColor[2]),
+                4 => new Vector3(OrangePlayerColor[0], OrangePlayerColor[1], OrangePlayerColor[2]),
+                5 => new Vector3(GreenPlayerColor[0], GreenPlayerColor[1], GreenPlayerColor[2]),
+                6 => new Vector3(PurplePlayerColor[0], PurplePlayerColor[1], PurplePlayerColor[2]),
+                7 => new Vector3(TealPlayerColor[0], TealPlayerColor[1], TealPlayerColor[2]),
+                _ => new Vector3(0,0,0),
+            };
+        }
     }
 
     /// <summary>
