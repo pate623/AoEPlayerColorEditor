@@ -7,12 +7,12 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
     ResizeMode="CanResizeWithGrip"
-    MinWidth="355" MinHeight="562"
+    MinWidth="355" MinHeight="595"
     Left="120" Top="120"
     Title="AOE:DE Custom Player Colors">
 
-    <Viewbox MinWidth="345" MinHeight="490">
-        <Grid Width="320" Height="485">
+    <Viewbox MinWidth="345" MinHeight="534">
+        <Grid Width="320" Height="530">
 
             <!-- "?" button -->
             <Button x:Name="Info" Click="Info_Click"
@@ -265,14 +265,14 @@
             <!-- Edit and switch palette presets -->
             <TextBlock
                 HorizontalAlignment="Center" VerticalAlignment="Bottom"
-                Margin="0,0,0,145"
+                Margin="0,0,0,190"
                 FontSize="12"
                 Text="Currently Active Player Color Preset"/>
 
             <ComboBox x:Name="PresetSelection"
                       SelectionChanged="ColorPreset_SelectionChanged"
                 HorizontalAlignment="Center" VerticalAlignment="Bottom"
-                Margin="0,0,0,120"
+                Margin="0,0,0,165"
                 Width="160">
                 <ComboBoxItem IsSelected="True" Content="Choice 1"></ComboBoxItem>
                 <ComboBoxItem Content="Choice 2"></ComboBoxItem>
@@ -282,28 +282,46 @@
             <Button x:Name="SavePreset" Click="SavePreset_Click"
                 IsEnabled="False"
                 HorizontalAlignment="Center" VerticalAlignment="Bottom"
-                Margin="0,0,120,80"
+                Margin="0,0,120,133"
                 Width="100"
                 Content="Save Preset"/>
 
             <Button x:Name="SavePresetAs" Click="SavePresetAs_Click"
                 HorizontalAlignment="Center" VerticalAlignment="Bottom"
-                Margin="120,0,0,80"
+                Margin="120,0,0,133"
                 Width="100"
                 Content="Save Preset As"/>
 
             <Button x:Name="DeletePreset" Click="DeletePreset_Click"
                 IsEnabled="False"
                 HorizontalAlignment="Center" VerticalAlignment="Bottom"
-                Margin="0,200,0,50"
+                Margin="0,200,0,102"
                 Width="100"
                 Content="Delete Preset"/>
 
             <Button x:Name="CreateColors" Click="CreateColors_Click"
                 HorizontalAlignment="Center" VerticalAlignment="Bottom"
-                Margin="0,0,0,12"
+                Margin="0,0,0,60"
                 Width="100"
                 Content="Create Colors"/>
+
+            <!-- Choose color interpolation Type -->
+            <TextBlock
+                HorizontalAlignment="Center" VerticalAlignment="Bottom"
+                Margin="0,0,0,40"
+                FontSize="10"
+                Text="Color Interpolation Type"/>
+
+            <ComboBox x:Name="ColorInterpolationSelection"
+                      SelectionChanged="ColorInterpolation_SelectionChanged"
+                HorizontalAlignment="Center" VerticalAlignment="Bottom"
+                Margin="0,0,0,20"
+                Width="110"
+                FontSize="10">
+                <ComboBoxItem IsSelected="True" Content="Default"></ComboBoxItem>
+                <ComboBoxItem Content="Only Main Color"></ComboBoxItem>
+                <ComboBoxItem Content="Glowing"></ComboBoxItem>
+            </ComboBox>
 
             <!-- Create new color preset pop up -->
             <StackPanel x:Name="PresetNamePopUp"

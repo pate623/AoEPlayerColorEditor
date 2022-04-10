@@ -16,12 +16,26 @@ using Newtonsoft.Json;
 
 namespace PlayerColorsWithWpf
 {
+    public enum EInterpolationStyles
+    {
+        Default = 0,
+        OnlyMainColor = 1,
+        Glowing = 2
+    }
+
     public partial class MainWindow : Window
     {
         public const int CountOfUnchangeableColorPresets = 2;
         public static int MaxLineCountInConsole = 5;
-        
+        public static EInterpolationStyles PlyerColorInterpolationStyle = EInterpolationStyles.Default;
+
         public static List<PalettePresetJSON> AllColorPalettePresets = new List<PalettePresetJSON>();
+
+        /// <summary>
+        /// Some UI element trigger selection changes on load.
+        /// These triggers can cause the boot order to change which can cause this program to crash.
+        /// </summary>
+        public bool ProgramBooted = false;
 
         public static readonly string[] PaletteFolderDefaultLocations = {
             @"C:\Program Files (x86)\Steam\steamapps\common\AoEDE\Assets\Palettes",
@@ -46,10 +60,12 @@ namespace PlayerColorsWithWpf
             WindowSizer.Initialize();
             UserPreferences.Initialize();
             PalettePresets.Initialize();
-            DisplayColorPresetChoices(UserPreferences.ActivePlayerColorPalette);
             DisplayNewlySelectedColors();
             DisplayPaletteFolderLocation();
+            DisplaySelectedInterpolationStyle();
+            DisplayColorPresetChoices(UserPreferences.ActivePlayerColorPalette);
             DisplayComparedToColorChoices(UserPreferences.ActiveComparedToPalette);
+            ProgramBooted = true;
             Debug.WriteLine("Program booted successfully.");
         }
 
@@ -157,13 +173,12 @@ namespace PlayerColorsWithWpf
         {
             var presetSelection = FindName("ComparedToColorSelection") as System.Windows.Controls.ComboBox;
 
-            if (presetSelection.SelectedIndex != -1)
-            {
-                Debug.WriteLine("New preset selected for compared to colors combo box, with index: {0}.",
-                    presetSelection.SelectedIndex);
-                UserPreferences.ActiveComparedToPalette = presetSelection.SelectedIndex;
-                DisplayComparedToPlayerColors(presetSelection.SelectedIndex);
-            }
+            if (presetSelection.SelectedIndex == -1) return;
+
+            Debug.WriteLine("New preset selected for compared to colors combo box, with index: {0}.",
+                presetSelection.SelectedIndex);
+            UserPreferences.ActiveComparedToPalette = presetSelection.SelectedIndex;
+            DisplayComparedToPlayerColors(presetSelection.SelectedIndex);
         }
 
         /// <summary>
@@ -328,12 +343,12 @@ namespace PlayerColorsWithWpf
         {
             var presetSelection = FindName("PresetSelection") as System.Windows.Controls.ComboBox;
 
-            if (presetSelection.SelectedIndex != -1)
-            {
-                Debug.WriteLine("New preset selected from combo box with index: {0}.", presetSelection.SelectedIndex);
-                UpdateDataToSelectedPreseset(presetSelection.SelectedIndex);
-                DisplayNewlySelectedColors();
-            }
+            if (presetSelection.SelectedIndex == -1) return;
+            
+            Debug.WriteLine("New preset selected from combo box with index: {0}.", presetSelection.SelectedIndex);
+            UpdateDataToSelectedPreseset(presetSelection.SelectedIndex);
+            DisplayNewlySelectedColors();
+            
         }
 
         /// <summary>
@@ -720,6 +735,27 @@ namespace PlayerColorsWithWpf
             }
         }
 
+        private void ColorInterpolation_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            var colorSelection = FindName("ColorInterpolationSelection") as System.Windows.Controls.ComboBox;
+
+            if (colorSelection.SelectedIndex == -1) return;
+
+            PlyerColorInterpolationStyle = (EInterpolationStyles)colorSelection.SelectedIndex;
+
+            if (!ProgramBooted) return;
+            Debug.WriteLine(((EInterpolationStyles)colorSelection.SelectedIndex).ToString() +
+                " interpolation style selected.");
+            UserPreferences.ActiveInterpolationStyle = colorSelection.SelectedIndex;
+            UserPreferences.SaveToDisk();
+        }
+
+        public void DisplaySelectedInterpolationStyle()
+        {
+            var colorSelection = FindName("ColorInterpolationSelection") as System.Windows.Controls.ComboBox;
+            colorSelection.SelectedIndex = UserPreferences.ActiveInterpolationStyle;
+        }
+
         private void UserControl_SizeChanged(object sender, SizeChangedEventArgs args)
         {
             WindowSizer.UserChangedWindowSize();
@@ -825,6 +861,7 @@ namespace PlayerColorsWithWpf
         public string PaletteLocation { get; set; }
         public int ActiveColorPalette { get; set; }
         public int ActiveComparedTo { get; set; }
+        public int ActiveInterpolation { get; set; }
         public int WindowsWidth { get; set; }
         public int WindowsHeight { get; set; }
         public int WindowsLeft { get; set; }
@@ -839,6 +876,7 @@ namespace PlayerColorsWithWpf
         public static string PlayerColorPaletteLocation = Directory.GetCurrentDirectory() + @"\Palettes";
         public static int ActivePlayerColorPalette = 0;
         public static int ActiveComparedToPalette = 1;
+        public static int ActiveInterpolationStyle = 0;
 
         private static readonly string UserPreferenceFileLocation =
             Directory.GetCurrentDirectory() + @"\UserPreferences.json";
@@ -863,6 +901,7 @@ namespace PlayerColorsWithWpf
                 PlayerColorPaletteLocation = loadedPreferencesAsObject.PaletteLocation;
                 ActivePlayerColorPalette = loadedPreferencesAsObject.ActiveColorPalette;
                 ActiveComparedToPalette = loadedPreferencesAsObject.ActiveComparedTo;
+                ActiveInterpolationStyle = loadedPreferencesAsObject.ActiveInterpolation;
                 System.Windows.Application.Current.MainWindow.Width = loadedPreferencesAsObject.WindowsWidth;
                 System.Windows.Application.Current.MainWindow.Height = loadedPreferencesAsObject.WindowsHeight;
                 System.Windows.Application.Current.MainWindow.Left = loadedPreferencesAsObject.WindowsLeft;
@@ -874,13 +913,14 @@ namespace PlayerColorsWithWpf
                 Debug.WriteLine("No user preference file found.");
                 System.Windows.Application.Current.MainWindow.Width = WindowSizer.DefaultWidth;
                 System.Windows.Application.Current.MainWindow.Height = WindowSizer.DefaultHeight;
-                ActiveComparedToPalette = 1;
+                ActiveComparedToPalette = 1; // Reads the default values as 0 even though it is set to 1.
 
                 var newPreferences = new UserPreferencesJSON
                 {
                     PaletteLocation = PlayerColorPaletteLocation,
                     ActiveColorPalette = ActivePlayerColorPalette,
                     ActiveComparedTo = ActiveComparedToPalette,
+                    ActiveInterpolation = ActiveInterpolationStyle,
                     WindowsWidth = (int)WindowSizer.DefaultWidth,
                     WindowsHeight = (int)WindowSizer.DefaultHeight,
                     WindowsLeft = (int)WindowSizer.DefaultLeft,
@@ -906,6 +946,7 @@ namespace PlayerColorsWithWpf
                 PaletteLocation = PlayerColorPaletteLocation,
                 ActiveColorPalette = ActivePlayerColorPalette,
                 ActiveComparedTo = ActiveComparedToPalette,
+                ActiveInterpolation = ActiveInterpolationStyle,
                 WindowsWidth = (int)System.Windows.Application.Current.MainWindow.Width,
                 WindowsHeight = (int)System.Windows.Application.Current.MainWindow.Height,
                 WindowsLeft = (int)WindowSizer.DefaultLeft,
@@ -949,35 +990,14 @@ namespace PlayerColorsWithWpf
         private static IEnumerable<T> DeserializeObjects<T>(string input)
         {
             var serializer = new Newtonsoft.Json.JsonSerializer();
-            using StringReader strreader = new StringReader(input);
-            using JsonTextReader jsonreader = new JsonTextReader(strreader);
-            jsonreader.SupportMultipleContent = true;
+            using StringReader strReader = new StringReader(input);
+            using JsonTextReader jsonReader = new JsonTextReader(strReader);
+            jsonReader.SupportMultipleContent = true;
 
-            while (jsonreader.Read())
+            while (jsonReader.Read())
             {
-                yield return serializer.Deserialize<T>(jsonreader);
+                yield return serializer.Deserialize<T>(jsonReader);
             }
-        }
-
-        /// <summary>
-        /// Gets all objects from the <see cref="MainWindow.AllColorPalettePresets"/> variable and
-        /// saves them to PlayerColorPresets.JSON file.
-        /// </summary>
-        public static async void SaveToDisk()
-        {
-            var options = new JsonSerializerOptions { WriteIndented = true };
-
-            string jsonTextToWriteInTheFile = "";
-
-            for (int i = 0; i < MainWindow.AllColorPalettePresets.Count; i++)
-            {
-                jsonTextToWriteInTheFile += System.Text.Json.JsonSerializer.Serialize(
-                    MainWindow.AllColorPalettePresets[i], options);
-            }
-
-            await File.WriteAllTextAsync(PlayerColorPresetFileLocation, jsonTextToWriteInTheFile);
-
-            Debug.WriteLine("Preset JSON file created and saved to the disk.");
         }
 
         /// <summary>
@@ -1049,6 +1069,27 @@ namespace PlayerColorsWithWpf
                 Debug.WriteLine("No Preset JSON found, new presets JSON file created and loaded into memory.");
             }
             Debug.WriteLine("Current number of palette presets: {0}.", MainWindow.AllColorPalettePresets.Count);
+        }
+
+        /// <summary>
+        /// Gets all objects from the <see cref="MainWindow.AllColorPalettePresets"/> variable and
+        /// saves them to PlayerColorPresets.JSON file.
+        /// </summary>
+        public static async void SaveToDisk()
+        {
+            var options = new JsonSerializerOptions { WriteIndented = true };
+
+            string jsonTextToWriteInTheFile = "";
+
+            for (int i = 0; i < MainWindow.AllColorPalettePresets.Count; i++)
+            {
+                jsonTextToWriteInTheFile += System.Text.Json.JsonSerializer.Serialize(
+                    MainWindow.AllColorPalettePresets[i], options);
+            }
+
+            await File.WriteAllTextAsync(PlayerColorPresetFileLocation, jsonTextToWriteInTheFile);
+
+            Debug.WriteLine("Preset JSON file created and saved to the disk.");
         }
     }
 
@@ -1122,30 +1163,57 @@ namespace PlayerColorsWithWpf
                 textToWriteInPaletteFile += PaletteStartingText;
 
                 // Going through the target colors.
-                foreach (Vector3 colorToInterpolateInto in InterpolatingIntoColors)
+                foreach (Vector3 interpolateIntoColor in InterpolatingIntoColors)
                 {
                     // Each step in interpolation.
                     for (int i = 0; i <= ColorInterpolationCount; i++)
                     {
-                        textToWriteInPaletteFile += RGBColorSeperator;
+                        switch (MainWindow.PlyerColorInterpolationStyle)
+                        {
+                            case EInterpolationStyles.Default:
+                                // Count the interpolation based on "i", "ColorToInterpolateInto" and "playerColor".
+                                // Go from "playerColor" to "ColorToInterpolateInto", do this linearly.
+                                textToWriteInPaletteFile += RGBColorSeperator;
 
-                        // Count the interpolation based on "i", "ColorToInterpolateInto" and "playerColor" variables.
-                        // Go from "playerColor" to "ColorToInterpolateInto", do this linearly.
-                        textToWriteInPaletteFile += Math.Round(
-                            (playerColor.X * (ColorInterpolationCount - i) / ColorInterpolationCount) +
-                            (colorToInterpolateInto.X * i / ColorInterpolationCount));
+                                textToWriteInPaletteFile += Math.Round(
+                                    (playerColor.X * (ColorInterpolationCount - i) / ColorInterpolationCount) +
+                                    (interpolateIntoColor.X * i / ColorInterpolationCount));
 
-                        textToWriteInPaletteFile += ColorCodeSeperator;
+                                textToWriteInPaletteFile += ColorCodeSeperator;
 
-                        textToWriteInPaletteFile += Math.Round(
-                            (playerColor.Y * (ColorInterpolationCount - i) / ColorInterpolationCount) +
-                            (colorToInterpolateInto.Y * i / ColorInterpolationCount));
+                                textToWriteInPaletteFile += Math.Round(
+                                    (playerColor.Y * (ColorInterpolationCount - i) / ColorInterpolationCount) +
+                                    (interpolateIntoColor.Y * i / ColorInterpolationCount));
 
-                        textToWriteInPaletteFile += ColorCodeSeperator;
+                                textToWriteInPaletteFile += ColorCodeSeperator;
 
-                        textToWriteInPaletteFile += Math.Round(
-                            (playerColor.Z * (ColorInterpolationCount - i) / ColorInterpolationCount) +
-                            (colorToInterpolateInto.Z * i / ColorInterpolationCount));
+                                textToWriteInPaletteFile += Math.Round(
+                                    (playerColor.Z * (ColorInterpolationCount - i) / ColorInterpolationCount) +
+                                    (interpolateIntoColor.Z * i / ColorInterpolationCount));
+                                break;
+
+                            case EInterpolationStyles.OnlyMainColor:
+                                // Write only the player color value. Good for color blindness.
+                                textToWriteInPaletteFile += RGBColorSeperator;
+                                textToWriteInPaletteFile += playerColor.X;
+                                textToWriteInPaletteFile += ColorCodeSeperator;
+                                textToWriteInPaletteFile += playerColor.Y;
+                                textToWriteInPaletteFile += ColorCodeSeperator;
+                                textToWriteInPaletteFile += playerColor.Z;
+                                break;
+
+                            case EInterpolationStyles.Glowing:
+                                // Easier to read when the vector is counted elsewhere
+                                Vector3 auxilliaryColors = CalculateGlow(playerColor, interpolateIntoColor, i);
+
+                                textToWriteInPaletteFile += RGBColorSeperator;
+                                textToWriteInPaletteFile += Math.Round(auxilliaryColors.X);
+                                textToWriteInPaletteFile += ColorCodeSeperator;
+                                textToWriteInPaletteFile += Math.Round(auxilliaryColors.Y);
+                                textToWriteInPaletteFile += ColorCodeSeperator;
+                                textToWriteInPaletteFile += Math.Round(auxilliaryColors.Z);
+                                break;
+                        }
                     }
                 }
 
@@ -1169,6 +1237,56 @@ namespace PlayerColorsWithWpf
                     return false;
                 }
             };
+
+            /// <summary>
+            /// Does 3d interpolation based on "i", "ColorToInterpolateInto" and "playerColor".
+            /// Better color separation than default interpolation, not as bad as "OnlyMainColor".
+            /// White colors are burnt through, increase player colors weight based on the
+            /// starting colors brightness.
+            /// </summary>
+            static Vector3 CalculateGlow(Vector3 pColor, Vector3 InterpolateColor, int i)
+            {
+                const bool useSimpleCalculation = true;
+                const float maxColorScore = 765;
+                const float adjustmentUpperLimit = 560;
+                const float adjustmentLowerLimit = 100;
+
+                float totalColor = InterpolateColor.X + InterpolateColor.Y + InterpolateColor.Z;
+                float amount = 0;
+
+                // Removes the darkest and lightest colors.
+                if (totalColor > adjustmentUpperLimit) // If adjustment is needed
+                {
+                    amount = (float)(ColorInterpolationCount - i) / ColorInterpolationCount;
+                    amount *= Math.Min(0.7f, amount);
+                }
+                else if (totalColor < adjustmentLowerLimit)
+                {
+                    amount = (float)(ColorInterpolationCount - i) / ColorInterpolationCount;
+                    amount *= Math.Min(0.7f, amount);
+                }
+                else // When no interpolation adjustment is needed
+                {
+                    amount = (float)(ColorInterpolationCount - i) / ColorInterpolationCount;
+                }
+
+                // simple math, looks rough but works
+                if (useSimpleCalculation)
+                {
+                    return Vector3.Lerp(pColor, InterpolateColor, amount);
+                }
+
+                // TODO: make the whole thing scale better
+                // Get number between 0 and 1 to represent how much extra adjustment is needed.
+                // use 1 in cases when adjustment isn't needed, 0 is full player color.
+                float adjustment = (maxColorScore - totalColor) / (maxColorScore - adjustmentUpperLimit);
+
+                amount = (float)(ColorInterpolationCount - i) / ColorInterpolationCount;
+                amount *= Math.Min(0.7f, amount);
+
+                // 
+                return Vector3.Lerp(pColor, InterpolateColor, amount);
+            }
 
             /// <!-- Logic Starts Here -->
             if (Directory.Exists(UserPreferences.PlayerColorPaletteLocation))
