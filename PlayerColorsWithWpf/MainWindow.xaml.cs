@@ -25,7 +25,7 @@ namespace PlayerColorsWithWpf
 
     public partial class MainWindow : Window
     {
-        public const int CountOfUnchangeableColorPresets = 2;
+        public const int CountOfUnchangeableColorPresets = 2; // Don't set below 2
         public static int MaxLineCountInConsole = 5;
         public static EInterpolationStyles PlyerColorInterpolationStyle = EInterpolationStyles.Default;
 
@@ -342,7 +342,6 @@ namespace PlayerColorsWithWpf
             Debug.WriteLine("New preset selected from combo box with index: {0}.", presetSelection.SelectedIndex);
             UpdateDataToSelectedPreseset(presetSelection.SelectedIndex);
             DisplayNewlySelectedColors();
-            
         }
 
         /// <summary>
@@ -987,6 +986,7 @@ namespace PlayerColorsWithWpf
 
                 Debug.WriteLine("No Preset JSON found, new presets JSON file created and loaded into memory.");
             }
+
             Debug.WriteLine("Current number of palette presets: {0}.", MainWindow.AllColorPalettePresets.Count);
         }
 
@@ -1158,53 +1158,26 @@ namespace PlayerColorsWithWpf
             };
 
             /// <summary>
-            /// Does 3d interpolation based on "i", "ColorToInterpolateInto" and "playerColor".
-            /// Better color separation than default interpolation, not as bad as "OnlyMainColor".
-            /// White colors are burnt through, increase player colors weight based on the
-            /// starting colors brightness.
+            /// <br>Does 3d interpolation based on "i", "ColorToInterpolateInto" and "playerColor".</br>
+            /// <br>Better color separation than default interpolation, not as bad as "OnlyMainColor".</br>
+            /// <br>Has some extra adjustments to prevent colors look burnt.</br>
             /// </summary>
             static Vector3 CalculateGlow(Vector3 pColor, Vector3 InterpolateColor, int i)
             {
-                const bool useSimpleCalculation = true;
-                const float maxColorScore = 765;
-                const float adjustmentUpperLimit = 560;
-                const float adjustmentLowerLimit = 100;
-
-                float totalColor = InterpolateColor.X + InterpolateColor.Y + InterpolateColor.Z;
-                float amount = 0;
-
-                // Removes the darkest and lightest colors.
-                if (totalColor > adjustmentUpperLimit) // If adjustment is needed
+                // Use linear scaling for all but the darkest colors
+                if (InterpolateColor.X + InterpolateColor.Y + InterpolateColor.Z > 100)
                 {
-                    amount = (float)(ColorInterpolationCount - i) / ColorInterpolationCount;
-                    amount *= Math.Min(0.7f, amount);
-                }
-                else if (totalColor < adjustmentLowerLimit)
-                {
-                    amount = (float)(ColorInterpolationCount - i) / ColorInterpolationCount;
-                    amount *= Math.Min(0.7f, amount);
-                }
-                else // When no interpolation adjustment is needed
-                {
-                    amount = (float)(ColorInterpolationCount - i) / ColorInterpolationCount;
+                    return new Vector3(
+                        (pColor.X * (ColorInterpolationCount - i) / ColorInterpolationCount) +
+                            (InterpolateColor.X * i / ColorInterpolationCount),
+                        (pColor.Y * (ColorInterpolationCount - i) / ColorInterpolationCount) +
+                            (InterpolateColor.Y * i / ColorInterpolationCount),
+                        (pColor.Z * (ColorInterpolationCount - i) / ColorInterpolationCount) +
+                            (InterpolateColor.Z * i / ColorInterpolationCount));
                 }
 
-                // simple math, looks rough but works
-                if (useSimpleCalculation)
-                {
-                    return Vector3.Lerp(pColor, InterpolateColor, amount);
-                }
-
-                // TODO: make the whole thing scale better
-                // Get number between 0 and 1 to represent how much extra adjustment is needed.
-                // use 1 in cases when adjustment isn't needed, 0 is full player color.
-                float adjustment = (maxColorScore - totalColor) / (maxColorScore - adjustmentUpperLimit);
-
-                amount = (float)(ColorInterpolationCount - i) / ColorInterpolationCount;
-                amount *= Math.Min(0.7f, amount);
-
-                // 
-                return Vector3.Lerp(pColor, InterpolateColor, amount);
+                float scalar = (float)(ColorInterpolationCount - i) / ColorInterpolationCount;
+                return Vector3.Lerp(pColor, InterpolateColor, scalar);
             }
 
             /// <!-- Logic Starts Here -->
