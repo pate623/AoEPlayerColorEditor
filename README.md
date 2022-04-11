@@ -10,3 +10,24 @@ This program is made for windows. No installation needed just run the “Player 
 Or download the source code and build this software using Microsoft Visual Studio. <br>If you encounter any compilation errors make sure you have Newtonsoft.Json NuGet package installed.
 
 <img src="https://user-images.githubusercontent.com/53486622/161376648-0de3f8f4-019e-43ab-af50-6c5a7004a3a0.png" width="353" height="564" />
+
+---
+
+### Game Default Player Colors
+The purple and blue colors are too similar in Age of Empires (as shown below).
+![Normal_GameDefault](https://user-images.githubusercontent.com/53486622/162680427-f7abce79-cd2c-4aa8-ba26-e2387a195b65.png)
+
+---
+
+### Editor Default Player Colors
+This editor comes with a few different color presets and a fully customizable player colors.<br>
+The default color preset in this editor will fix the biggest problems.
+![Normal_GameDefault3](https://user-images.githubusercontent.com/53486622/162685564-ea4b8c07-fac1-425c-892a-7808aa577cde.png)
+
+### Glowing Player Colors
+The glowing player colors will help to separate the units from the ground and from each other.
+![Glow_HighContrast](https://user-images.githubusercontent.com/53486622/162680278-4ac1cfd3-c397-42a4-96c6-df6922cfdf97.png)
+
+### Simple Player Colors
+Using only the player color looks bad but makes it really easy to separate all player colors.
+![MainColors_HighContrast](https://user-images.githubusercontent.com/53486622/162681071-158427e3-f59b-4389-a439-aa4d760290d7.png)
