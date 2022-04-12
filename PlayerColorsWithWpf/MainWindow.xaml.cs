@@ -25,7 +25,7 @@ namespace PlayerColorsWithWpf
 
     public partial class MainWindow : Window
     {
-        public const int CountOfUnchangeableColorPresets = 2; // Don't set below 2
+        public const int CountOfUnchangeableColorPresets = 2;
         public static int MaxLineCountInConsole = 5;
         public static EInterpolationStyles PlyerColorInterpolationStyle = EInterpolationStyles.Default;
 
@@ -80,7 +80,6 @@ namespace PlayerColorsWithWpf
         /// </summary>
         private void LocatePlayerColorBoxes()
         {
-            // All player color squares
             PlayerColorBoxes.Add(FindName("BluePlayerColor") as Rectangle);
             PlayerColorBoxes.Add(FindName("RedPlayerColor") as Rectangle);
             PlayerColorBoxes.Add(FindName("YellowPlayerColor") as Rectangle);
@@ -91,7 +90,6 @@ namespace PlayerColorsWithWpf
             PlayerColorBoxes.Add(FindName("PurplePlayerColor") as Rectangle);
             PlayerColorBoxes.Add(FindName("TealPlayerColor") as Rectangle);
 
-            // All compared to player color squares
             CompraredToColorBoxes.Add(FindName("BlueComparedToColor") as Rectangle);
             CompraredToColorBoxes.Add(FindName("RedComparedToColor") as Rectangle);
             CompraredToColorBoxes.Add(FindName("YellowComparedToColor") as Rectangle);
@@ -440,7 +438,6 @@ namespace PlayerColorsWithWpf
             PalettePresets.SaveToDisk();
             ApplyPickedComparedToColors();
             PrintToConsole("Saved palette preset", Color.FromRgb(50, 50, 50));
-            Debug.WriteLine("Saved palette preset.");
         }
 
         /// <summary>
@@ -555,9 +552,7 @@ namespace PlayerColorsWithWpf
             var presetDropdown = FindName("PresetSelection") as System.Windows.Controls.ComboBox;
             presetDropdown.IsEnabled = true;
 
-            // Get the index of currently selected preset and remove it from the list.
             var presetSelection = FindName("PresetSelection") as System.Windows.Controls.ComboBox;
-
             AllColorPalettePresets.RemoveAt(presetSelection.SelectedIndex);
 
             PalettePresets.SaveToDisk();
@@ -742,10 +737,8 @@ namespace PlayerColorsWithWpf
 
             if (File.Exists(UserPreferenceFileLocation))
             {
-                // Load user preferences.
                 string loadedPreferences = File.ReadAllText(UserPreferenceFileLocation);
 
-                // Convert JSON string back to object.
                 var loadedPreferencesAsObject =
                     System.Text.Json.JsonSerializer.Deserialize<UserPreferencesJSON>(loadedPreferences);
 
@@ -1008,7 +1001,7 @@ namespace PlayerColorsWithWpf
 
             await File.WriteAllTextAsync(PlayerColorPresetFileLocation, jsonTextToWriteInTheFile);
 
-            Debug.WriteLine("Preset JSON file created and saved to the disk.");
+            Debug.WriteLine("Player color preset saved to the disk.");
         }
     }
 
@@ -1077,42 +1070,31 @@ namespace PlayerColorsWithWpf
             /// <returns>True if palette file was successfully created.</returns>
             static bool CreatePlayerColorPalette(Vector3 playerColor, string paletteName)
             {
-                string textToWriteInPaletteFile = "";
+                string textToWriteInPaletteFile = PaletteStartingText;
 
-                textToWriteInPaletteFile += PaletteStartingText;
-
-                // Going through the target colors.
                 foreach (Vector3 interpolateIntoColor in InterpolatingIntoColors)
                 {
-                    // Each step in interpolation.
-                    for (int i = 0; i <= ColorInterpolationCount; i++)
+                    for (int IneterpolateIndex = 0; IneterpolateIndex <= ColorInterpolationCount; IneterpolateIndex++)
                     {
+                        Vector3 auxiliaryColors;
+
                         switch (MainWindow.PlyerColorInterpolationStyle)
                         {
                             case EInterpolationStyles.Default:
-                                // Count the interpolation based on "i", "ColorToInterpolateInto" and "playerColor".
-                                // Go from "playerColor" to "ColorToInterpolateInto", do this linearly.
+                                // Same style as the games default interpolation.
+                                auxiliaryColors = InterpolateLinearly(
+                                    playerColor, interpolateIntoColor, IneterpolateIndex);
+
                                 textToWriteInPaletteFile += RGBColorSeperator;
-
-                                textToWriteInPaletteFile += Math.Round(
-                                    (playerColor.X * (ColorInterpolationCount - i) / ColorInterpolationCount) +
-                                    (interpolateIntoColor.X * i / ColorInterpolationCount));
-
+                                textToWriteInPaletteFile += Math.Round(auxiliaryColors.X);
                                 textToWriteInPaletteFile += ColorCodeSeperator;
-
-                                textToWriteInPaletteFile += Math.Round(
-                                    (playerColor.Y * (ColorInterpolationCount - i) / ColorInterpolationCount) +
-                                    (interpolateIntoColor.Y * i / ColorInterpolationCount));
-
+                                textToWriteInPaletteFile += Math.Round(auxiliaryColors.Y);
                                 textToWriteInPaletteFile += ColorCodeSeperator;
-
-                                textToWriteInPaletteFile += Math.Round(
-                                    (playerColor.Z * (ColorInterpolationCount - i) / ColorInterpolationCount) +
-                                    (interpolateIntoColor.Z * i / ColorInterpolationCount));
+                                textToWriteInPaletteFile += Math.Round(auxiliaryColors.Z);
                                 break;
 
                             case EInterpolationStyles.OnlyMainColor:
-                                // Write only the player color value. Good for color blindness.
+                                // Write only the player color value.
                                 textToWriteInPaletteFile += RGBColorSeperator;
                                 textToWriteInPaletteFile += playerColor.X;
                                 textToWriteInPaletteFile += ColorCodeSeperator;
@@ -1122,15 +1104,16 @@ namespace PlayerColorsWithWpf
                                 break;
 
                             case EInterpolationStyles.Glowing:
-                                // Easier to read when the vector is counted elsewhere
-                                Vector3 auxilliaryColors = CalculateGlow(playerColor, interpolateIntoColor, i);
+                                // Adds glow to the darkest colors, otherwise same as default style.
+                                auxiliaryColors = InterpolateForGlow(
+                                    playerColor, interpolateIntoColor, IneterpolateIndex);
 
                                 textToWriteInPaletteFile += RGBColorSeperator;
-                                textToWriteInPaletteFile += Math.Round(auxilliaryColors.X);
+                                textToWriteInPaletteFile += Math.Round(auxiliaryColors.X);
                                 textToWriteInPaletteFile += ColorCodeSeperator;
-                                textToWriteInPaletteFile += Math.Round(auxilliaryColors.Y);
+                                textToWriteInPaletteFile += Math.Round(auxiliaryColors.Y);
                                 textToWriteInPaletteFile += ColorCodeSeperator;
-                                textToWriteInPaletteFile += Math.Round(auxilliaryColors.Z);
+                                textToWriteInPaletteFile += Math.Round(auxiliaryColors.Z);
                                 break;
                         }
                     }
@@ -1158,25 +1141,37 @@ namespace PlayerColorsWithWpf
             };
 
             /// <summary>
-            /// <br>Does 3d interpolation based on "i", "ColorToInterpolateInto" and "playerColor".</br>
-            /// <br>Better color separation than default interpolation, not as bad as "OnlyMainColor".</br>
+            /// Linearly interpolates between pColor and InterpolateColor, weights based on interpolateIteration.
+            /// </summary>
+            static Vector3 InterpolateLinearly(Vector3 pColor, Vector3 InterpolateColor, int interpolateIteration)
+            {
+                float interpolateStep = (float)interpolateIteration / ColorInterpolationCount;
+
+                return new Vector3(
+                    pColor.X * (1 - interpolateStep) + InterpolateColor.X * interpolateStep,
+                    pColor.Y * (1 - interpolateStep) + InterpolateColor.Y * interpolateStep,
+                    pColor.Z * (1 - interpolateStep) + InterpolateColor.Z * interpolateStep);
+            }
+
+            /// <summary>
+            /// <br>Does 3d Interpolation from "pColor"to "InterpolateColor".</br>
+            /// <br>Better color separation than default IneterpolateIndex, not as bad as "OnlyMainColor".</br>
             /// <br>Has some extra adjustments to prevent colors look burnt.</br>
             /// </summary>
-            static Vector3 CalculateGlow(Vector3 pColor, Vector3 InterpolateColor, int i)
+            static Vector3 InterpolateForGlow(Vector3 pColor, Vector3 InterpolateColor, int interpolateIteration)
             {
                 // Use linear scaling for all but the darkest colors
                 if (InterpolateColor.X + InterpolateColor.Y + InterpolateColor.Z > 100)
                 {
+                    float interpolateStep = (float)interpolateIteration / ColorInterpolationCount;
+
                     return new Vector3(
-                        (pColor.X * (ColorInterpolationCount - i) / ColorInterpolationCount) +
-                            (InterpolateColor.X * i / ColorInterpolationCount),
-                        (pColor.Y * (ColorInterpolationCount - i) / ColorInterpolationCount) +
-                            (InterpolateColor.Y * i / ColorInterpolationCount),
-                        (pColor.Z * (ColorInterpolationCount - i) / ColorInterpolationCount) +
-                            (InterpolateColor.Z * i / ColorInterpolationCount));
+                        pColor.X * (1 - interpolateStep) + InterpolateColor.X * interpolateStep,
+                        pColor.Y * (1 - interpolateStep) + InterpolateColor.Y * interpolateStep,
+                        pColor.Z * (1 - interpolateStep) + InterpolateColor.Z * interpolateStep);
                 }
 
-                float scalar = (float)(ColorInterpolationCount - i) / ColorInterpolationCount;
+                float scalar = (float)(ColorInterpolationCount - interpolateIteration) / ColorInterpolationCount;
                 return Vector3.Lerp(pColor, InterpolateColor, scalar);
             }
 
