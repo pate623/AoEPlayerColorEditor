@@ -25,29 +25,29 @@ namespace PlayerColorsWithWpf
 
     public partial class MainWindow : Window
     {
-        public const int CountOfUnchangeableColorPresets = 2;
-        public static int MaxLineCountInConsole = 5;
         public static EInterpolationStyles PlyerColorInterpolationStyle = EInterpolationStyles.Default;
+        public static List<PalettePresetJSON> AllColorPalettePresets = new List<PalettePresetJSON>();
 
         /// <summary>
         /// Some UI element trigger selection changes on load.
         /// These triggers can cause the boot order to change which can cause this program to crash.
         /// </summary>
-        public static bool ProgramBooted = false;
+        private static bool ProgramBooted = false;
 
-        public static List<PalettePresetJSON> AllColorPalettePresets = new List<PalettePresetJSON>();
+        private const int CountOfUnchangeableColorPresets = 2;
+        private static int MaxLineCountInConsole = 5;
 
-        public static List<Rectangle> PlayerColorBoxes = new List<Rectangle>();
-        public static List<Rectangle> CompraredToColorBoxes = new List<Rectangle>();
+        private static List<Rectangle> PlayerColorBoxes = new List<Rectangle>();
+        private static List<Rectangle> CompraredToColorBoxes = new List<Rectangle>();
 
-        public static readonly string[] PaletteFolderDefaultLocations = {
+        private static readonly string[] PaletteFolderDefaultLocations = {
             @"C:\Program Files (x86)\Steam\steamapps\common\AoEDE\Assets\Palettes",
             @"C:\SteamLibrary\steamapps\common\AoEDE\Assets\Palettes",
             @"D:\SteamLibrary\steamapps\common\AoEDE\Assets\Palettes",
             @"E:\SteamLibrary\steamapps\common\AoEDE\Assets\Palettes",
             @"F:\SteamLibrary\steamapps\common\AoEDE\Assets\Palettes"};
 
-        public static readonly Vector3[] CurrentlyActivePlayerColors = {
+        private static readonly Vector3[] CurrentlyActivePlayerColors = {
             new Vector3(15, 70, 245),
             new Vector3(220, 35, 35),
             new Vector3(215, 215, 30),
@@ -71,6 +71,37 @@ namespace PlayerColorsWithWpf
             DisplayComparedToColorChoices(UserPreferences.ActiveComparedToPalette);
             ProgramBooted = true;
             Debug.WriteLine("Program booted successfully.");
+        }
+
+        /// <summary>
+        /// <br>Add a line of text to the console window.</br>
+        /// <br>Use empty line as parameter to apply the new maximum line count.</br>
+        /// <para>Get old text from the console, add it to a list,
+        /// then insert the "textToBeAdded" parameter to that list at index 0.
+        /// <br>Clear the console window and then add all the lines from the list to it, whilst
+        /// making sure the row count doesn't exceed <see cref="MaxLineCountInConsole"/>.</br></para>
+        /// </summary>
+        public void PrintToConsole(string textToBeAdded, Color? textColor = null)
+        {
+            // Optional parameter has to be constant, have to declare default text color value here.
+            textColor = textColor == null ? Color.FromRgb(0, 0, 0) : textColor;
+
+            var newText = new Run(textToBeAdded + "\n")
+            {
+                Foreground = new SolidColorBrush((Color)textColor)
+            };
+
+            var customConsole = FindName("CustomConsole") as TextBlock;
+
+            List<Inline> newConsoleText = customConsole.Inlines.ToList();
+            newConsoleText.Insert(0, newText);
+
+            customConsole.Inlines.Clear();
+
+            for (int i = 0; i < newConsoleText.Count && i < MaxLineCountInConsole; i++)
+            {
+                customConsole.Inlines.Add(newConsoleText[i]);
+            }
         }
 
         /// <summary>
@@ -169,37 +200,6 @@ namespace PlayerColorsWithWpf
 
             Debug.WriteLine("Player colors edited by the user.");
             DisplayNewlySelectedColors();
-        }
-
-        /// <summary>
-        /// <br>Add a line of text to the console window.</br>
-        /// <br>Use empty line as parameter to apply the new maximum line count.</br>
-        /// <para>Get old text from the console, add it to a list,
-        /// then insert the "textToBeAdded" parameter to that list at index 0.
-        /// <br>Clear the console window and then add all the lines from the list to it, whilst
-        /// making sure the row count doesn't exceed <see cref="MaxLineCountInConsole"/>.</br></para>
-        /// </summary>
-        public void PrintToConsole(string textToBeAdded, Color? textColor = null)
-        {
-            // Optional parameter has to be constant, have to declare default text color value here.
-            textColor = textColor == null ? Color.FromRgb(0, 0, 0) : textColor;
-
-            var newText = new Run(textToBeAdded + "\n")
-            {
-                Foreground = new SolidColorBrush((Color)textColor)
-            };
-
-            var customConsole = FindName("CustomConsole") as TextBlock;
-
-            List<Inline> newConsoleText = customConsole.Inlines.ToList();
-            newConsoleText.Insert(0, newText);
-
-            customConsole.Inlines.Clear();
-
-            for (int i = 0; i < newConsoleText.Count && i < MaxLineCountInConsole; i++)
-            {
-                customConsole.Inlines.Add(newConsoleText[i]);
-            }
         }
 
         private void ComparedToColors_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -321,7 +321,7 @@ namespace PlayerColorsWithWpf
         /// <summary>
         /// Get color palettes folder location from the user preferences and displays that string in the UI.
         /// </summary>
-        public void DisplayPaletteFolderLocation()
+        private void DisplayPaletteFolderLocation()
         {
             var colorPalettePathText = FindName("ColorPalettesLocation") as TextBlock;
 
@@ -598,7 +598,7 @@ namespace PlayerColorsWithWpf
             UserPreferences.SaveToDisk();
         }
 
-        public void DisplaySelectedInterpolationStyle()
+        private void DisplaySelectedInterpolationStyle()
         {
             var colorSelection = FindName("ColorInterpolationSelection") as System.Windows.Controls.ComboBox;
             colorSelection.SelectedIndex = UserPreferences.ActiveInterpolationStyle;
@@ -630,8 +630,8 @@ namespace PlayerColorsWithWpf
         private static double WidthRatio;
         private static double HeightRatio;
 
-        public static bool TimerIsRunning = false;
-        public static bool TimerNeedsToBeRefreshed = false;
+        private static bool TimerIsRunning = false;
+        private static bool TimerNeedsToBeRefreshed = false;
 
         /// <summary>
         /// <br>Saves current window size and location.</br>
@@ -901,19 +901,6 @@ namespace PlayerColorsWithWpf
         private static readonly string PlayerColorPresetFileLocation =
             Directory.GetCurrentDirectory() + @"\PlayerColorPresets.json";
 
-        private static IEnumerable<T> DeserializeObjects<T>(string input)
-        {
-            var serializer = new Newtonsoft.Json.JsonSerializer();
-            using StringReader strReader = new StringReader(input);
-            using JsonTextReader jsonReader = new JsonTextReader(strReader);
-            jsonReader.SupportMultipleContent = true;
-
-            while (jsonReader.Read())
-            {
-                yield return serializer.Deserialize<T>(jsonReader);
-            }
-        }
-
         /// <summary>
         /// <br>Loads palette presets from JSON file into memory.</br>
         /// <br>Creates 3 palette presets if palette presets JSON file is not found.</br>
@@ -1005,6 +992,19 @@ namespace PlayerColorsWithWpf
             await File.WriteAllTextAsync(PlayerColorPresetFileLocation, jsonTextToWriteInTheFile);
 
             Debug.WriteLine("Player color preset saved to the disk.");
+        }
+
+        private static IEnumerable<T> DeserializeObjects<T>(string input)
+        {
+            var serializer = new Newtonsoft.Json.JsonSerializer();
+            using StringReader strReader = new StringReader(input);
+            using JsonTextReader jsonReader = new JsonTextReader(strReader);
+            jsonReader.SupportMultipleContent = true;
+
+            while (jsonReader.Read())
+            {
+                yield return serializer.Deserialize<T>(jsonReader);
+            }
         }
     }
 
