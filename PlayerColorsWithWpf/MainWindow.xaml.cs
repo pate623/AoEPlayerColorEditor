@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Numerics;
 using System.Windows;
 using System.Windows.Controls;
@@ -19,16 +18,16 @@ namespace PlayerColorEditor
         public static List<Palettes.PaletteModel> AllColorPalettePresets = [];
 
         /// <summary>
-        /// Some UI element trigger selection changes on load.
-        /// These triggers can cause the boot order to change which can cause this program to crash.
+        /// Some UI element trigger selection changes on load.<br/>
+        /// These triggers can cause the boot order to change which can cause this program to crash.<br/>
         /// </summary>
         private static bool ProgramBooted = false;
 
         private const int CountOfUnchangeableColorPresets = 2;
-        private static int MaxLineCountInConsole = 5;
+        private const int MaxLineCountInConsole = 5;
 
-        private static List<Rectangle> PlayerColorBoxes = [];
-        private static List<Rectangle> CompraredToColorBoxes = [];
+        private static readonly List<Rectangle> PlayerColorBoxes = [];
+        private static readonly List<Rectangle> CompraredToColorBoxes = [];
 
         private static readonly string[] PaletteFolderDefaultLocations = [
             @"C:\Program Files (x86)\Steam\steamapps\common\AoEDE\Assets\Palettes",
@@ -93,13 +92,18 @@ namespace PlayerColorEditor
             }
         }
 
+        /// This warning is given whenever a main window element is being searched.
+        /// Disabling these warnings here as a whole creates cleaner looking code than disabling these warning on each element search.
+#pragma warning disable CS8602
+
         /// <summary>
-        /// <br>Add a line of text to the console window.</br>
-        /// <br>Use empty line as parameter to apply the new maximum line count.</br>
-        /// <para>Get old text from the console, add it to a list,
-        /// then insert the "textToBeAdded" parameter to that list at index 0.
-        /// <br>Clear the console window and then add all the lines from the list to it, whilst
-        /// making sure the row count doesn't exceed <see cref="MaxLineCountInConsole"/>.</br></para>
+        /// Add a line of text to the console window.<br/>
+        /// Use empty line as parameter to apply the new maximum line count.<br/>
+        /// <para><br/>
+        /// Get old text from the console, add it to a list, then insert the "textToBeAdded" parameter to that list at index 0.<br/>
+        /// Clear the console window and then add all the lines from the list to it, whilst making sure the row count doesn't  exceed 
+        /// <see cref="MaxLineCountInConsole"/>.
+        /// </para>
         /// </summary>
         private void PrintToConsole(string textToBeAdded, Color? textColor = null)
         {
@@ -113,7 +117,7 @@ namespace PlayerColorEditor
 
             var customConsole = FindName("CustomConsole") as TextBlock;
 
-            List<Inline> newConsoleText = customConsole.Inlines.ToList();
+            List<Inline> newConsoleText = [.. customConsole.Inlines];
             newConsoleText.Insert(0, newText);
 
             customConsole.Inlines.Clear();
@@ -169,7 +173,7 @@ namespace PlayerColorEditor
         /// <br>Each time the color picker is closed this script updates
         /// <see cref="CurrentlyActivePlayerColors"/> and showcases these changes in the UI.</br>
         /// </summary>
-        private void OpenColorPicker(int selectedPlayerColor)
+        private static void OpenColorPicker(int selectedPlayerColor)
         {
             Debug.WriteLine("Color picker opened with player color id: " + selectedPlayerColor);
 
@@ -209,7 +213,7 @@ namespace PlayerColorEditor
         /// <summary>
         /// Changes UI to show newly selected compared to player colors in the compared to player color squares.
         /// </summary>
-        private void DisplayComparedToPlayerColors(int presetID)
+        private static void DisplayComparedToPlayerColors(int presetID)
         {
             if (AllColorPalettePresets.Count <= presetID)
             {
@@ -361,9 +365,8 @@ namespace PlayerColorEditor
             }
             else
             {
-                Debug.WriteLine("Failed to update player colors; given index was too big.");
-                Debug.WriteLine("Given index number was: {0} and the count of palette presets is: {1}.",
-                    currentlyActivePresetIndex, AllColorPalettePresets.Count);
+                Debug.WriteLine("Failed to update player colors; given index was too big. "+ 
+                    $"Given index number was {currentlyActivePresetIndex} and the count of palette presets is {AllColorPalettePresets.Count}.");
             }
 
             // If currently selected preset is one of the default presets then disable save and delete buttons.
@@ -401,9 +404,9 @@ namespace PlayerColorEditor
         /// <br>Updates the "Your Edit" player colors squares shown in the UI.</br>
         /// <br>Uses the colors from <see cref="CurrentlyActivePlayerColors"/>.</br>
         /// </summary>
-        private void DisplayNewlySelectedColors()
+        private static void DisplayNewlySelectedColors()
         {
-            for (int i = 0; i < PlayerColorBoxes.Count(); i++)
+            for (int i = 0; i < PlayerColorBoxes.Count; i++)
             {
                 PlayerColorBoxes[i].Fill = new SolidColorBrush(Color.FromRgb(
                     (byte)CurrentlyActivePlayerColors[i].X,
@@ -423,12 +426,12 @@ namespace PlayerColorEditor
             var presetSelection = FindName("PresetSelection") as System.Windows.Controls.ComboBox;
             int currentPreset = presetSelection.SelectedIndex;
 
-            for (int i = 0; i < PlayerColorBoxes.Count(); i++)
+            for (int i = 0; i < PlayerColorBoxes.Count; i++)
             {
                 AllColorPalettePresets[currentPreset].SetPlayerColor(CurrentlyActivePlayerColors[i], i);
             }
 
-            Palettes.PaletteController.SaveToDisk();
+            Palettes.PaletteController.SavePalettePresetsToDisk();
             ApplyPickedComparedToColors();
             PrintToConsole("Saved palette preset", Color.FromRgb(50, 50, 50));
         }
@@ -491,7 +494,7 @@ namespace PlayerColorEditor
 
             AllColorPalettePresets.Add(newPreset);
 
-            Palettes.PaletteController.SaveToDisk();
+            Palettes.PaletteController.SavePalettePresetsToDisk();
             Debug.WriteLine("Created new palette preset.");
 
             // Update UI to reflect all changes.
@@ -551,7 +554,7 @@ namespace PlayerColorEditor
             var presetSelection = FindName("PresetSelection") as System.Windows.Controls.ComboBox;
             AllColorPalettePresets.RemoveAt(presetSelection.SelectedIndex);
 
-            Palettes.PaletteController.SaveToDisk();
+            Palettes.PaletteController.SavePalettePresetsToDisk();
             Debug.WriteLine("Player color preset deleted.");
 
             // Update UI to reflect all changes.
@@ -567,7 +570,7 @@ namespace PlayerColorEditor
         /// </summary>
         private void CreateColors_Click(object sender, RoutedEventArgs e)
         {
-            if (Palettes.PaletteController.CreateColors(CurrentlyActivePlayerColors))
+            if (Palettes.PaletteController.WritePlayerColorToPaletteFiles(CurrentlyActivePlayerColors))
             {
                 PrintToConsole("Created the color palettes", Color.FromRgb(0, 102, 221));
             }
@@ -608,5 +611,6 @@ namespace PlayerColorEditor
         {
             MainWindowsControls.WindowSizer.UserChangedWindowSize();
         }
+#pragma warning restore CS8602
     }
 }

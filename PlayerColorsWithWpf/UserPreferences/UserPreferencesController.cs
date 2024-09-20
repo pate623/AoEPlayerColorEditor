@@ -3,6 +3,7 @@ using System.IO;
 using System.Text.Json;
 using System.Windows;
 
+// TODO Make better file loading/saving/data storing
 namespace PlayerColorEditor.UserPreferences
 {
     /// <summary>
@@ -10,13 +11,12 @@ namespace PlayerColorEditor.UserPreferences
     /// </summary>
     public static class UserPreferencesController
     {
-        public static string PlayerColorPaletteLocation = Directory.GetCurrentDirectory() + @"\Palettes";
+        public static string PlayerColorPaletteLocation = Path.Combine(Directory.GetCurrentDirectory(), "Palettes");
         public static int ActivePlayerColorPalette = 0;
         public static int ActiveComparedToPalette = 1;
         public static int ActiveInterpolationStyle = 0;
 
-        private static readonly string UserPreferenceFileLocation =
-            Directory.GetCurrentDirectory() + @"\UserPreferences.json";
+        private static readonly string UserPreferenceFileLocation = Path.Combine(Directory.GetCurrentDirectory(), "UserPreferences.json");
 
         /// <summary>
         /// <br>Loads user preferences from disk to memory.</br>
@@ -87,9 +87,7 @@ namespace PlayerColorEditor.UserPreferences
                 WindowsTop = (int)MainWindowsControls.WindowSizer.DefaultTop
             };
 
-            File.WriteAllText(
-                UserPreferenceFileLocation,
-                JsonSerializer.Serialize(newPreferences));
+            File.WriteAllText(UserPreferenceFileLocation, JsonSerializer.Serialize(newPreferences));
 
             Debug.WriteLine("User preferences saved.");
         }

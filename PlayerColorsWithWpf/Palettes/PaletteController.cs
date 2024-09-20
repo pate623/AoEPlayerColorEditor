@@ -1,6 +1,4 @@
-﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -10,9 +8,12 @@ using System.Text.Json;
 namespace PlayerColorEditor.Palettes
 {
     /// <summary>
-    /// <br>Creates new player color palettes for Age of Empires Definitive Edition.</br>
-    /// <br>Call <see cref="CreateColors"/> with all the player colors as a parameter.</br>
-    /// <br>Creates a total of 8 color palettes.</br>
+    /// Creates new player color palettes for Age of Empires Definitive Edition.<br/>
+    /// Call <see cref="WritePlayerColorToPaletteFiles"/> with all the player colors as a parameter.<br/>
+    /// Creates a total of 8 color palettes.<br/>
+    /// <br/>
+    /// All presets are stored in a JSON file at the root of this program.<br/>
+    /// In the code side files are stored in a JSON compatible object.<br/>
     /// </summary>
     /// 
     /// From row 1 to row 3 use the default header data.
@@ -26,11 +27,6 @@ namespace PlayerColorEditor.Palettes
     /// Use "ColorCodeSeperator" and "RGBColorSeperator" variables to separate each value.
     /// Get the first value of "InterpolatingIntoColors" array, and linearly interpolate into that value.
     /// 16 numbers interpolated in total, if counting starting and ending values
-    
-    /// <summary>
-    /// <br>All presets are stored in a JSON file at the root of this program.</br>
-    /// <br>In the code side files are stored in a JSON compatible object.</br>
-    /// </summary>
     public static class PaletteController
     {
         private static readonly string PaletteStartingText =
@@ -64,18 +60,17 @@ namespace PlayerColorEditor.Palettes
             "playercolor_purple.pal",
             "playercolor_teal.pal"];
 
-        private static readonly string PlayerColorPresetFileLocation =
-            Directory.GetCurrentDirectory() + @"\PlayerColorPresets.json";
+        private static readonly string PlayerColorPresetFileLocation = Path.Combine(Directory.GetCurrentDirectory(), "PlayerColorPresets.json");
 
         /// <summary>
         /// <br>Loads palette presets from JSON file into memory.</br>
-        /// <br>Creates 3 palette presets if palette presets JSON file is not found.</br>
+        /// <br>Creates 3 default palette presets if the palette presets JSON file is not found.</br>
         /// </summary>
         public static void Initialize()
         {
             if (File.Exists(PlayerColorPresetFileLocation))
             {
-                MainWindow.AllColorPalettePresets = DeserializeObjects<PaletteModel>(File.ReadAllText(PlayerColorPresetFileLocation)).ToList();
+                MainWindow.AllColorPalettePresets = Utilities.Json.DeserializeObjects<PaletteModel>(File.ReadAllText(PlayerColorPresetFileLocation)).ToList();
                 Debug.WriteLine("Preset JSON found on star up, all presets loaded into memory.");
             }
             else
@@ -126,7 +121,7 @@ namespace PlayerColorEditor.Palettes
                 MainWindow.AllColorPalettePresets.Add(gameDefaultPlayerColors);
                 MainWindow.AllColorPalettePresets.Add(highContrastPlayerColors);
 
-                SaveToDisk();
+                SavePalettePresetsToDisk();
 
                 Debug.WriteLine("No Preset JSON found, new presets JSON file created and loaded into memory.");
             }
@@ -140,7 +135,7 @@ namespace PlayerColorEditor.Palettes
         /// </summary>
         /// <param name="playerColors">Holds 8 player colors.</param>
         /// <returns>True if palette files were successfully created.</returns>
-        public static bool CreateColors(Vector3[] playerColors)
+        public static bool WritePlayerColorToPaletteFiles(Vector3[] playerColors)
         {
             if (Directory.Exists(UserPreferences.UserPreferencesController.PlayerColorPaletteLocation))
             {
@@ -293,7 +288,7 @@ namespace PlayerColorEditor.Palettes
         /// Gets all objects from the <see cref="MainWindow.AllColorPalettePresets"/> variable and
         /// saves them to PlayerColorPresets.JSON file.
         /// </summary>
-        public static async void SaveToDisk()
+        public static async void SavePalettePresetsToDisk()
         {
             var options = new JsonSerializerOptions { WriteIndented = true };
 
@@ -308,19 +303,6 @@ namespace PlayerColorEditor.Palettes
             await File.WriteAllTextAsync(PlayerColorPresetFileLocation, jsonTextToWriteInTheFile);
 
             Debug.WriteLine("Player color preset saved to the disk.");
-        }
-
-        private static IEnumerable<T> DeserializeObjects<T>(string input)
-        {
-            var serializer = new Newtonsoft.Json.JsonSerializer();
-            using StringReader strReader = new StringReader(input);
-            using JsonTextReader jsonReader = new JsonTextReader(strReader);
-            jsonReader.SupportMultipleContent = true;
-
-            while (jsonReader.Read())
-            {
-                yield return serializer.Deserialize<T>(jsonReader);
-            }
         }
     }
 }
