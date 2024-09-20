@@ -4,21 +4,19 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Numerics;
-using System.Text.Json;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Forms;
 using System.Windows.Media;
 using System.Windows.Shapes;
-using Newtonsoft.Json;
 
 namespace PlayerColorEditor
 {
     public partial class MainWindow : Window
     {
         public static EInterpolationStyles PlayerColorInterpolationStyle = EInterpolationStyles.Default;
-        public static List<PalettePresetJSON> AllColorPalettePresets = [];
+        public static List<Palettes.PaletteModel> AllColorPalettePresets = [];
 
         /// <summary>
         /// Some UI element trigger selection changes on load.
@@ -55,7 +53,7 @@ namespace PlayerColorEditor
             LocatePlayerColorBoxes();
             MainWindowsControls.WindowSizer.Initialize();
             UserPreferences.UserPreferencesController.Initialize();
-            PalettePresets.Initialize();
+            Palettes.PaletteController.Initialize();
             DisplayNewlySelectedColors();
             DisplayPaletteFolderLocation();
             DisplaySelectedInterpolationStyle();
@@ -103,7 +101,7 @@ namespace PlayerColorEditor
         /// <br>Clear the console window and then add all the lines from the list to it, whilst
         /// making sure the row count doesn't exceed <see cref="MaxLineCountInConsole"/>.</br></para>
         /// </summary>
-        public void PrintToConsole(string textToBeAdded, Color? textColor = null)
+        private void PrintToConsole(string textToBeAdded, Color? textColor = null)
         {
             // Optional parameter has to be constant, have to declare default text color value here.
             textColor = textColor == null ? Color.FromRgb(0, 0, 0) : textColor;
@@ -390,7 +388,7 @@ namespace PlayerColorEditor
 
             presetsComboBox.Items.Clear();
 
-            foreach (PalettePresetJSON currentColorPreset in AllColorPalettePresets)
+            foreach (Palettes.PaletteModel currentColorPreset in AllColorPalettePresets)
             {
                 _ = presetsComboBox.Items.Add(currentColorPreset.PresetName);
             }
@@ -430,7 +428,7 @@ namespace PlayerColorEditor
                 AllColorPalettePresets[currentPreset].SetPlayerColor(CurrentlyActivePlayerColors[i], i);
             }
 
-            PalettePresets.SaveToDisk();
+            Palettes.PaletteController.SaveToDisk();
             ApplyPickedComparedToColors();
             PrintToConsole("Saved palette preset", Color.FromRgb(50, 50, 50));
         }
@@ -477,20 +475,23 @@ namespace PlayerColorEditor
         {
             var presetNameString = FindName("NewPresetName") as System.Windows.Controls.TextBox;
 
-            var newPreset = new PalettePresetJSON(
-                presetNameString.Text,
-                CurrentlyActivePlayerColors[0],
-                CurrentlyActivePlayerColors[1],
-                CurrentlyActivePlayerColors[2],
-                CurrentlyActivePlayerColors[3],
-                CurrentlyActivePlayerColors[4],
-                CurrentlyActivePlayerColors[5],
-                CurrentlyActivePlayerColors[6],
-                CurrentlyActivePlayerColors[7]);
+            Palettes.PaletteModel newPreset = new(
+                name: presetNameString.Text,
+
+                blue: CurrentlyActivePlayerColors[0],
+                red: CurrentlyActivePlayerColors[1],
+                yellow: CurrentlyActivePlayerColors[2],
+                brown: CurrentlyActivePlayerColors[3],
+
+                orange: CurrentlyActivePlayerColors[4],
+                green: CurrentlyActivePlayerColors[5],
+                purple: CurrentlyActivePlayerColors[6],
+                teal:CurrentlyActivePlayerColors[7]
+            );
 
             AllColorPalettePresets.Add(newPreset);
 
-            PalettePresets.SaveToDisk();
+            Palettes.PaletteController.SaveToDisk();
             Debug.WriteLine("Created new palette preset.");
 
             // Update UI to reflect all changes.
@@ -550,7 +551,7 @@ namespace PlayerColorEditor
             var presetSelection = FindName("PresetSelection") as System.Windows.Controls.ComboBox;
             AllColorPalettePresets.RemoveAt(presetSelection.SelectedIndex);
 
-            PalettePresets.SaveToDisk();
+            Palettes.PaletteController.SaveToDisk();
             Debug.WriteLine("Player color preset deleted.");
 
             // Update UI to reflect all changes.
@@ -566,7 +567,7 @@ namespace PlayerColorEditor
         /// </summary>
         private void CreateColors_Click(object sender, RoutedEventArgs e)
         {
-            if (ColorPaletteCreation.CreateColors(CurrentlyActivePlayerColors))
+            if (Palettes.PaletteController.CreateColors(CurrentlyActivePlayerColors))
             {
                 PrintToConsole("Created the color palettes", Color.FromRgb(0, 102, 221));
             }
@@ -606,415 +607,6 @@ namespace PlayerColorEditor
         private void Window_LocationChanged(object sender, EventArgs e)
         {
             MainWindowsControls.WindowSizer.UserChangedWindowSize();
-        }
-    }
-
-    /// <summary>
-    /// <br>JSON coded "Player Color Palette Preset" object.</br>
-    /// <br>Player color Blue is index 0 and Teal is index 7</br>
-    /// </summary>
-    public class PalettePresetJSON
-    {
-        public string PresetName { get; set; }
-
-        public int[] BluePlayerColor { get; set; }
-        public int[] RedPlayerColor { get; set; }
-        public int[] YellowPlayerColor { get; set; }
-        public int[] BrownPlayerColor { get; set; }
-        public int[] OrangePlayerColor { get; set; }
-        public int[] GreenPlayerColor { get; set; }
-        public int[] PurplePlayerColor { get; set; }
-        public int[] TealPlayerColor { get; set; }
-
-        public PalettePresetJSON() { }
-
-        public PalettePresetJSON(string name,
-            Vector3 blue, Vector3 red, Vector3 yellow, Vector3 brown,
-            Vector3 orange, Vector3 green, Vector3 purple, Vector3 teal)
-        {
-            PresetName = name;
-
-            BluePlayerColor = new int[] { (int)blue.X, (int)blue.Y, (int)blue.Z };
-            RedPlayerColor = new int[] { (int)red.X, (int)red.Y, (int)red.Z };
-            YellowPlayerColor = new int[] { (int)yellow.X, (int)yellow.Y, (int)yellow.Z };
-            BrownPlayerColor = new int[] { (int)brown.X, (int)brown.Y, (int)brown.Z };
-
-            OrangePlayerColor = new int[] { (int)orange.X, (int)orange.Y, (int)orange.Z };
-            GreenPlayerColor = new int[] { (int)green.X, (int)green.Y, (int)green.Z };
-            PurplePlayerColor = new int[] { (int)purple.X, (int)purple.Y, (int)purple.Z };
-            TealPlayerColor = new int[] { (int)teal.X, (int)teal.Y, (int)teal.Z };
-        }
-
-        public void SetPlayerColor(Vector3 playerColor, int playerIndex)
-        {
-            switch (playerIndex)
-            {
-                case 0:
-                    BluePlayerColor = new int[] { (int)playerColor.X, (int)playerColor.Y, (int)playerColor.Z };
-                    break;
-                case 1:
-                    RedPlayerColor = new int[] { (int)playerColor.X, (int)playerColor.Y, (int)playerColor.Z };
-                    break;
-                case 2:
-                    YellowPlayerColor = new int[] { (int)playerColor.X, (int)playerColor.Y, (int)playerColor.Z };
-                    break;
-                case 3:
-                    BrownPlayerColor = new int[] { (int)playerColor.X, (int)playerColor.Y, (int)playerColor.Z };
-                    break;
-
-                case 4:
-                    OrangePlayerColor = new int[] { (int)playerColor.X, (int)playerColor.Y, (int)playerColor.Z };
-                    break;
-                case 5:
-                    GreenPlayerColor = new int[] { (int)playerColor.X, (int)playerColor.Y, (int)playerColor.Z };
-                    break;
-                case 6:
-                    PurplePlayerColor = new int[] { (int)playerColor.X, (int)playerColor.Y, (int)playerColor.Z };
-                    break;
-                case 7:
-                    TealPlayerColor = new int[] { (int)playerColor.X, (int)playerColor.Y, (int)playerColor.Z };
-                    break;
-            }
-        }
-
-        public Vector3 GetPlayerColor(int index)
-        {
-            return index switch
-            {
-                0 => new Vector3(BluePlayerColor[0], BluePlayerColor[1], BluePlayerColor[2]),
-                1 => new Vector3(RedPlayerColor[0], RedPlayerColor[1], RedPlayerColor[2]),
-                2 => new Vector3(YellowPlayerColor[0], YellowPlayerColor[1], YellowPlayerColor[2]),
-                3 => new Vector3(BrownPlayerColor[0], BrownPlayerColor[1], BrownPlayerColor[2]),
-                4 => new Vector3(OrangePlayerColor[0], OrangePlayerColor[1], OrangePlayerColor[2]),
-                5 => new Vector3(GreenPlayerColor[0], GreenPlayerColor[1], GreenPlayerColor[2]),
-                6 => new Vector3(PurplePlayerColor[0], PurplePlayerColor[1], PurplePlayerColor[2]),
-                7 => new Vector3(TealPlayerColor[0], TealPlayerColor[1], TealPlayerColor[2]),
-                _ => new Vector3(0,0,0),
-            };
-        }
-    }
-
-    /// <summary>
-    /// <br>All presets are stored in a JSON file at the root of this program.</br>
-    /// <br>In the code side files are stored in a JSON compatible object.</br>
-    /// </summary>
-    public static class PalettePresets
-    {
-        private static readonly string PlayerColorPresetFileLocation =
-            Directory.GetCurrentDirectory() + @"\PlayerColorPresets.json";
-
-        /// <summary>
-        /// <br>Loads palette presets from JSON file into memory.</br>
-        /// <br>Creates 3 palette presets if palette presets JSON file is not found.</br>
-        /// </summary>
-        public static void Initialize()
-        {
-            if (File.Exists(PlayerColorPresetFileLocation))
-            {
-                MainWindow.AllColorPalettePresets = DeserializeObjects<PalettePresetJSON>(
-                    File.ReadAllText(PlayerColorPresetFileLocation)).ToList();
-
-                Debug.WriteLine("Preset JSON found on star up, all presets loaded into memory.");
-            }
-            else
-            {
-                var editorDefaultPlayerColors = new PalettePresetJSON
-                {
-                    PresetName = "Editor Default",
-
-                    BluePlayerColor = new int[] { 15, 70, 245 },
-                    RedPlayerColor = new int[] { 220, 35, 35 },
-                    YellowPlayerColor = new int[] { 215, 215, 30 },
-                    BrownPlayerColor = new int[] { 115, 60, 0 },
-
-                    OrangePlayerColor = new int[] { 245, 135, 25 },
-                    GreenPlayerColor = new int[] { 4, 165, 20 },
-                    PurplePlayerColor = new int[] { 210, 55, 200 },
-                    TealPlayerColor = new int[] { 126, 242, 225 }
-                };
-
-                var gameDefaultPlayerColors = new PalettePresetJSON
-                {
-                    PresetName = "AOE:DE Default",
-
-                    BluePlayerColor = new int[] { 45, 45, 245 },
-                    RedPlayerColor = new int[] { 210, 40, 40 },
-                    YellowPlayerColor = new int[] { 215, 215, 30 },
-                    BrownPlayerColor = new int[] { 142, 91, 0 },
-
-                    OrangePlayerColor = new int[] { 255, 150, 5 },
-                    GreenPlayerColor = new int[] { 4, 165, 20 },
-                    PurplePlayerColor = new int[] { 150, 15, 250 },
-                    TealPlayerColor = new int[] { 126, 242, 225 }
-                };
-
-                var highContrastPlayerColors = new PalettePresetJSON
-                {
-                    PresetName = "High Contrast",
-
-                    BluePlayerColor = new int[] { 43, 63, 247 },
-                    RedPlayerColor = new int[] { 224, 27, 27 },
-                    YellowPlayerColor = new int[] { 230, 234, 53 },
-                    BrownPlayerColor = new int[] { 96, 43, 11 },
-
-                    OrangePlayerColor = new int[] { 234, 128, 21 },
-                    GreenPlayerColor = new int[] { 30, 165, 5 },
-                    PurplePlayerColor = new int[] { 218, 3, 186 },
-                    TealPlayerColor = new int[] { 126, 241, 184 }
-                };
-
-                MainWindow.AllColorPalettePresets.Add(editorDefaultPlayerColors);
-                MainWindow.AllColorPalettePresets.Add(gameDefaultPlayerColors);
-                MainWindow.AllColorPalettePresets.Add(highContrastPlayerColors);
-
-                SaveToDisk();
-
-                Debug.WriteLine("No Preset JSON found, new presets JSON file created and loaded into memory.");
-            }
-
-            Debug.WriteLine("Current number of palette presets: {0}.", MainWindow.AllColorPalettePresets.Count);
-        }
-
-        /// <summary>
-        /// Gets all objects from the <see cref="MainWindow.AllColorPalettePresets"/> variable and
-        /// saves them to PlayerColorPresets.JSON file.
-        /// </summary>
-        public static async void SaveToDisk()
-        {
-            var options = new JsonSerializerOptions { WriteIndented = true };
-
-            string jsonTextToWriteInTheFile = "";
-
-            for (int i = 0; i < MainWindow.AllColorPalettePresets.Count; i++)
-            {
-                jsonTextToWriteInTheFile += System.Text.Json.JsonSerializer.Serialize(
-                    MainWindow.AllColorPalettePresets[i], options);
-            }
-
-            await File.WriteAllTextAsync(PlayerColorPresetFileLocation, jsonTextToWriteInTheFile);
-
-            Debug.WriteLine("Player color preset saved to the disk.");
-        }
-
-        private static IEnumerable<T> DeserializeObjects<T>(string input)
-        {
-            var serializer = new Newtonsoft.Json.JsonSerializer();
-            using StringReader strReader = new StringReader(input);
-            using JsonTextReader jsonReader = new JsonTextReader(strReader);
-            jsonReader.SupportMultipleContent = true;
-
-            while (jsonReader.Read())
-            {
-                yield return serializer.Deserialize<T>(jsonReader);
-            }
-        }
-    }
-
-    /// <summary>
-    /// <br>Creates new player color palettes for Age of Empires Definitive Edition.</br>
-    /// <br>Call <see cref="CreateColors"/> with all the player colors as a parameter.</br>
-    /// <br>Creates a total of 8 color palettes.</br>
-    /// </summary>
-    /// 
-    /// From row 1 to row 3 use the default header data.
-    /// From row 4 to 131 creates the player colors data.
-    /// From row 132 to 259 populates the file with "0 0 0" rows.
-    /// Row 260 is the last one and will be empty.
-    /// 
-    /// Player colors are created as follows:
-    /// Start with the player color (RGB).
-    /// Write it on the document.
-    /// Use "ColorCodeSeperator" and "RGBColorSeperator" variables to separate each value.
-    /// Get the first value of "InterpolatingIntoColors" array, and linearly interpolate into that value.
-    /// 16 numbers interpolated in total, if counting starting and ending values.
-    /// Do the same for each value within "InterpolatingIntoColors" array.
-    public static class ColorPaletteCreation
-    {
-        private static readonly string PaletteStartingText =
-            "JASC-PAL" +
-            Environment.NewLine + "0100" +
-            Environment.NewLine + "256";
-
-        private static readonly string ColorCodeSeperator = " ";
-        private static readonly string RGBColorSeperator = Environment.NewLine;
-
-        /// <summary>Total of this +1 colors if counting both starting and ending colors.</summary>
-        private const int ColorInterpolationCount = 15;
-
-        private static readonly Vector3[] InterpolatingIntoColors = {
-            new Vector3(0, 0, 0),
-            new Vector3(32, 32, 32),
-            new Vector3(64, 64, 64),
-            new Vector3(128, 128, 128),
-            new Vector3(192, 192, 192),
-            new Vector3(224, 224, 224),
-            new Vector3(255, 255, 255),
-            new Vector3(128, 96, 64)};
-
-        private static readonly string[] PaletteNames = {
-            "playercolor_blue.pal",
-            "playercolor_red.pal",
-            "playercolor_yellow.pal",
-            "playercolor_brown.pal",
-            "playercolor_orange.pal",
-            "playercolor_green.pal",
-            "playercolor_purple.pal",
-            "playercolor_teal.pal"};
-
-        /// <summary>
-        /// <br>Running this once creates all 8 player color palettes.</br>
-        /// <br>The palette location is stored in the user preferences.</br>
-        /// </summary>
-        /// <param name="playerColors">Holds 8 player colors.</param>
-        /// <returns>True if palette files were successfully created.</returns>
-        public static bool CreateColors(Vector3[] playerColors)
-        {
-            /// <summary>
-            /// Creates a single color palette files. Saves that file to the disk.
-            /// </summary>
-            /// <param name="playerColor">Holds the main color (RGB).</param>
-            /// <returns>True if palette file was successfully created.</returns>
-            static bool CreatePlayerColorPalette(Vector3 playerColor, string paletteName)
-            {
-                string textToWriteInPaletteFile = PaletteStartingText;
-
-                foreach (Vector3 interpolateIntoColor in InterpolatingIntoColors)
-                {
-                    for (int ineterpolateIndex = 0; ineterpolateIndex <= ColorInterpolationCount; ineterpolateIndex++)
-                    {
-                        Vector3 auxiliaryColors;
-
-                        switch (MainWindow.PlayerColorInterpolationStyle)
-                        {
-                            case EInterpolationStyles.Default:
-                                // Same style as the games default interpolation.
-                                auxiliaryColors = InterpolateLinearly(
-                                    playerColor, interpolateIntoColor, ineterpolateIndex);
-
-                                textToWriteInPaletteFile += RGBColorSeperator;
-                                textToWriteInPaletteFile += Math.Round(auxiliaryColors.X);
-                                textToWriteInPaletteFile += ColorCodeSeperator;
-                                textToWriteInPaletteFile += Math.Round(auxiliaryColors.Y);
-                                textToWriteInPaletteFile += ColorCodeSeperator;
-                                textToWriteInPaletteFile += Math.Round(auxiliaryColors.Z);
-                                break;
-
-                            case EInterpolationStyles.OnlyMainColor:
-                                // Write only the player color value.
-                                textToWriteInPaletteFile += RGBColorSeperator;
-                                textToWriteInPaletteFile += playerColor.X;
-                                textToWriteInPaletteFile += ColorCodeSeperator;
-                                textToWriteInPaletteFile += playerColor.Y;
-                                textToWriteInPaletteFile += ColorCodeSeperator;
-                                textToWriteInPaletteFile += playerColor.Z;
-                                break;
-
-                            case EInterpolationStyles.Glowing:
-                                // Adds glow to the darkest colors, otherwise same as default style.
-                                auxiliaryColors = InterpolateForGlow(
-                                    playerColor, interpolateIntoColor, ineterpolateIndex);
-
-                                textToWriteInPaletteFile += RGBColorSeperator;
-                                textToWriteInPaletteFile += Math.Round(auxiliaryColors.X);
-                                textToWriteInPaletteFile += ColorCodeSeperator;
-                                textToWriteInPaletteFile += Math.Round(auxiliaryColors.Y);
-                                textToWriteInPaletteFile += ColorCodeSeperator;
-                                textToWriteInPaletteFile += Math.Round(auxiliaryColors.Z);
-                                break;
-                        }
-                    }
-                }
-
-                // Fill in "0 0 0" line to get a total of 256 lines in color data.
-                for (int i = 0; i < 128; i++)
-                {
-                    textToWriteInPaletteFile += RGBColorSeperator;
-                    textToWriteInPaletteFile += "0 0 0";
-                }
-
-                // Original palette files had an empty line in the end so this one will also have one.
-                textToWriteInPaletteFile += RGBColorSeperator;
-                try
-                {
-                    File.WriteAllText($"{UserPreferences.UserPreferencesController.PlayerColorPaletteLocation}\\{paletteName}",
-                        textToWriteInPaletteFile);
-                    return true;
-                }
-                catch
-                {
-                    return false;
-                }
-            };
-
-            /// <summary>
-            /// Linearly interpolates between pColor and InterpolateColor, weights based on interpolateIteration.
-            /// </summary>
-            static Vector3 InterpolateLinearly(Vector3 pColor, Vector3 InterpolateColor, int interpolateIteration)
-            {
-                float interpolateStep = (float)interpolateIteration / ColorInterpolationCount;
-
-                return new Vector3(
-                    pColor.X * (1 - interpolateStep) + InterpolateColor.X * interpolateStep,
-                    pColor.Y * (1 - interpolateStep) + InterpolateColor.Y * interpolateStep,
-                    pColor.Z * (1 - interpolateStep) + InterpolateColor.Z * interpolateStep);
-            }
-
-            /// <summary>
-            /// <br>Does 3d Interpolation from "pColor"to "InterpolateColor".</br>
-            /// <br>Better color separation than default IneterpolateIndex, not as bad as "OnlyMainColor".</br>
-            /// <br>Has some extra adjustments to prevent colors look burnt.</br>
-            /// </summary>
-            static Vector3 InterpolateForGlow(Vector3 pColor, Vector3 InterpolateColor, int interpolateIteration)
-            {
-                // Use linear scaling for all but the darkest colors
-                if (InterpolateColor.X + InterpolateColor.Y + InterpolateColor.Z > 100)
-                {
-                    float interpolateStep = (float)interpolateIteration / ColorInterpolationCount;
-
-                    return new Vector3(
-                        pColor.X * (1 - interpolateStep) + InterpolateColor.X * interpolateStep,
-                        pColor.Y * (1 - interpolateStep) + InterpolateColor.Y * interpolateStep,
-                        pColor.Z * (1 - interpolateStep) + InterpolateColor.Z * interpolateStep);
-                }
-
-                float scalar = (float)(ColorInterpolationCount - interpolateIteration) / ColorInterpolationCount;
-                return Vector3.Lerp(pColor, InterpolateColor, scalar);
-            }
-
-            /// <!-- Logic Starts Here -->
-            if (Directory.Exists(UserPreferences.UserPreferencesController.PlayerColorPaletteLocation))
-            {
-                try
-                {
-                    for (int i = 0; i < 8; i++)
-                    {
-                        File.Delete(UserPreferences.UserPreferencesController.PlayerColorPaletteLocation + @"\" + PaletteNames[i]);
-                    }
-                    Debug.WriteLine("Previous player colors palettes removed");
-                }
-                catch
-                {
-                    Debug.WriteLine("Can't delete currently existing palette files");
-                    return false;
-                }
-            }
-            else
-            {
-                _ = Directory.CreateDirectory(UserPreferences.UserPreferencesController.PlayerColorPaletteLocation);
-                Debug.WriteLine("No player color palette folder found, new player color palette folder created.");
-            }
-
-            for (int i = 0; i < 8; i++)
-            {
-                if (!CreatePlayerColorPalette(playerColors[i], PaletteNames[i]))
-                {
-                    Debug.WriteLine("Writing a palette file to disk failed: " + PaletteNames[i]);
-                    return false;
-                }
-            }
-
-            Debug.WriteLine("All player colors created.");
-            return true;
         }
     }
 }
