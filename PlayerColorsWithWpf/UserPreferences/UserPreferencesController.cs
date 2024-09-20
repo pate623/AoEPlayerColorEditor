@@ -45,8 +45,8 @@ namespace PlayerColorEditor.UserPreferences
             else
             {
                 Debug.WriteLine("No user preference file found.");
-                Application.Current.MainWindow.Width = WindowSizer.DefaultWidth;
-                Application.Current.MainWindow.Height = WindowSizer.DefaultHeight;
+                Application.Current.MainWindow.Width = MainWindowsControls.WindowSizer.DefaultWidth;
+                Application.Current.MainWindow.Height = MainWindowsControls.WindowSizer.DefaultHeight;
                 ActiveComparedToPalette = 1; // Reads the default values as 0 even though it is set to 1.
 
                 var newPreferences = new UserPreferencesModel
@@ -55,10 +55,10 @@ namespace PlayerColorEditor.UserPreferences
                     ActiveColorPalette = ActivePlayerColorPalette,
                     ActiveComparedTo = ActiveComparedToPalette,
                     ActiveInterpolation = ActiveInterpolationStyle,
-                    WindowsWidth = (int)WindowSizer.DefaultWidth,
-                    WindowsHeight = (int)WindowSizer.DefaultHeight,
-                    WindowsLeft = (int)WindowSizer.DefaultLeft,
-                    WindowsTop = (int)WindowSizer.DefaultTop
+                    WindowsWidth = (int)MainWindowsControls.WindowSizer.DefaultWidth,
+                    WindowsHeight = (int)MainWindowsControls.WindowSizer.DefaultHeight,
+                    WindowsLeft = (int)MainWindowsControls.WindowSizer.DefaultLeft,
+                    WindowsTop = (int)MainWindowsControls.WindowSizer.DefaultTop
                 };
 
                 File.WriteAllText(
@@ -83,8 +83,8 @@ namespace PlayerColorEditor.UserPreferences
                 ActiveInterpolation = ActiveInterpolationStyle,
                 WindowsWidth = (int)Application.Current.MainWindow.Width,
                 WindowsHeight = (int)Application.Current.MainWindow.Height,
-                WindowsLeft = (int)WindowSizer.DefaultLeft,
-                WindowsTop = (int)WindowSizer.DefaultTop
+                WindowsLeft = (int)MainWindowsControls.WindowSizer.DefaultLeft,
+                WindowsTop = (int)MainWindowsControls.WindowSizer.DefaultTop
             };
 
             File.WriteAllText(

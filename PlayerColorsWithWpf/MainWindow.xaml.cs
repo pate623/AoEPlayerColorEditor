@@ -32,14 +32,14 @@ namespace PlayerColorEditor
         private static List<Rectangle> PlayerColorBoxes = [];
         private static List<Rectangle> CompraredToColorBoxes = [];
 
-        private static readonly string[] PaletteFolderDefaultLocations = {
+        private static readonly string[] PaletteFolderDefaultLocations = [
             @"C:\Program Files (x86)\Steam\steamapps\common\AoEDE\Assets\Palettes",
             @"C:\SteamLibrary\steamapps\common\AoEDE\Assets\Palettes",
             @"D:\SteamLibrary\steamapps\common\AoEDE\Assets\Palettes",
             @"E:\SteamLibrary\steamapps\common\AoEDE\Assets\Palettes",
-            @"F:\SteamLibrary\steamapps\common\AoEDE\Assets\Palettes"};
+            @"F:\SteamLibrary\steamapps\common\AoEDE\Assets\Palettes"];
 
-        private static readonly Vector3[] CurrentlyActivePlayerColors = {
+        private static readonly Vector3[] CurrentlyActivePlayerColors = [
             new(15, 70, 245),
             new(220, 35, 35),
             new(215, 215, 30),
@@ -47,13 +47,13 @@ namespace PlayerColorEditor
             new(245, 135, 25),
             new(4, 165, 20),
             new(245, 95, 240),
-            new(65, 245, 230)};
+            new(65, 245, 230)];
 
         public MainWindow()
         {
-            InitializeComponent(); // Do not remove this even if compilers shows "InitializeComponent does not exist in current context" error.
+            InitializeComponent();
             LocatePlayerColorBoxes();
-            WindowSizer.Initialize();
+            MainWindowsControls.WindowSizer.Initialize();
             UserPreferences.UserPreferencesController.Initialize();
             PalettePresets.Initialize();
             DisplayNewlySelectedColors();
@@ -600,12 +600,12 @@ namespace PlayerColorEditor
 
         private void UserControl_SizeChanged(object sender, SizeChangedEventArgs args)
         {
-            WindowSizer.UserChangedWindowSize();
+            MainWindowsControls.WindowSizer.UserChangedWindowSize();
         }
 
         private void Window_LocationChanged(object sender, EventArgs e)
         {
-            WindowSizer.UserChangedWindowSize();
+            MainWindowsControls.WindowSizer.UserChangedWindowSize();
         }
     }
 

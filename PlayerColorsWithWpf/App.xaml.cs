@@ -1,10 +1,16 @@
 ﻿// Ignore Spelling: App
 
-using PlayerColorEditor;
 using System.Windows;
 
-namespace PlayerColorsWithWpf
+namespace PlayerColorEditor
 {
+    public enum EInterpolationStyles
+    {
+        Default = 0,
+        OnlyMainColor = 1,
+        Glowing = 2
+    }
+
     /// <summary>
     /// The startup class.
     /// </summary>

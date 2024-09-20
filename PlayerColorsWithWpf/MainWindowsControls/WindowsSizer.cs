@@ -1,18 +1,9 @@
 ﻿using System.Diagnostics;
-using System.IO;
-using System.Text.Json;
 using System.Threading.Tasks;
 using System.Windows;
 
-namespace PlayerColorEditor
+namespace PlayerColorEditor.MainWindowsControls
 {
-    public enum EInterpolationStyles
-    {
-        Default = 0,
-        OnlyMainColor = 1,
-        Glowing = 2
-    }
-
     /// <summary>
     /// <br>Records changes on windows location and saves the values into user preferences.</br>
     /// <br>Users can only scale the window in fixed ratio.</br>
@@ -20,16 +11,16 @@ namespace PlayerColorEditor
     /// </summary>
     public static class WindowSizer
     {
-        public static double DefaultLeft;
-        public static double DefaultTop;
-        public static double DefaultWidth;
-        public static double DefaultHeight;
+        public static double DefaultLeft { get; private set; }
+        public static double DefaultTop { get; private set; }
+        public static double DefaultWidth { get; private set; }
+        public static double DefaultHeight { get; private set; }
 
         private static double WidthRatio;
         private static double HeightRatio;
 
-        private static bool TimerIsRunning = false;
-        private static bool TimerNeedsToBeRefreshed = false;
+        private static bool saveDelayTimerIsRunning = false;
+        private static bool KeepDelayingConfigSaving = false;
 
         /// <summary>
         /// <br>Saves current window size and location.</br>
@@ -45,6 +36,11 @@ namespace PlayerColorEditor
 
             WidthRatio = DefaultWidth / DefaultHeight;
             HeightRatio = DefaultHeight / DefaultWidth;
+
+            Debug.WriteLine($"Windows sizer initializer with: " +
+                $"WidthRatio {WidthRatio}, HeightRatio {HeightRatio} " +
+                $"DefaultWidth {DefaultWidth}, DefaultHeight {DefaultHeight} " +
+                $"DefaultLeft {DefaultLeft}, DefaultTop {DefaultTop}");
         }
 
         /// <summary>
@@ -53,51 +49,51 @@ namespace PlayerColorEditor
         /// </summary>
         public static void UserChangedWindowSize()
         {
-            double width = Application.Current.MainWindow.Width;
-            double height = Application.Current.MainWindow.Height;
+            double currenWidth = Application.Current.MainWindow.Width;
+            double currentHeight = Application.Current.MainWindow.Height;
 
-            if (width * DefaultWidth > height * DefaultHeight)
+            if (currenWidth * DefaultWidth > currentHeight * DefaultHeight)
             {
-                Application.Current.MainWindow.Width = width;
-                Application.Current.MainWindow.Height = width * HeightRatio;
+                Application.Current.MainWindow.Width = currenWidth;
+                Application.Current.MainWindow.Height = currenWidth * HeightRatio;
             }
             else
             {
-                Application.Current.MainWindow.Height = height;
-                Application.Current.MainWindow.Width = height * WidthRatio;
+                Application.Current.MainWindow.Height = currentHeight;
+                Application.Current.MainWindow.Width = currentHeight * WidthRatio;
             }
-
+            
             DefaultLeft = Application.Current.MainWindow.Left;
             DefaultTop = Application.Current.MainWindow.Top;
 
-            // Timer for saving user preferences.
-            // If timer is active only refreshes it.
-            if (TimerIsRunning)
+            if (saveDelayTimerIsRunning)
             {
-                TimerNeedsToBeRefreshed = true;
+                KeepDelayingConfigSaving = true;
             }
             else
             {
-                TimerIsRunning = true;
+                saveDelayTimerIsRunning = true;
                 Debug.WriteLine("User started adjusting the windows size.");
-                StartTimer();
+                DelayedConfigSaving();
             }
         }
 
-        private static async void StartTimer()
+        /// <summary>
+        /// The windows size and location is saved to the config.<br/>
+        /// This ensures there won't be unneeded file saving.<br/>
+        /// </summary>
+        private static async void DelayedConfigSaving()
         {
             await Task.Delay(200);
-            while (TimerNeedsToBeRefreshed)
+            while (KeepDelayingConfigSaving)
             {
-                TimerNeedsToBeRefreshed = false;
+                KeepDelayingConfigSaving = false;
                 await Task.Delay(400);
             }
 
-            TimerIsRunning = false;
+            saveDelayTimerIsRunning = false;
             Debug.WriteLine("User stopped adjusting the windows size.");
             UserPreferences.UserPreferencesController.SaveToDisk();
         }
     }
-
-
 }
