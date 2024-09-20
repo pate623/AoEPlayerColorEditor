@@ -13,12 +13,12 @@ using System.Windows.Media;
 using System.Windows.Shapes;
 using Newtonsoft.Json;
 
-namespace PlayerColorsWithWpf
+namespace PlayerColorEditor
 {
     public partial class MainWindow : Window
     {
-        public static EInterpolationStyles PlyerColorInterpolationStyle = EInterpolationStyles.Default;
-        public static List<PalettePresetJSON> AllColorPalettePresets = new List<PalettePresetJSON>();
+        public static EInterpolationStyles PlayerColorInterpolationStyle = EInterpolationStyles.Default;
+        public static List<PalettePresetJSON> AllColorPalettePresets = [];
 
         /// <summary>
         /// Some UI element trigger selection changes on load.
@@ -29,8 +29,8 @@ namespace PlayerColorsWithWpf
         private const int CountOfUnchangeableColorPresets = 2;
         private static int MaxLineCountInConsole = 5;
 
-        private static List<Rectangle> PlayerColorBoxes = new List<Rectangle>();
-        private static List<Rectangle> CompraredToColorBoxes = new List<Rectangle>();
+        private static List<Rectangle> PlayerColorBoxes = [];
+        private static List<Rectangle> CompraredToColorBoxes = [];
 
         private static readonly string[] PaletteFolderDefaultLocations = {
             @"C:\Program Files (x86)\Steam\steamapps\common\AoEDE\Assets\Palettes",
@@ -40,29 +40,59 @@ namespace PlayerColorsWithWpf
             @"F:\SteamLibrary\steamapps\common\AoEDE\Assets\Palettes"};
 
         private static readonly Vector3[] CurrentlyActivePlayerColors = {
-            new Vector3(15, 70, 245),
-            new Vector3(220, 35, 35),
-            new Vector3(215, 215, 30),
-            new Vector3(115, 60, 0),
-            new Vector3(245, 135, 25),
-            new Vector3(4, 165, 20),
-            new Vector3(245, 95, 240),
-            new Vector3(65, 245, 230)};
+            new(15, 70, 245),
+            new(220, 35, 35),
+            new(215, 215, 30),
+            new(115, 60, 0),
+            new(245, 135, 25),
+            new(4, 165, 20),
+            new(245, 95, 240),
+            new(65, 245, 230)};
 
         public MainWindow()
         {
-            InitializeComponent();
+            InitializeComponent(); // Do not remove this even if compilers shows "InitializeComponent does not exist in current context" error.
             LocatePlayerColorBoxes();
             WindowSizer.Initialize();
-            UserPreferences.Initialize();
+            UserPreferences.UserPreferencesController.Initialize();
             PalettePresets.Initialize();
             DisplayNewlySelectedColors();
             DisplayPaletteFolderLocation();
             DisplaySelectedInterpolationStyle();
-            DisplayColorPresetChoices(UserPreferences.ActivePlayerColorPalette);
-            DisplayComparedToColorChoices(UserPreferences.ActiveComparedToPalette);
+            DisplayColorPresetChoices(UserPreferences.UserPreferencesController.ActivePlayerColorPalette);
+            DisplayComparedToColorChoices(UserPreferences.UserPreferencesController.ActiveComparedToPalette);
             ProgramBooted = true;
             Debug.WriteLine("Program booted successfully.");
+
+            /// <summary>
+            /// <br>Locates all player color squares and adds them to static lists.</br>
+            /// <br>This way the colors can be set in a loop and the scripts needn't locate
+            /// the color squares each time they need to be changed.</br>
+            /// </summary>
+            void LocatePlayerColorBoxes()
+            {
+#pragma warning disable CS8604
+                PlayerColorBoxes.Add(FindName("BluePlayerColor") as Rectangle);
+                PlayerColorBoxes.Add(FindName("RedPlayerColor") as Rectangle);
+                PlayerColorBoxes.Add(FindName("YellowPlayerColor") as Rectangle);
+                PlayerColorBoxes.Add(FindName("BrownPlayerColor") as Rectangle);
+
+                PlayerColorBoxes.Add(FindName("OrangePlayerColor") as Rectangle);
+                PlayerColorBoxes.Add(FindName("GreenPlayerColor") as Rectangle);
+                PlayerColorBoxes.Add(FindName("PurplePlayerColor") as Rectangle);
+                PlayerColorBoxes.Add(FindName("TealPlayerColor") as Rectangle);
+
+                CompraredToColorBoxes.Add(FindName("BlueComparedToColor") as Rectangle);
+                CompraredToColorBoxes.Add(FindName("RedComparedToColor") as Rectangle);
+                CompraredToColorBoxes.Add(FindName("YellowComparedToColor") as Rectangle);
+                CompraredToColorBoxes.Add(FindName("BrownComparedToColor") as Rectangle);
+
+                CompraredToColorBoxes.Add(FindName("OrangeComparedToColor") as Rectangle);
+                CompraredToColorBoxes.Add(FindName("GreenComparedToColor") as Rectangle);
+                CompraredToColorBoxes.Add(FindName("PurpleComparedToColor") as Rectangle);
+                CompraredToColorBoxes.Add(FindName("TealComparedToColor") as Rectangle);
+#pragma warning restore CS8604
+            }
         }
 
         /// <summary>
@@ -94,34 +124,6 @@ namespace PlayerColorsWithWpf
             {
                 customConsole.Inlines.Add(newConsoleText[i]);
             }
-        }
-
-        /// <summary>
-        /// <br>Locates all player color squares and adds them to static lists.</br>
-        /// <br>This way the colors can be set in a loop and the scripts needn't locate
-        /// the color squares each time they need to be changed.</br>
-        /// </summary>
-        private void LocatePlayerColorBoxes()
-        {
-            PlayerColorBoxes.Add(FindName("BluePlayerColor") as Rectangle);
-            PlayerColorBoxes.Add(FindName("RedPlayerColor") as Rectangle);
-            PlayerColorBoxes.Add(FindName("YellowPlayerColor") as Rectangle);
-            PlayerColorBoxes.Add(FindName("BrownPlayerColor") as Rectangle);
-
-            PlayerColorBoxes.Add(FindName("OrangePlayerColor") as Rectangle);
-            PlayerColorBoxes.Add(FindName("GreenPlayerColor") as Rectangle);
-            PlayerColorBoxes.Add(FindName("PurplePlayerColor") as Rectangle);
-            PlayerColorBoxes.Add(FindName("TealPlayerColor") as Rectangle);
-
-            CompraredToColorBoxes.Add(FindName("BlueComparedToColor") as Rectangle);
-            CompraredToColorBoxes.Add(FindName("RedComparedToColor") as Rectangle);
-            CompraredToColorBoxes.Add(FindName("YellowComparedToColor") as Rectangle);
-            CompraredToColorBoxes.Add(FindName("BrownComparedToColor") as Rectangle);
-
-            CompraredToColorBoxes.Add(FindName("OrangeComparedToColor") as Rectangle);
-            CompraredToColorBoxes.Add(FindName("GreenComparedToColor") as Rectangle);
-            CompraredToColorBoxes.Add(FindName("PurpleComparedToColor") as Rectangle);
-            CompraredToColorBoxes.Add(FindName("TealComparedToColor") as Rectangle);
         }
 
         private void Info_Click(object sender, RoutedEventArgs e)
@@ -202,7 +204,7 @@ namespace PlayerColorsWithWpf
 
             Debug.WriteLine("New preset selected for compared to colors combo box, with index: {0}.",
                 presetSelection.SelectedIndex);
-            UserPreferences.ActiveComparedToPalette = presetSelection.SelectedIndex;
+            UserPreferences.UserPreferencesController.ActiveComparedToPalette = presetSelection.SelectedIndex;
             DisplayComparedToPlayerColors(presetSelection.SelectedIndex);
         }
 
@@ -226,7 +228,7 @@ namespace PlayerColorsWithWpf
             }
 
             Debug.WriteLine("UI compared to player colors updated.");
-            UserPreferences.SaveToDisk();
+            UserPreferences.UserPreferencesController.SaveToDisk();
         }
 
         /// <summary>
@@ -248,8 +250,8 @@ namespace PlayerColorsWithWpf
             presetsComboBox.SelectedIndex = presetID;
             Debug.WriteLine("Preset list in compared to combo box updated.");
 
-            UserPreferences.ActiveComparedToPalette = presetID;
-            UserPreferences.SaveToDisk();
+            UserPreferences.UserPreferencesController.ActiveComparedToPalette = presetID;
+            UserPreferences.UserPreferencesController.SaveToDisk();
         }
 
         /// <summary>
@@ -265,13 +267,13 @@ namespace PlayerColorsWithWpf
             if (AllColorPalettePresets.Count <= toBeSetIndex)
             {
                 Debug.WriteLine("Index too big for comparison combo box, reseted to index 1");
-                UserPreferences.ActiveComparedToPalette = 1;
+                UserPreferences.UserPreferencesController.ActiveComparedToPalette = 1;
                 DisplayComparedToColorChoices(1);
                 DisplayComparedToPlayerColors(1);
             }
             else
             {
-                UserPreferences.ActiveComparedToPalette = toBeSetIndex;
+                UserPreferences.UserPreferencesController.ActiveComparedToPalette = toBeSetIndex;
                 DisplayComparedToColorChoices(toBeSetIndex);
                 DisplayComparedToPlayerColors(toBeSetIndex);
             }
@@ -299,15 +301,15 @@ namespace PlayerColorsWithWpf
 
             if (browseFileResult == System.Windows.Forms.DialogResult.OK)
             {
-                UserPreferences.PlayerColorPaletteLocation = findPaletteFolder.SelectedPath;
+                UserPreferences.UserPreferencesController.PlayerColorPaletteLocation = findPaletteFolder.SelectedPath;
                 Debug.WriteLine("Palette location changed. New palette location is:");
-                Debug.WriteLine(UserPreferences.PlayerColorPaletteLocation);
+                Debug.WriteLine(UserPreferences.UserPreferencesController.PlayerColorPaletteLocation);
             }
 
             findPaletteFolder.Dispose();
 
             DisplayPaletteFolderLocation();
-            UserPreferences.SaveToDisk();
+            UserPreferences.UserPreferencesController.SaveToDisk();
         }
 
         /// <summary>
@@ -317,7 +319,7 @@ namespace PlayerColorsWithWpf
         {
             var colorPalettePathText = FindName("ColorPalettesLocation") as TextBlock;
 
-            colorPalettePathText.Text = UserPreferences.PlayerColorPaletteLocation;
+            colorPalettePathText.Text = UserPreferences.UserPreferencesController.PlayerColorPaletteLocation;
             Debug.WriteLine("UI Palette location string updated.");
         }
 
@@ -356,8 +358,8 @@ namespace PlayerColorsWithWpf
                 }
                 Debug.WriteLine("Newly selected color updated to the Vector3[] NewPlayerColors.");
 
-                UserPreferences.ActivePlayerColorPalette = currentlyActivePresetIndex;
-                UserPreferences.SaveToDisk();
+                UserPreferences.UserPreferencesController.ActivePlayerColorPalette = currentlyActivePresetIndex;
+                UserPreferences.UserPreferencesController.SaveToDisk();
             }
             else
             {
@@ -580,20 +582,20 @@ namespace PlayerColorsWithWpf
 
             if (colorSelection.SelectedIndex == -1) return;
 
-            PlyerColorInterpolationStyle = (EInterpolationStyles)colorSelection.SelectedIndex;
+            PlayerColorInterpolationStyle = (EInterpolationStyles)colorSelection.SelectedIndex;
 
             if (!ProgramBooted) return;
 
             Debug.WriteLine(((EInterpolationStyles)colorSelection.SelectedIndex).ToString() +
                 " interpolation style selected.");
-            UserPreferences.ActiveInterpolationStyle = colorSelection.SelectedIndex;
-            UserPreferences.SaveToDisk();
+            UserPreferences.UserPreferencesController.ActiveInterpolationStyle = colorSelection.SelectedIndex;
+            UserPreferences.UserPreferencesController.SaveToDisk();
         }
 
         private void DisplaySelectedInterpolationStyle()
         {
             var colorSelection = FindName("ColorInterpolationSelection") as System.Windows.Controls.ComboBox;
-            colorSelection.SelectedIndex = UserPreferences.ActiveInterpolationStyle;
+            colorSelection.SelectedIndex = UserPreferences.UserPreferencesController.ActiveInterpolationStyle;
         }
 
         private void UserControl_SizeChanged(object sender, SizeChangedEventArgs args)
@@ -882,7 +884,7 @@ namespace PlayerColorsWithWpf
                     {
                         Vector3 auxiliaryColors;
 
-                        switch (MainWindow.PlyerColorInterpolationStyle)
+                        switch (MainWindow.PlayerColorInterpolationStyle)
                         {
                             case EInterpolationStyles.Default:
                                 // Same style as the games default interpolation.
@@ -934,7 +936,7 @@ namespace PlayerColorsWithWpf
                 textToWriteInPaletteFile += RGBColorSeperator;
                 try
                 {
-                    File.WriteAllText($"{UserPreferences.PlayerColorPaletteLocation}\\{paletteName}",
+                    File.WriteAllText($"{UserPreferences.UserPreferencesController.PlayerColorPaletteLocation}\\{paletteName}",
                         textToWriteInPaletteFile);
                     return true;
                 }
@@ -980,13 +982,13 @@ namespace PlayerColorsWithWpf
             }
 
             /// <!-- Logic Starts Here -->
-            if (Directory.Exists(UserPreferences.PlayerColorPaletteLocation))
+            if (Directory.Exists(UserPreferences.UserPreferencesController.PlayerColorPaletteLocation))
             {
                 try
                 {
                     for (int i = 0; i < 8; i++)
                     {
-                        File.Delete(UserPreferences.PlayerColorPaletteLocation + @"\" + PaletteNames[i]);
+                        File.Delete(UserPreferences.UserPreferencesController.PlayerColorPaletteLocation + @"\" + PaletteNames[i]);
                     }
                     Debug.WriteLine("Previous player colors palettes removed");
                 }
@@ -998,7 +1000,7 @@ namespace PlayerColorsWithWpf
             }
             else
             {
-                _ = Directory.CreateDirectory(UserPreferences.PlayerColorPaletteLocation);
+                _ = Directory.CreateDirectory(UserPreferences.UserPreferencesController.PlayerColorPaletteLocation);
                 Debug.WriteLine("No player color palette folder found, new player color palette folder created.");
             }
 
