@@ -584,11 +584,13 @@ namespace PlayerColorEditor
         {
             var colorSelection = FindName("ColorInterpolationSelection") as System.Windows.Controls.ComboBox;
 
-            if (colorSelection.SelectedIndex == -1) return;
+            if (colorSelection.SelectedIndex == -1)
+                return;
 
             PlayerColorInterpolationStyle = (EInterpolationStyles)colorSelection.SelectedIndex;
 
-            if (!ProgramBooted) return;
+            if (!ProgramBooted)
+                return;
 
             Debug.WriteLine(((EInterpolationStyles)colorSelection.SelectedIndex).ToString() +
                 " interpolation style selected.");

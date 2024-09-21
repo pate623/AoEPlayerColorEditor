@@ -15,18 +15,6 @@ namespace PlayerColorEditor.Palettes
     /// All presets are stored in a JSON file at the root of this program.<br/>
     /// In the code side files are stored in a JSON compatible object.<br/>
     /// </summary>
-    /// 
-    /// From row 1 to row 3 use the default header data.
-    /// From row 4 to 131 creates the player colors data.
-    /// From row 132 to 259 populates the file with "0 0 0" rows.
-    /// Row 260 is the last one and will be empty.
-    /// 
-    /// Player colors are created as follows:
-    /// Start with the player color (RGB).
-    /// Write it on the document.
-    /// Use "ColorCodeSeperator" and "RGBColorSeperator" variables to separate each value.
-    /// Get the first value of "InterpolatingIntoColors" array, and linearly interpolate into that value.
-    /// 16 numbers interpolated in total, if counting starting and ending values
     public static class PaletteController
     {
         private static readonly string PaletteStartingText =
@@ -135,6 +123,18 @@ namespace PlayerColorEditor.Palettes
         /// </summary>
         /// <param name="playerColors">Holds 8 player colors.</param>
         /// <returns>True if palette files were successfully created.</returns>
+        /// 
+        /// From row 1 to row 3 use the default header data.
+        /// From row 4 to 131 creates the player colors data.
+        /// From row 132 to 259 populates the file with "0 0 0" rows.
+        /// Row 260 is the last one and will be empty.
+        /// 
+        /// Player colors are created as follows:
+        /// Start with the player color (RGB).
+        /// Write it on the document.
+        /// Use "ColorCodeSeperator" and "RGBColorSeperator" variables to separate each value.
+        /// Get the first value of "InterpolatingIntoColors" array, and linearly interpolate into that value.
+        /// 16 numbers interpolated in total, if counting starting and ending values
         public static bool WritePlayerColorToPaletteFiles(Vector3[] playerColors)
         {
             if (Directory.Exists(UserPreferences.UserPreferencesController.PlayerColorPaletteLocation))

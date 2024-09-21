@@ -1,9 +1,7 @@
 ﻿using System.Diagnostics;
 using System.IO;
-using System.Text.Json;
 using System.Windows;
 
-// TODO Make better file loading/saving/data storing
 namespace PlayerColorEditor.UserPreferences
 {
     /// <summary>
@@ -29,8 +27,7 @@ namespace PlayerColorEditor.UserPreferences
             if (File.Exists(UserPreferenceFileLocation))
             {
                 string preferencesFromDisk = File.ReadAllText(UserPreferenceFileLocation);
-
-                var userPreferences = JsonSerializer.Deserialize<UserPreferencesModel>(preferencesFromDisk);
+                UserPreferencesModel userPreferences = Utilities.Json.DeserializeObject<UserPreferencesModel>(preferencesFromDisk);
 
                 PlayerColorPaletteLocation = userPreferences.PaletteLocation;
                 ActivePlayerColorPalette = userPreferences.ActiveColorPalette;
@@ -44,26 +41,23 @@ namespace PlayerColorEditor.UserPreferences
             }
             else
             {
-                Debug.WriteLine("No user preference file found.");
+                Debug.WriteLine("No user preference file found, creating default preferences.");
                 Application.Current.MainWindow.Width = MainWindowsControls.WindowSizer.DefaultWidth;
                 Application.Current.MainWindow.Height = MainWindowsControls.WindowSizer.DefaultHeight;
                 ActiveComparedToPalette = 1; // Reads the default values as 0 even though it is set to 1.
 
-                var newPreferences = new UserPreferencesModel
-                {
-                    PaletteLocation = PlayerColorPaletteLocation,
-                    ActiveColorPalette = ActivePlayerColorPalette,
-                    ActiveComparedTo = ActiveComparedToPalette,
-                    ActiveInterpolation = ActiveInterpolationStyle,
-                    WindowsWidth = (int)MainWindowsControls.WindowSizer.DefaultWidth,
-                    WindowsHeight = (int)MainWindowsControls.WindowSizer.DefaultHeight,
-                    WindowsLeft = (int)MainWindowsControls.WindowSizer.DefaultLeft,
-                    WindowsTop = (int)MainWindowsControls.WindowSizer.DefaultTop
-                };
+                UserPreferencesModel newPreferences = new(
+                    paletteLocation: PlayerColorPaletteLocation,
+                    activeColorPalette: ActivePlayerColorPalette,
+                    activeComparedToPalette: ActiveComparedToPalette,
+                    activeInterpolationMode: ActiveInterpolationStyle,
+                    windowsWidth: (int)MainWindowsControls.WindowSizer.DefaultWidth,
+                    windowsHeight: (int)MainWindowsControls.WindowSizer.DefaultHeight,
+                    windowsLeft: (int)MainWindowsControls.WindowSizer.DefaultLeft,
+                    windowsTop: (int)MainWindowsControls.WindowSizer.DefaultTop
+                );
 
-                File.WriteAllText(
-                    UserPreferenceFileLocation,
-                    JsonSerializer.Serialize(newPreferences));
+                File.WriteAllText(UserPreferenceFileLocation, System.Text.Json.JsonSerializer.Serialize(newPreferences));
 
                 Debug.WriteLine("New user preferences created.");
             }
@@ -75,19 +69,18 @@ namespace PlayerColorEditor.UserPreferences
         /// </summary>
         public static void SaveToDisk()
         {
-            var newPreferences = new UserPreferencesModel
-            {
-                PaletteLocation = PlayerColorPaletteLocation,
-                ActiveColorPalette = ActivePlayerColorPalette,
-                ActiveComparedTo = ActiveComparedToPalette,
-                ActiveInterpolation = ActiveInterpolationStyle,
-                WindowsWidth = (int)Application.Current.MainWindow.Width,
-                WindowsHeight = (int)Application.Current.MainWindow.Height,
-                WindowsLeft = (int)MainWindowsControls.WindowSizer.DefaultLeft,
-                WindowsTop = (int)MainWindowsControls.WindowSizer.DefaultTop
-            };
+            UserPreferencesModel newPreferences = new(
+                paletteLocation:  PlayerColorPaletteLocation,
+                activeColorPalette: ActivePlayerColorPalette,
+                activeComparedToPalette: ActiveComparedToPalette,
+                activeInterpolationMode: ActiveInterpolationStyle,
+                windowsWidth: (int)Application.Current.MainWindow.Width,
+                windowsHeight: (int)Application.Current.MainWindow.Height,
+                windowsLeft: (int)MainWindowsControls.WindowSizer.DefaultLeft,
+                windowsTop: (int)MainWindowsControls.WindowSizer.DefaultTop
+            );
 
-            File.WriteAllText(UserPreferenceFileLocation, JsonSerializer.Serialize(newPreferences));
+            File.WriteAllText(UserPreferenceFileLocation, System.Text.Json.JsonSerializer.Serialize(newPreferences));
 
             Debug.WriteLine("User preferences saved.");
         }
