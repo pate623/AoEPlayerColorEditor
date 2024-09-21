@@ -5,12 +5,13 @@ using System.Windows;
 namespace PlayerColorEditor.MainWindowsControls
 {
     /// <summary>
-    /// <br>Records changes on windows location and saves the values into user preferences.</br>
-    /// <br>Users can only scale the window in fixed ratio.</br>
-    /// <br>Fixed ratio is determined by the window minimum width and height written in the XAML file.</br>
+    /// Records changes on windows location and saves the values into user preferences.<br/>
+    /// Users can only scale the window in fixed ratio.<br/>
+    /// Fixed ratio is determined by the window minimum width and height written in the XAML file.<br/>
     /// </summary>
     public static class WindowSizer
     {
+        // TODO Move these public values to a separate file called ProgramState.cs
         public static double DefaultLeft { get; private set; }
         public static double DefaultTop { get; private set; }
         public static double DefaultWidth { get; private set; }
@@ -23,8 +24,8 @@ namespace PlayerColorEditor.MainWindowsControls
         private static bool KeepDelayingConfigSaving = false;
 
         /// <summary>
-        /// <br>Saves current window size and location.</br>
-        /// <br>Uses the gained window width and height to determine windows fixed ratio.</br>
+        /// Saves current window size and location.<br/>
+        /// Uses the gained window width and height to determine windows fixed ratio.<br/>
         /// </summary>
         public static void Initialize()
         {
@@ -44,8 +45,7 @@ namespace PlayerColorEditor.MainWindowsControls
         }
 
         /// <summary>
-        /// <br>Saves the new window location and size to the user preferences and
-        /// saves the user preferences to the disk after user stops adjusting the window.</br>
+        /// Saves the new window location and size to the user preferences and saves the user preferences to the disk after user stops adjusting the window.<br/>
         /// </summary>
         public static void UserChangedWindowSize()
         {
@@ -93,7 +93,7 @@ namespace PlayerColorEditor.MainWindowsControls
 
             saveDelayTimerIsRunning = false;
             Debug.WriteLine("User stopped adjusting the windows size.");
-            UserPreferences.UserPreferencesController.SaveToDisk();
+            Settings.ConfigController.SaveToDisk();
         }
     }
 }

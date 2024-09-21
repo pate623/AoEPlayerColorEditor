@@ -119,8 +119,8 @@ namespace PlayerColorEditor
             presetsComboBox.SelectedIndex = presetID;
             Debug.WriteLine("Preset list in compared to combo box updated.");
 
-            UserPreferences.UserPreferencesController.ActiveComparedToPalette = presetID;
-            UserPreferences.UserPreferencesController.SaveToDisk();
+            Settings.ConfigController.Config.ActiveComparedToPalettePreset = presetID;
+            Settings.ConfigController.SaveToDisk();
         }
 
         /// <summary>
@@ -147,14 +147,14 @@ namespace PlayerColorEditor
         {
             var colorPalettePathText = FindName("ColorPalettesLocation") as TextBlock;
 
-            colorPalettePathText.Text = UserPreferences.UserPreferencesController.PlayerColorPaletteLocation;
+            colorPalettePathText.Text = Settings.ConfigController.Config.PaletteFolderLocation;
             Debug.WriteLine("UI Palette location string updated.");
         }
 
         public void DisplaySelectedInterpolationStyle()
         {
             var colorSelection = FindName("ColorInterpolationSelection") as System.Windows.Controls.ComboBox;
-            colorSelection.SelectedIndex = UserPreferences.UserPreferencesController.ActiveInterpolationStyle;
+            colorSelection.SelectedIndex = Settings.ConfigController.Config.ActiveInterpolationMode;
         }
 
         /// <summary>
@@ -263,12 +263,11 @@ namespace PlayerColorEditor
         {
             var presetSelection = FindName("ComparedToColorSelection") as System.Windows.Controls.ComboBox;
 
-            if (presetSelection.SelectedIndex == -1) 
+            if (presetSelection.SelectedIndex == -1)
                 return;
 
-            Debug.WriteLine("New preset selected for compared to colors combo box, with index: {0}.",
-                presetSelection.SelectedIndex);
-            UserPreferences.UserPreferencesController.ActiveComparedToPalette = presetSelection.SelectedIndex;
+            Debug.WriteLine($"New preset selected for compared to colors combo box, with index: {presetSelection.SelectedIndex}.");
+            Settings.ConfigController.Config.ActiveComparedToPalettePreset = presetSelection.SelectedIndex;
             DisplayComparedToPlayerColors(presetSelection.SelectedIndex);
         }
 
@@ -292,7 +291,7 @@ namespace PlayerColorEditor
             }
 
             Debug.WriteLine("UI compared to player colors updated.");
-            UserPreferences.UserPreferencesController.SaveToDisk();
+            Settings.ConfigController.SaveToDisk();
         }
 
         /// <summary>
@@ -308,13 +307,13 @@ namespace PlayerColorEditor
             if (App.AllColorPalettePresets.Count <= toBeSetIndex)
             {
                 Debug.WriteLine("Index too big for comparison combo box, reseted to index 1");
-                UserPreferences.UserPreferencesController.ActiveComparedToPalette = 1;
+                Settings.ConfigController.Config.ActiveComparedToPalettePreset = 1;
                 DisplayComparedToColorChoices(1);
                 DisplayComparedToPlayerColors(1);
             }
             else
             {
-                UserPreferences.UserPreferencesController.ActiveComparedToPalette = toBeSetIndex;
+                Settings.ConfigController.Config.ActiveComparedToPalettePreset = toBeSetIndex;
                 DisplayComparedToColorChoices(toBeSetIndex);
                 DisplayComparedToPlayerColors(toBeSetIndex);
             }
@@ -342,15 +341,15 @@ namespace PlayerColorEditor
 
             if (browseFileResult == System.Windows.Forms.DialogResult.OK)
             {
-                UserPreferences.UserPreferencesController.PlayerColorPaletteLocation = findPaletteFolder.SelectedPath;
+                Settings.ConfigController.Config.PaletteFolderLocation = findPaletteFolder.SelectedPath;
                 Debug.WriteLine("Palette location changed. New palette location is:");
-                Debug.WriteLine(UserPreferences.UserPreferencesController.PlayerColorPaletteLocation);
+                Debug.WriteLine(Settings.ConfigController.Config.PaletteFolderLocation);
             }
 
             findPaletteFolder.Dispose();
 
             DisplayPaletteFolderLocation();
-            UserPreferences.UserPreferencesController.SaveToDisk();
+            Settings.ConfigController.SaveToDisk();
         }
 
         /// <summary>
@@ -388,8 +387,8 @@ namespace PlayerColorEditor
                 }
                 Debug.WriteLine("Newly selected color updated to the Vector3[] NewPlayerColors.");
 
-                UserPreferences.UserPreferencesController.ActivePlayerColorPalette = currentlyActivePresetIndex;
-                UserPreferences.UserPreferencesController.SaveToDisk();
+                Settings.ConfigController.Config.ActiveColorPalettePreset = currentlyActivePresetIndex;
+                Settings.ConfigController.SaveToDisk();
             }
             else
             {
@@ -577,8 +576,8 @@ namespace PlayerColorEditor
                 return;
 
             Debug.WriteLine($"{(EInterpolationStyles)colorSelection.SelectedIndex} interpolation style selected.");
-            UserPreferences.UserPreferencesController.ActiveInterpolationStyle = colorSelection.SelectedIndex;
-            UserPreferences.UserPreferencesController.SaveToDisk();
+            Settings.ConfigController.Config.ActiveInterpolationMode = colorSelection.SelectedIndex;
+            Settings.ConfigController.SaveToDisk();
         }
 
         private void UserControl_SizeChanged(object sender, SizeChangedEventArgs args)

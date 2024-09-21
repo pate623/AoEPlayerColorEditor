@@ -20,7 +20,7 @@ namespace PlayerColorEditor
     public partial class App : Application
     {
         // TODO Move these to a separate file called ProgramState.cs
-        public static EInterpolationStyles PlayerColorInterpolationStyle = EInterpolationStyles.Default;
+        public static EInterpolationStyles PlayerColorInterpolationStyle = EInterpolationStyles.Default; // TODO Move this to config?
         public static List<PalettesPreset.PalettePresetModel> AllColorPalettePresets = [];
 
         /// <summary>
@@ -34,13 +34,13 @@ namespace PlayerColorEditor
             mainWindow.Show();
             mainWindow.LocatePlayerColorBoxes();
             MainWindowsControls.WindowSizer.Initialize();
-            UserPreferences.UserPreferencesController.Initialize();
+            Settings.ConfigController.Initialize();
             PalettesPreset.PalettePresetController.Initialize();
             mainWindow.DisplayNewlySelectedColors();
             mainWindow.DisplayPaletteFolderLocation();
             mainWindow.DisplaySelectedInterpolationStyle();
-            mainWindow.DisplayColorPresetChoices(UserPreferences.UserPreferencesController.ActivePlayerColorPalette);
-            mainWindow.DisplayComparedToColorChoices(UserPreferences.UserPreferencesController.ActiveComparedToPalette);
+            mainWindow.DisplayColorPresetChoices(Settings.ConfigController.Config.ActiveColorPalettePreset);
+            mainWindow.DisplayComparedToColorChoices(Settings.ConfigController.Config.ActiveComparedToPalettePreset);
             mainWindow.ProgramBooted = true;
             Debug.WriteLine("Program booted successfully.");
         }

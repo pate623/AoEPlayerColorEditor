@@ -43,13 +43,13 @@ namespace PlayerColorEditor.GamePaletteFiles
         /// <returns>True if palette files were successfully created.</returns>
         public static bool WritePlayerColorToPaletteFiles(Vector3[] playerColors)
         {
-            if (Directory.Exists(UserPreferences.UserPreferencesController.PlayerColorPaletteLocation))
+            if (Directory.Exists(Settings.ConfigController.Config.PaletteFolderLocation))
             {
                 try
                 {
                     for (int i = 0; i < 8; i++)
                     {
-                        File.Delete(UserPreferences.UserPreferencesController.PlayerColorPaletteLocation + @"\" + PaletteNames[i]);
+                        File.Delete(Settings.ConfigController.Config.PaletteFolderLocation + @"\" + PaletteNames[i]);
                     }
                     Debug.WriteLine("Previous player colors palettes removed");
                 }
@@ -61,7 +61,7 @@ namespace PlayerColorEditor.GamePaletteFiles
             }
             else
             {
-                _ = Directory.CreateDirectory(UserPreferences.UserPreferencesController.PlayerColorPaletteLocation);
+                _ = Directory.CreateDirectory(Settings.ConfigController.Config.PaletteFolderLocation);
                 Debug.WriteLine("No player color palette folder found, new player color palette folder created.");
             }
 
@@ -145,7 +145,7 @@ namespace PlayerColorEditor.GamePaletteFiles
             textToWriteInPaletteFile += RGBColorSeperator;
             try
             {
-                File.WriteAllText(Path.Combine(UserPreferences.UserPreferencesController.PlayerColorPaletteLocation, paletteName), textToWriteInPaletteFile);
+                File.WriteAllText(Path.Combine(Settings.ConfigController.Config.PaletteFolderLocation, paletteName), textToWriteInPaletteFile);
                 return true;
             }
             catch (Exception ex)
