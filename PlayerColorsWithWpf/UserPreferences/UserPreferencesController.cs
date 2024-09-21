@@ -17,8 +17,8 @@ namespace PlayerColorEditor.UserPreferences
         private static readonly string UserPreferenceFileLocation = Path.Combine(Directory.GetCurrentDirectory(), "UserPreferences.json");
 
         /// <summary>
-        /// <br>Loads user preferences from disk to memory.</br>
-        /// <br>If no preferences are found creates the file with default settings.</br>
+        /// Loads user preferences from disk to memory.<br/>
+        /// If no preferences are found creates the file with default settings.<br/>
         /// </summary>
         public static void Initialize()
         {
@@ -64,8 +64,8 @@ namespace PlayerColorEditor.UserPreferences
         }
 
         /// <summary>
-        /// <br>Locates all the values to be saved.</br>
-        /// <br>Always overwrites the whole JSON regardless of how many actual values were changed.</br>
+        /// Locates all the values to be saved.<br/>
+        /// Always overwrites the whole JSON regardless of how many actual values were changed.<br/>
         /// </summary>
         public static void SaveToDisk()
         {
