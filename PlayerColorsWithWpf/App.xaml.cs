@@ -1,10 +1,12 @@
 ﻿// Ignore Spelling: App
 
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Windows;
 
 namespace PlayerColorEditor
 {
+    // TODO Figure out best place to store global enums
     public enum EInterpolationStyles
     {
         Default = 0,
@@ -17,6 +19,10 @@ namespace PlayerColorEditor
     /// </summary>
     public partial class App : Application
     {
+        // TODO Move these to a separate file called ProgramState.cs
+        public static EInterpolationStyles PlayerColorInterpolationStyle = EInterpolationStyles.Default;
+        public static List<PalettesPreset.PalettePresetModel> AllColorPalettePresets = [];
+
         /// <summary>
         /// Main function of this app.<br/>
         /// Initializes the Main windows and all other relevant tasks.<br/>
@@ -29,7 +35,7 @@ namespace PlayerColorEditor
             mainWindow.LocatePlayerColorBoxes();
             MainWindowsControls.WindowSizer.Initialize();
             UserPreferences.UserPreferencesController.Initialize();
-            Palettes.PaletteController.Initialize();
+            PalettesPreset.PalettePresetController.Initialize();
             mainWindow.DisplayNewlySelectedColors();
             mainWindow.DisplayPaletteFolderLocation();
             mainWindow.DisplaySelectedInterpolationStyle();

@@ -4,6 +4,8 @@ using System.Windows;
 
 namespace PlayerColorEditor.UserPreferences
 {
+    // TODO Completely rework this behavior and change this name to Config.
+
     /// <summary>
     /// User preferences are stored in a JSON file at the root of this program.
     /// </summary>

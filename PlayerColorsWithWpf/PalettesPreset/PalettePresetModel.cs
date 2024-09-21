@@ -1,12 +1,12 @@
 ﻿using System.Numerics;
 
-namespace PlayerColorEditor.Palettes
+namespace PlayerColorEditor.PalettesPreset
 {
     /// <summary>
-    /// <br>JSON coded "Player Color Palette Preset" object.</br>
-    /// <br>Player color Blue is index 0 and Teal is index 7</br>
+    /// JSON coded "Player Color Palette Preset" object.<br/>
+    /// Player color Blue is index 0 and Teal is index 7<br/>
     /// </summary>
-    public class PaletteModel(
+    public class PalettePresetModel(
         string name,
         Vector3 blue, Vector3 red, Vector3 yellow, Vector3 brown,
         Vector3 orange, Vector3 green, Vector3 purple, Vector3 teal)
