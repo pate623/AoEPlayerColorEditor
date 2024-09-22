@@ -1,6 +1,5 @@
 ﻿// Ignore Spelling: App
 
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Windows;
 
@@ -19,10 +18,6 @@ namespace PlayerColorEditor
     /// </summary>
     public partial class App : Application
     {
-        // TODO Move these to a separate file called ProgramState.cs
-        public static EInterpolationStyles PlayerColorInterpolationStyle = EInterpolationStyles.Default; // TODO Move this to config?
-        public static List<PalettesPreset.PalettePresetModel> AllColorPalettePresets = [];
-
         /// <summary>
         /// Main function of this app.<br/>
         /// Initializes the Main windows and all other relevant tasks.<br/>

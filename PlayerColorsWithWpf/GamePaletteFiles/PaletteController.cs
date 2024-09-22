@@ -102,7 +102,7 @@ namespace PlayerColorEditor.GamePaletteFiles
             {
                 for (int ineterpolateIndex = 0; ineterpolateIndex <= ColorInterpolationCount; ineterpolateIndex++)
                 {
-                    switch (App.PlayerColorInterpolationStyle)
+                    switch (Settings.ConfigController.Config.ActiveInterpolationMode)
                     {
                         case EInterpolationStyles.Default: // Same style as the games default interpolation.
                             Vector3 baseInterpolatedColor = InterpolateLinearly(playerColor, interpolateIntoColor, ineterpolateIndex);

@@ -95,7 +95,7 @@ namespace PlayerColorEditor
 
             presetsComboBox.Items.Clear();
 
-            foreach (PalettesPreset.PalettePresetModel currentColorPreset in App.AllColorPalettePresets)
+            foreach (var currentColorPreset in PalettesPreset.PalettePresetController.AllColorPalettePresets)
             {
                 _ = presetsComboBox.Items.Add(currentColorPreset.PresetName);
             }
@@ -114,7 +114,7 @@ namespace PlayerColorEditor
 
             presetsComboBox.Items.Clear();
 
-            foreach (var currentColorPreset in App.AllColorPalettePresets)
+            foreach (var currentColorPreset in PalettesPreset.PalettePresetController.AllColorPalettePresets)
             {
                 _ = presetsComboBox.Items.Add(currentColorPreset.PresetName);
             }
@@ -157,7 +157,7 @@ namespace PlayerColorEditor
         public void DisplaySelectedInterpolationStyle()
         {
             var colorSelection = FindName("ColorInterpolationSelection") as System.Windows.Controls.ComboBox;
-            colorSelection.SelectedIndex = Settings.ConfigController.Config.ActiveInterpolationMode;
+            colorSelection.SelectedIndex = (int)Settings.ConfigController.Config.ActiveInterpolationMode;
         }
 
         /// <summary>
@@ -264,6 +264,9 @@ namespace PlayerColorEditor
 
         private void ComparedToColors_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            if (!ProgramBooted)
+                return;
+
             var presetSelection = FindName("ComparedToColorSelection") as System.Windows.Controls.ComboBox;
 
             if (presetSelection.SelectedIndex == -1)
@@ -279,7 +282,7 @@ namespace PlayerColorEditor
         /// </summary>
         private void DisplayComparedToPlayerColors(int presetID)
         {
-            if (App.AllColorPalettePresets.Count <= presetID)
+            if (PalettesPreset.PalettePresetController.AllColorPalettePresets.Count <= presetID)
             {
                 Debug.WriteLine("Index for compared to colors is too big");
                 return;
@@ -288,9 +291,9 @@ namespace PlayerColorEditor
             for (int i = 0; i < CompraredToColorBoxes.Count; i++)
             {
                 CompraredToColorBoxes[i].Fill = new SolidColorBrush(Color.FromRgb(
-                    (byte)App.AllColorPalettePresets[presetID].GetPlayerColor(i).X,
-                    (byte)App.AllColorPalettePresets[presetID].GetPlayerColor(i).Y,
-                    (byte)App.AllColorPalettePresets[presetID].GetPlayerColor(i).Z));
+                    (byte)PalettesPreset.PalettePresetController.AllColorPalettePresets[presetID].GetPlayerColor(i).X,
+                    (byte)PalettesPreset.PalettePresetController.AllColorPalettePresets[presetID].GetPlayerColor(i).Y,
+                    (byte)PalettesPreset.PalettePresetController.AllColorPalettePresets[presetID].GetPlayerColor(i).Z));
             }
 
             Debug.WriteLine("UI compared to player colors updated.");
@@ -307,7 +310,7 @@ namespace PlayerColorEditor
             var presetSelection = FindName("ComparedToColorSelection") as System.Windows.Controls.ComboBox;
             int toBeSetIndex = presetSelection.SelectedIndex;
 
-            if (App.AllColorPalettePresets.Count <= toBeSetIndex)
+            if (PalettesPreset.PalettePresetController.AllColorPalettePresets.Count <= toBeSetIndex)
             {
                 Debug.WriteLine("Index too big for comparison combo box, reseted to index 1");
                 Settings.ConfigController.Config.ActiveComparedToPalettePreset = 1;
@@ -360,6 +363,9 @@ namespace PlayerColorEditor
         /// </summary>
         private void ColorPreset_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            if (!ProgramBooted)
+                return;
+
             var presetSelection = FindName("PresetSelection") as System.Windows.Controls.ComboBox;
 
             if (presetSelection.SelectedIndex == -1)
@@ -379,14 +385,14 @@ namespace PlayerColorEditor
         /// </summary>
         private void UpdateDataToSelectedPreseset(int currentlyActivePresetIndex)
         {
-            if (currentlyActivePresetIndex < App.AllColorPalettePresets.Count && currentlyActivePresetIndex >= 0)
+            if (currentlyActivePresetIndex < PalettesPreset.PalettePresetController.AllColorPalettePresets.Count && currentlyActivePresetIndex >= 0)
             {
                 for (int i = 0; i < CurrentlyActivePlayerColors.Length; i++)
                 {
                     CurrentlyActivePlayerColors[i] = new Vector3(
-                        App.AllColorPalettePresets[currentlyActivePresetIndex].GetPlayerColor(i).X,
-                        App.AllColorPalettePresets[currentlyActivePresetIndex].GetPlayerColor(i).Y,
-                        App.AllColorPalettePresets[currentlyActivePresetIndex].GetPlayerColor(i).Z);
+                        PalettesPreset.PalettePresetController.AllColorPalettePresets[currentlyActivePresetIndex].GetPlayerColor(i).X,
+                        PalettesPreset.PalettePresetController.AllColorPalettePresets[currentlyActivePresetIndex].GetPlayerColor(i).Y,
+                        PalettesPreset.PalettePresetController.AllColorPalettePresets[currentlyActivePresetIndex].GetPlayerColor(i).Z);
                 }
                 Debug.WriteLine("Newly selected color updated to the Vector3[] NewPlayerColors.");
 
@@ -396,7 +402,8 @@ namespace PlayerColorEditor
             else
             {
                 Debug.WriteLine("Failed to update player colors; given index was too big. "+ 
-                    $"Given index number was {currentlyActivePresetIndex} and the count of palette presets is {App.AllColorPalettePresets.Count}.");
+                    $"Given index number was {currentlyActivePresetIndex} " +
+                    $"and the count of palette presets is {PalettesPreset.PalettePresetController.AllColorPalettePresets.Count}.");
             }
 
             // If currently selected preset is one of the default presets then disable save and delete buttons.
@@ -420,7 +427,7 @@ namespace PlayerColorEditor
 
             for (int i = 0; i < PlayerColorBoxes.Count; i++)
             {
-                App.AllColorPalettePresets[currentPreset].SetPlayerColor(CurrentlyActivePlayerColors[i], i);
+                PalettesPreset.PalettePresetController.AllColorPalettePresets[currentPreset].SetPlayerColor(CurrentlyActivePlayerColors[i], i);
             }
 
             PalettesPreset.PalettePresetController.SavePalettePresetsToDisk();
@@ -441,7 +448,7 @@ namespace PlayerColorEditor
 
             var currentlySelectedPreset = FindName("PresetSelection") as System.Windows.Controls.ComboBox;
             var newPresetName = FindName("NewPresetName") as System.Windows.Controls.TextBox;
-            newPresetName.Text = App.AllColorPalettePresets[currentlySelectedPreset.SelectedIndex].PresetName;
+            newPresetName.Text = PalettesPreset.PalettePresetController.AllColorPalettePresets[currentlySelectedPreset.SelectedIndex].PresetName;
 
             Debug.WriteLine("Save preset as pop up opened.");
         }
@@ -479,13 +486,13 @@ namespace PlayerColorEditor
                 purple: CurrentlyActivePlayerColors[6],
                 teal: CurrentlyActivePlayerColors[7]);
 
-            App.AllColorPalettePresets.Add(newPreset);
+            PalettesPreset.PalettePresetController.AllColorPalettePresets.Add(newPreset);
 
             PalettesPreset.PalettePresetController.SavePalettePresetsToDisk();
             Debug.WriteLine("Created new palette preset.");
 
             // Update UI to reflect all changes.
-            DisplayColorPresetChoices(App.AllColorPalettePresets.Count - 1);
+            DisplayColorPresetChoices(PalettesPreset.PalettePresetController.AllColorPalettePresets.Count - 1);
 
             var presetDropdown = FindName("PresetSelection") as System.Windows.Controls.ComboBox;
             presetDropdown.IsEnabled = true;
@@ -538,7 +545,7 @@ namespace PlayerColorEditor
             presetDropdown.IsEnabled = true;
 
             var presetSelection = FindName("PresetSelection") as System.Windows.Controls.ComboBox;
-            App.AllColorPalettePresets.RemoveAt(presetSelection.SelectedIndex);
+            PalettesPreset.PalettePresetController.AllColorPalettePresets.RemoveAt(presetSelection.SelectedIndex);
 
             PalettesPreset.PalettePresetController.SavePalettePresetsToDisk();
             Debug.WriteLine("Player color preset deleted.");
@@ -568,28 +575,32 @@ namespace PlayerColorEditor
 
         private void ColorInterpolation_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            if (!ProgramBooted)
+                return;
+
             var colorSelection = FindName("ColorInterpolationSelection") as System.Windows.Controls.ComboBox;
 
             if (colorSelection.SelectedIndex == -1)
                 return;
 
-            App.PlayerColorInterpolationStyle = (EInterpolationStyles)colorSelection.SelectedIndex;
-
-            if (!ProgramBooted)
-                return;
-
             Debug.WriteLine($"{(EInterpolationStyles)colorSelection.SelectedIndex} interpolation style selected.");
-            Settings.ConfigController.Config.ActiveInterpolationMode = colorSelection.SelectedIndex;
+            Settings.ConfigController.Config.ActiveInterpolationMode = (EInterpolationStyles)colorSelection.SelectedIndex;
             Settings.ConfigController.SaveToDisk();
         }
 
         private void UserControl_SizeChanged(object sender, SizeChangedEventArgs args)
         {
+            if (!ProgramBooted)
+                return;
+
             MainWindowsControls.WindowSizer.UserChangedWindowSize();
         }
 
         private void Window_LocationChanged(object sender, EventArgs e)
         {
+            if (!ProgramBooted)
+                return;
+
             MainWindowsControls.WindowSizer.UserChangedWindowSize();
         }
 #pragma warning restore CS8602
