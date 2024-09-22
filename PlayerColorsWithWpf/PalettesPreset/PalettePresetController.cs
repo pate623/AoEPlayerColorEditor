@@ -43,7 +43,7 @@ namespace PlayerColorEditor.PalettesPreset
         /// </summary>
         public static async void SavePalettePresetsToDisk()
         {
-            var options = new JsonSerializerOptions { WriteIndented = true };
+            JsonSerializerOptions options = new() { WriteIndented = true };
 
             string jsonTextToWriteInTheFile = "";
 

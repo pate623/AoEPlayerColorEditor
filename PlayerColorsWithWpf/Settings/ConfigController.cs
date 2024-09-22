@@ -9,11 +9,8 @@ namespace PlayerColorEditor.Settings
     /// </summary>
     public static class ConfigController
     {
-        // TODO move this declaration to somewhere else
-        private static readonly string DefaultPaletteFolderLocation = Path.Combine(Directory.GetCurrentDirectory(), "Palettes");
-
         public static ConfigModel Config { get; private set; } = new(
-            paletteLocation: DefaultPaletteFolderLocation, 
+            null,
             activeColorPalette: 0,
             activeComparedToPalette: 1,
             activeInterpolationMode: 0);
@@ -38,16 +35,15 @@ namespace PlayerColorEditor.Settings
             else
             {
                 Debug.WriteLine("No Config file found, creating default Config.");
-                Config.WindowsWidth = (int)MainWindowsControls.WindowSizer.DefaultWidth;
-                Config.WindowsHeight = (int)MainWindowsControls.WindowSizer.DefaultHeight;
-                Config.WindowsLeft = (int)MainWindowsControls.WindowSizer.DefaultLeft;
-                Config.WindowsTop = (int)MainWindowsControls.WindowSizer.DefaultTop;
+                Config.WindowsWidth = DefaultValues.MainWindowsWidth;
+                Config.WindowsHeight = DefaultValues.MainWindowsHeight;
+                Config.WindowsLeft = DefaultValues.MainWindowsLeft;
+                Config.WindowsTop = DefaultValues.MainWindowsTop;
 
                 Debug.WriteLine("New Config file created.");
             }
 
-            // TODO move this to somewhere else
-            SetMainWindowStartingLocation();
+            UpdateMainWindowLocationAndSize();
         }
 
         /// <summary>
@@ -61,13 +57,13 @@ namespace PlayerColorEditor.Settings
             Debug.WriteLine("User preferences saved.");
         }
 
-        private static void SetMainWindowStartingLocation()
+        // TODO move this to somewhere else?
+        private static void UpdateMainWindowLocationAndSize()
         {
             Application.Current.MainWindow.Width = Config.WindowsWidth;
             Application.Current.MainWindow.Height = Config.WindowsHeight;
             Application.Current.MainWindow.Left = Config.WindowsLeft;
             Application.Current.MainWindow.Top = Config.WindowsTop;
-
         }
     }
 }

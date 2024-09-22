@@ -33,6 +33,9 @@ namespace PlayerColorEditor
             @"E:\SteamLibrary\steamapps\common\AoEDE\Assets\Palettes",
             @"F:\SteamLibrary\steamapps\common\AoEDE\Assets\Palettes"];
 
+        /// <summary>
+        /// These are the player colors which Are currently being edited.
+        /// </summary>
         private readonly Vector3[] CurrentlyActivePlayerColors = [
             new(15, 70, 245),
             new(220, 35, 35),

@@ -4,7 +4,7 @@
     /// JSON coded Configuration object.
     /// </summary>
     public class ConfigModel(
-        string paletteLocation, 
+        string? paletteLocation,
         int activeColorPalette, 
         int activeComparedToPalette,
         int activeInterpolationMode,
@@ -13,7 +13,7 @@
         int windowsLeft = 0 ,
         int windowsTop = 0)
     {
-        public string PaletteFolderLocation { get; set; } = paletteLocation; // TODO Allow this to be null, so the default folder location won't get saved to disk
+        public string? PaletteFolderLocation { get; set; } = paletteLocation;
         public int ActiveColorPalettePreset { get; set; } = activeColorPalette;
         public int ActiveComparedToPalettePreset { get; set; } = activeComparedToPalette;
         public int ActiveInterpolationMode { get; set; } = activeInterpolationMode;

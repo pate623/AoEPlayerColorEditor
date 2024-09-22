@@ -8,8 +8,14 @@ namespace PlayerColorEditor.PalettesPreset
     /// </summary>
     public class PalettePresetModel(
         string name,
-        Vector3 blue, Vector3 red, Vector3 yellow, Vector3 brown,
-        Vector3 orange, Vector3 green, Vector3 purple, Vector3 teal)
+        Vector3 blue, 
+        Vector3 red, 
+        Vector3 yellow, 
+        Vector3 brown,
+        Vector3 orange, 
+        Vector3 green,
+        Vector3 purple, 
+        Vector3 teal)
     {
         public string PresetName { get; set; } = name;
 
@@ -38,7 +44,6 @@ namespace PlayerColorEditor.PalettesPreset
                 case 3:
                     BrownPlayerColor = [(int)playerColor.X, (int)playerColor.Y, (int)playerColor.Z];
                     break;
-
                 case 4:
                     OrangePlayerColor = [(int)playerColor.X, (int)playerColor.Y, (int)playerColor.Z];
                     break;

@@ -11,12 +11,6 @@ namespace PlayerColorEditor.MainWindowsControls
     /// </summary>
     public static class WindowSizer
     {
-        // TODO Move these public values to a separate file called ProgramState.cs
-        public static double DefaultLeft { get; private set; }
-        public static double DefaultTop { get; private set; }
-        public static double DefaultWidth { get; private set; }
-        public static double DefaultHeight { get; private set; }
-
         private static double WidthRatio;
         private static double HeightRatio;
 
@@ -29,19 +23,10 @@ namespace PlayerColorEditor.MainWindowsControls
         /// </summary>
         public static void Initialize()
         {
-            DefaultWidth = Application.Current.MainWindow.MinWidth;
-            DefaultHeight = Application.Current.MainWindow.MinHeight;
+            WidthRatio = (double)Settings.DefaultValues.MainWindowsWidth / Settings.DefaultValues.MainWindowsHeight;
+            HeightRatio = (double)Settings.DefaultValues.MainWindowsHeight / Settings.DefaultValues.MainWindowsWidth;
 
-            DefaultLeft = Application.Current.MainWindow.Left;
-            DefaultTop = Application.Current.MainWindow.Top;
-
-            WidthRatio = DefaultWidth / DefaultHeight;
-            HeightRatio = DefaultHeight / DefaultWidth;
-
-            Debug.WriteLine($"Windows sizer initializer with: " +
-                $"WidthRatio {WidthRatio}, HeightRatio {HeightRatio} " +
-                $"DefaultWidth {DefaultWidth}, DefaultHeight {DefaultHeight} " +
-                $"DefaultLeft {DefaultLeft}, DefaultTop {DefaultTop}");
+            Debug.WriteLine($"Windows sizer initializer with: WidthRatio {WidthRatio}, HeightRatio {HeightRatio}");
         }
 
         /// <summary>
@@ -52,19 +37,17 @@ namespace PlayerColorEditor.MainWindowsControls
             double currenWidth = Application.Current.MainWindow.Width;
             double currentHeight = Application.Current.MainWindow.Height;
 
-            if (currenWidth * DefaultWidth > currentHeight * DefaultHeight)
-            {
-                Application.Current.MainWindow.Width = currenWidth;
-                Application.Current.MainWindow.Height = currenWidth * HeightRatio;
-            }
-            else
-            {
-                Application.Current.MainWindow.Height = currentHeight;
-                Application.Current.MainWindow.Width = currentHeight * WidthRatio;
-            }
-            
-            DefaultLeft = Application.Current.MainWindow.Left;
-            DefaultTop = Application.Current.MainWindow.Top;
+            bool useCurrentWidth = currenWidth * Settings.DefaultValues.MainWindowsWidth > currentHeight * Settings.DefaultValues.MainWindowsHeight;
+            double newWidth = useCurrentWidth ? currenWidth : currentHeight * WidthRatio;
+            double newHeight = useCurrentWidth ? currenWidth * HeightRatio : currentHeight;
+
+            Application.Current.MainWindow.Width = newWidth;
+            Application.Current.MainWindow.Height = newHeight;
+
+            Settings.ConfigController.Config.WindowsWidth = (int)newWidth;
+            Settings.ConfigController.Config.WindowsHeight = (int)newHeight;
+            Settings.ConfigController.Config.WindowsTop = (int)Application.Current.MainWindow.Top;
+            Settings.ConfigController.Config.WindowsLeft = (int)Application.Current.MainWindow.Left;
 
             if (saveDelayTimerIsRunning)
             {

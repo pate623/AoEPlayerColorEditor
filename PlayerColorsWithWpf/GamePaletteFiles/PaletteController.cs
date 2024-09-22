@@ -61,7 +61,7 @@ namespace PlayerColorEditor.GamePaletteFiles
             }
             else
             {
-                _ = Directory.CreateDirectory(Settings.ConfigController.Config.PaletteFolderLocation);
+                _ = Directory.CreateDirectory(Settings.ConfigController.Config.PaletteFolderLocation ?? Settings.DefaultValues.PaletteFolderLocation);
                 Debug.WriteLine("No player color palette folder found, new player color palette folder created.");
             }
 
@@ -145,7 +145,8 @@ namespace PlayerColorEditor.GamePaletteFiles
             textToWriteInPaletteFile += RGBColorSeperator;
             try
             {
-                File.WriteAllText(Path.Combine(Settings.ConfigController.Config.PaletteFolderLocation, paletteName), textToWriteInPaletteFile);
+                string paletteFolderLocation = Settings.ConfigController.Config.PaletteFolderLocation ?? Settings.DefaultValues.PaletteFolderLocation;
+                File.WriteAllText(Path.Combine(paletteFolderLocation, paletteName), textToWriteInPaletteFile);
                 return true;
             }
             catch (Exception ex)
