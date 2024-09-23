@@ -31,11 +31,12 @@ namespace PlayerColorEditor
             MainWindowsControls.WindowSizer.Initialize();
             Settings.ConfigController.Initialize();
             PalettesPreset.PalettePresetController.Initialize();
-            mainWindow.DisplayNewlySelectedColors();
             mainWindow.DisplayPaletteFolderLocation();
             mainWindow.DisplaySelectedInterpolationStyle();
             mainWindow.DisplayColorPresetChoices(Settings.ConfigController.Config.ActiveColorPalettePreset);
             mainWindow.DisplayComparedToColorChoices(Settings.ConfigController.Config.ActiveComparedToPalettePreset);
+            mainWindow.UpdateDataToSelectedPreset(Settings.ConfigController.Config.ActiveColorPalettePreset);
+            mainWindow.DisplayNewlySelectedColors();
             mainWindow.ProgramBooted = true;
             Debug.WriteLine("Program booted successfully.");
         }

@@ -23,18 +23,10 @@ namespace PlayerColorEditor
         private readonly List<Rectangle> PlayerColorBoxes = [];
         private readonly List<Rectangle> CompraredToColorBoxes = [];
 
-        private readonly string[] PaletteFolderDefaultLocations = [
-            @"C:\Program Files (x86)\Steam\steamapps\common\AoEDE\Assets\Palettes",
-            @"C:\SteamLibrary\steamapps\common\AoEDE\Assets\Palettes",
-            @"D:\SteamLibrary\steamapps\common\AoEDE\Assets\Palettes",
-            @"E:\SteamLibrary\steamapps\common\AoEDE\Assets\Palettes",
-            @"F:\SteamLibrary\steamapps\common\AoEDE\Assets\Palettes"];
-
         /// <summary>
         /// These are the player colors which Are currently being edited.
         /// </summary>
         private readonly Vector3[] CurrentlyActivePlayerColors = new Vector3[8];
-        // TODO These colors need to be updated on boot.
 
         public MainWindow()
         {
@@ -148,6 +140,47 @@ namespace PlayerColorEditor
         {
             var colorSelection = FindName("ColorInterpolationSelection") as System.Windows.Controls.ComboBox;
             colorSelection.SelectedIndex = (int)Settings.ConfigController.Config.ActiveInterpolationMode;
+        }
+
+        /// <summary>
+        /// <para>Used to load the color preset after it has been selected from the Combo Box.</para>
+        /// Updates both; the UI and the code.<br/>
+        /// In UI disables/enables "save" and "delete" preset buttons depending Whether if the currently selected preset is one of the default presets.<br/>
+        /// One the code side; loads the color presets colors into <see cref="CurrentlyActivePlayerColors"/><br/>
+        /// Updates user preferences.<br/>
+        /// </summary>
+        public void UpdateDataToSelectedPreset(int currentlyActivePresetIndex)
+        {
+            if (currentlyActivePresetIndex < PalettesPreset.PalettePresetController.AllColorPalettePresets.Count && currentlyActivePresetIndex >= 0)
+            {
+                for (int i = 0; i < CurrentlyActivePlayerColors.Length; i++)
+                {
+                    CurrentlyActivePlayerColors[i] = new Vector3(
+                        PalettesPreset.PalettePresetController.AllColorPalettePresets[currentlyActivePresetIndex].GetPlayerColor(i).X,
+                        PalettesPreset.PalettePresetController.AllColorPalettePresets[currentlyActivePresetIndex].GetPlayerColor(i).Y,
+                        PalettesPreset.PalettePresetController.AllColorPalettePresets[currentlyActivePresetIndex].GetPlayerColor(i).Z);
+                }
+                Debug.WriteLine($"Newly selected color {currentlyActivePresetIndex} updated to the Vector3[] NewPlayerColors.");
+
+                Settings.ConfigController.Config.ActiveColorPalettePreset = currentlyActivePresetIndex;
+                Settings.ConfigController.SaveToDisk();
+            }
+            else
+            {
+                Debug.WriteLine("Failed to update player colors; given index was too big. " +
+                    $"Given index number was {currentlyActivePresetIndex} " +
+                    $"and the count of palette presets is {PalettesPreset.PalettePresetController.AllColorPalettePresets.Count}.");
+            }
+
+            // If currently selected preset is one of the default presets then disable save and delete buttons.
+            // Makes sure this doesn't get executed before all window elements are loaded.
+            if (FindName("SavePreset") is System.Windows.Controls.Button savePresetButton)
+            {
+                savePresetButton.IsEnabled = currentlyActivePresetIndex >= Settings.DefaultValues.CountOfUnchangeableColorPresets;
+
+                var deletePresetButton = FindName("DeletePreset") as System.Windows.Controls.Button;
+                deletePresetButton.IsEnabled = currentlyActivePresetIndex >= Settings.DefaultValues.CountOfUnchangeableColorPresets;
+            }
         }
 
         /// <summary>
@@ -323,11 +356,11 @@ namespace PlayerColorEditor
         {
             FolderBrowserDialog findPaletteFolder = new();
 
-            for (int i = 0; i < PaletteFolderDefaultLocations.Length; i++)
+            for (int i = 0; i < Settings.DefaultValues.ExpectedPaletteFolderLocations.Length; i++)
             {
-                if (Directory.Exists(PaletteFolderDefaultLocations[i]))
+                if (Directory.Exists(Settings.DefaultValues.ExpectedPaletteFolderLocations[i]))
                 {
-                    findPaletteFolder.SelectedPath = PaletteFolderDefaultLocations[i];
+                    findPaletteFolder.SelectedPath = Settings.DefaultValues.ExpectedPaletteFolderLocations[i];
                     Debug.WriteLine("Palette location found automatically.");
                     break;
                 }
@@ -362,49 +395,8 @@ namespace PlayerColorEditor
                 return;
             
             Debug.WriteLine($"New preset selected from combo box with index {presetSelection.SelectedIndex}");
-            UpdateDataToSelectedPreseset(presetSelection.SelectedIndex);
+            UpdateDataToSelectedPreset(presetSelection.SelectedIndex);
             DisplayNewlySelectedColors();
-        }
-
-        /// <summary>
-        /// <para>Used to load the color preset after it has been selected from the Combo Box.</para>
-        /// Updates both; the UI and the code.<br/>
-        /// In UI disables/enables "save" and "delete" preset buttons depending Whether if the currently selected preset is one of the default presets.<br/>
-        /// One the code side; loads the color presets colors into <see cref="CurrentlyActivePlayerColors"/><br/>
-        /// Updates user preferences.<br/>
-        /// </summary>
-        private void UpdateDataToSelectedPreseset(int currentlyActivePresetIndex)
-        {
-            if (currentlyActivePresetIndex < PalettesPreset.PalettePresetController.AllColorPalettePresets.Count && currentlyActivePresetIndex >= 0)
-            {
-                for (int i = 0; i < CurrentlyActivePlayerColors.Length; i++)
-                {
-                    CurrentlyActivePlayerColors[i] = new Vector3(
-                        PalettesPreset.PalettePresetController.AllColorPalettePresets[currentlyActivePresetIndex].GetPlayerColor(i).X,
-                        PalettesPreset.PalettePresetController.AllColorPalettePresets[currentlyActivePresetIndex].GetPlayerColor(i).Y,
-                        PalettesPreset.PalettePresetController.AllColorPalettePresets[currentlyActivePresetIndex].GetPlayerColor(i).Z);
-                }
-                Debug.WriteLine("Newly selected color updated to the Vector3[] NewPlayerColors.");
-
-                Settings.ConfigController.Config.ActiveColorPalettePreset = currentlyActivePresetIndex;
-                Settings.ConfigController.SaveToDisk();
-            }
-            else
-            {
-                Debug.WriteLine("Failed to update player colors; given index was too big. "+ 
-                    $"Given index number was {currentlyActivePresetIndex} " +
-                    $"and the count of palette presets is {PalettesPreset.PalettePresetController.AllColorPalettePresets.Count}.");
-            }
-
-            // If currently selected preset is one of the default presets then disable save and delete buttons.
-            // Makes sure this doesn't get executed before all window elements are loaded.
-            if (FindName("SavePreset") is System.Windows.Controls.Button savePresetButton)
-            {
-                savePresetButton.IsEnabled = currentlyActivePresetIndex >= Settings.DefaultValues.CountOfUnchangeableColorPresets;
-
-                var deletePresetButton = FindName("DeletePreset") as System.Windows.Controls.Button;
-                deletePresetButton.IsEnabled = currentlyActivePresetIndex >= Settings.DefaultValues.CountOfUnchangeableColorPresets;
-            }
         }
 
         /// <summary>

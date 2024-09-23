@@ -9,6 +9,13 @@ namespace PlayerColorEditor.Settings
         public static string ConfigurationFileLocation { get { return Path.Combine(Directory.GetCurrentDirectory(), "UserPreferences.json"); } }
         public static string PalettePresetFileLocation { get { return Path.Combine(Directory.GetCurrentDirectory(), "PlayerColorPresets.json"); } }
 
+        public static string[] ExpectedPaletteFolderLocations => [
+            @"C:\Program Files (x86)\Steam\steamapps\common\AoEDE\Assets\Palettes",
+            @"C:\SteamLibrary\steamapps\common\AoEDE\Assets\Palettes",
+            @"D:\SteamLibrary\steamapps\common\AoEDE\Assets\Palettes",
+            @"E:\SteamLibrary\steamapps\common\AoEDE\Assets\Palettes",
+            @"F:\SteamLibrary\steamapps\common\AoEDE\Assets\Palettes"];
+
         public static int MainWindowsWidth { get { return 355; } }
         public static int MainWindowsHeight { get { return 595; } }
         public static int MainWindowsLeft { get { return 120; } }
