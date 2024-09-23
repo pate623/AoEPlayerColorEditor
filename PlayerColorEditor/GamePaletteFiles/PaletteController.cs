@@ -47,7 +47,7 @@ namespace PlayerColorEditor.GamePaletteFiles
             {
                 try
                 {
-                    for (int i = 0; i < 8; i++)
+                    for (int i = 0; i < PaletteNames.Length; i++)
                     {
                         File.Delete(Settings.ConfigController.Config.PaletteFolderLocation + @"\" + PaletteNames[i]);
                     }
@@ -65,7 +65,7 @@ namespace PlayerColorEditor.GamePaletteFiles
                 Debug.WriteLine("No player color palette folder found, new player color palette folder created.");
             }
 
-            for (int i = 0; i < 8; i++)
+            for (int i = 0; i < PaletteNames.Length; i++)
             {
                 if (!CreatePlayerColorPalette(playerColors[i], PaletteNames[i]))
                 {

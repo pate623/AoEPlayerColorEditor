@@ -67,11 +67,11 @@ namespace PlayerColorEditor.MainWindowsControls
         /// </summary>
         private static async void DelayedConfigSaving()
         {
-            await Task.Delay(200);
+            await Task.Delay(Settings.DefaultValues.DelayedConfigSaveTimer);
             while (KeepDelayingConfigSaving)
             {
                 KeepDelayingConfigSaving = false;
-                await Task.Delay(400);
+                await Task.Delay(Settings.DefaultValues.DelayedConfigSaveTimer);
             }
 
             saveDelayTimerIsRunning = false;

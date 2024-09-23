@@ -16,7 +16,7 @@ namespace PlayerColorEditor.Settings
             activeInterpolationMode: DefaultValues.ActiveInterpolationMode);
 
         // Uses UserPreferences.json name for backwards compatibility
-        private static readonly FileInfo ConfigFile = new(Path.Combine(Directory.GetCurrentDirectory(), "UserPreferences.json"));
+        private static readonly FileInfo ConfigFile = new(DefaultValues.ConfigurationFileLocation);
 
         /// <summary>
         /// Loads user preferences from disk to memory.<br/>
@@ -54,7 +54,7 @@ namespace PlayerColorEditor.Settings
         {
             // TODO Create the delayed saving here.
             File.WriteAllText(ConfigFile.FullName, System.Text.Json.JsonSerializer.Serialize(Config));
-            Debug.WriteLine("User preferences saved.");
+            Debug.WriteLine("Config saved to disk.");
         }
 
         // TODO move this to somewhere else?

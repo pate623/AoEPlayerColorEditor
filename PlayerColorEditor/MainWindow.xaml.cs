@@ -162,7 +162,7 @@ namespace PlayerColorEditor
         private void PrintToConsole(string textToBeAdded, Color? textColor = null)
         {
             // Optional parameter has to be constant, have to declare default text color value here.
-            textColor = textColor == null ? Settings.DefaultValues.ConsoleTextBaseColor : textColor;
+            textColor = textColor == null ? Settings.DefaultValues.ConsoleTextBase : textColor;
 
             var newText = new Run(textToBeAdded + "\n")
             {
@@ -422,7 +422,7 @@ namespace PlayerColorEditor
 
             PalettesPreset.PalettePresetController.SavePalettePresetsToDisk();
             ApplyPickedComparedToColors();
-            PrintToConsole("Saved palette preset", Settings.DefaultValues.ConsoleTextRemovalColor);
+            PrintToConsole("Saved palette preset", Settings.DefaultValues.ConsoleTextSmallDetail);
         }
 
         /// <summary>
@@ -491,7 +491,7 @@ namespace PlayerColorEditor
             presetNameBox.Visibility = Visibility.Collapsed;
 
             ApplyPickedComparedToColors();
-            PrintToConsole("Created new palette preset", Settings.DefaultValues.ConsoleTextRemovalColor);
+            PrintToConsole("Created new palette preset", Settings.DefaultValues.ConsoleTextSmallDetail);
         }
 
         /// <summary>
@@ -541,10 +541,10 @@ namespace PlayerColorEditor
             Debug.WriteLine("Player color preset deleted.");
 
             // Update UI to reflect all changes.
-            DisplayColorPresetChoices(0);
+            DisplayColorPresetChoices(Settings.DefaultValues.ActivePaletteDropDownSelection);
             DisplayNewlySelectedColors();
             ApplyPickedComparedToColors();
-            PrintToConsole("Deleted palette preset", Color.FromRgb(190, 20, 20));
+            PrintToConsole("Deleted palette preset", Settings.DefaultValues.ConsoleTextRemoval);
         }
 
         /// <summary>
@@ -555,11 +555,11 @@ namespace PlayerColorEditor
         {
             if (GamePaletteFiles.PaletteController.WritePlayerColorToPaletteFiles(CurrentlyActivePlayerColors))
             {
-                PrintToConsole("Created the color palettes", Color.FromRgb(0, 102, 221));
+                PrintToConsole("Created the color palettes", Settings.DefaultValues.ConsoleTextAdding);
             }
             else
             {
-                PrintToConsole("Failed to create color palettes", Color.FromRgb(255, 0, 0));
+                PrintToConsole("Failed to create color palettes", Settings.DefaultValues.ConsoleTextError);
             }
         }
 

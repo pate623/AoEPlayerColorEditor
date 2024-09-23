@@ -18,7 +18,7 @@ namespace PlayerColorEditor.PalettesPreset
     {
         public static List<PalettePresetModel> AllColorPalettePresets { get; private set; } = [];
 
-        private static readonly string PlayerColorPresetFileLocation = Path.Combine(Directory.GetCurrentDirectory(), "PlayerColorPresets.json");
+        private static readonly string PlayerColorPresetFileLocation = Settings.DefaultValues.PalettePresetFileLocation;
 
         /// <summary>
         /// Loads palette presets from JSON file into memory.<br/>
