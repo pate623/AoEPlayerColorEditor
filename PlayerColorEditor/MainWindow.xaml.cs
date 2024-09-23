@@ -18,10 +18,7 @@ namespace PlayerColorEditor
         /// Some UI element trigger selection changes on load.<br/>
         /// These triggers can cause the boot order to change which can cause this program to crash.<br/>
         /// </summary>
-        public bool ProgramBooted = false;
-
-        private const int CountOfUnchangeableColorPresets = 2;
-        private const int MaxLineCountInConsole = 5;
+        public bool ProgramBooted { get; set; } = false;
 
         private readonly List<Rectangle> PlayerColorBoxes = [];
         private readonly List<Rectangle> CompraredToColorBoxes = [];
@@ -36,15 +33,8 @@ namespace PlayerColorEditor
         /// <summary>
         /// These are the player colors which Are currently being edited.
         /// </summary>
-        private readonly Vector3[] CurrentlyActivePlayerColors = [
-            new(15, 70, 245),
-            new(220, 35, 35),
-            new(215, 215, 30),
-            new(115, 60, 0),
-            new(245, 135, 25),
-            new(4, 165, 20),
-            new(245, 95, 240),
-            new(65, 245, 230)];
+        private readonly Vector3[] CurrentlyActivePlayerColors = new Vector3[8];
+        // TODO These colors need to be updated on boot.
 
         public MainWindow()
         {
@@ -166,13 +156,13 @@ namespace PlayerColorEditor
         /// <para><br/>
         /// Get old text from the console, add it to a list, then insert the "textToBeAdded" parameter to that list at index 0.<br/>
         /// Clear the console window and then add all the lines from the list to it, whilst making sure the row count doesn't  exceed 
-        /// <see cref="MaxLineCountInConsole"/>.
+        /// <see cref="Settings.DefaultValues.MaxLineCountInConsole"/>.
         /// </para>
         /// </summary>
         private void PrintToConsole(string textToBeAdded, Color? textColor = null)
         {
             // Optional parameter has to be constant, have to declare default text color value here.
-            textColor = textColor == null ? Color.FromRgb(0, 0, 0) : textColor;
+            textColor = textColor == null ? Settings.DefaultValues.ConsoleTextBaseColor : textColor;
 
             var newText = new Run(textToBeAdded + "\n")
             {
@@ -186,7 +176,7 @@ namespace PlayerColorEditor
 
             customConsole.Inlines.Clear();
 
-            for (int i = 0; i < newConsoleText.Count && i < MaxLineCountInConsole; i++)
+            for (int i = 0; i < newConsoleText.Count && i < Settings.DefaultValues.MaxLineCountInConsole; i++)
             {
                 customConsole.Inlines.Add(newConsoleText[i]);
             }
@@ -313,9 +303,9 @@ namespace PlayerColorEditor
             if (PalettesPreset.PalettePresetController.AllColorPalettePresets.Count <= toBeSetIndex)
             {
                 Debug.WriteLine("Index too big for comparison combo box, reseted to index 1");
-                Settings.ConfigController.Config.ActiveComparedToPalettePreset = 1;
-                DisplayComparedToColorChoices(1);
-                DisplayComparedToPlayerColors(1);
+                Settings.ConfigController.Config.ActiveComparedToPalettePreset = Settings.DefaultValues.ComparedToPaletteDropDownSelection;
+                DisplayComparedToColorChoices(Settings.DefaultValues.ComparedToPaletteDropDownSelection);
+                DisplayComparedToPlayerColors(Settings.DefaultValues.ComparedToPaletteDropDownSelection);
             }
             else
             {
@@ -371,7 +361,7 @@ namespace PlayerColorEditor
             if (presetSelection.SelectedIndex == -1)
                 return;
             
-            Debug.WriteLine("New preset selected from combo box with index: {0}.", presetSelection.SelectedIndex);
+            Debug.WriteLine($"New preset selected from combo box with index {presetSelection.SelectedIndex}");
             UpdateDataToSelectedPreseset(presetSelection.SelectedIndex);
             DisplayNewlySelectedColors();
         }
@@ -410,10 +400,10 @@ namespace PlayerColorEditor
             // Makes sure this doesn't get executed before all window elements are loaded.
             if (FindName("SavePreset") is System.Windows.Controls.Button savePresetButton)
             {
-                savePresetButton.IsEnabled = currentlyActivePresetIndex >= CountOfUnchangeableColorPresets;
+                savePresetButton.IsEnabled = currentlyActivePresetIndex >= Settings.DefaultValues.CountOfUnchangeableColorPresets;
 
                 var deletePresetButton = FindName("DeletePreset") as System.Windows.Controls.Button;
-                deletePresetButton.IsEnabled = currentlyActivePresetIndex >= CountOfUnchangeableColorPresets;
+                deletePresetButton.IsEnabled = currentlyActivePresetIndex >= Settings.DefaultValues.CountOfUnchangeableColorPresets;
             }
         }
 
@@ -432,7 +422,7 @@ namespace PlayerColorEditor
 
             PalettesPreset.PalettePresetController.SavePalettePresetsToDisk();
             ApplyPickedComparedToColors();
-            PrintToConsole("Saved palette preset", Color.FromRgb(50, 50, 50));
+            PrintToConsole("Saved palette preset", Settings.DefaultValues.ConsoleTextRemovalColor);
         }
 
         /// <summary>
@@ -501,7 +491,7 @@ namespace PlayerColorEditor
             presetNameBox.Visibility = Visibility.Collapsed;
 
             ApplyPickedComparedToColors();
-            PrintToConsole("Created new palette preset", Color.FromRgb(50, 50, 50));
+            PrintToConsole("Created new palette preset", Settings.DefaultValues.ConsoleTextRemovalColor);
         }
 
         /// <summary>

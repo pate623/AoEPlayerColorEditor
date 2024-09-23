@@ -1,4 +1,5 @@
 using System.IO;
+using System.Windows.Media;
 
 namespace PlayerColorEditor.Settings
 {
@@ -6,11 +7,21 @@ namespace PlayerColorEditor.Settings
     {
         public static string PaletteFolderLocation { get { return Path.Combine(Directory.GetCurrentDirectory(), "Palettes"); } }
 
-        // TODO Find a way to get these values from MainWindow.xaml file.
         public static int MainWindowsWidth { get { return 355; } }
         public static int MainWindowsHeight { get { return 595; } }
         public static int MainWindowsLeft { get { return 120; } }
         public static int MainWindowsTop { get { return 120; } }
+
+        public static int CountOfUnchangeableColorPresets { get { return 2; } }
+        public static int MaxLineCountInConsole { get { return 5; } }
+        public static Color ConsoleTextBaseColor { get { return Color.FromRgb(0, 0, 0); } }
+        public static Color ConsoleTextSmallDetailColor { get { return Color.FromRgb(50, 50, 50); } }
+        public static Color ConsoleTextRemovalColor { get { return Color.FromRgb(50, 50, 50); } }
+
+
+        public static int ComparedToPaletteDropDownSelection { get { return 1; } }
+        public static int ActivePaletteDropDownSelection { get { return 0; } }
+        public static EInterpolationStyles ActiveInterpolationMode { get { return EInterpolationStyles.Default; } }
 
         /// <summary>The Color palettes this program has by default.</summary>
         public static PalettesPreset.PalettePresetModel[] PalettePresets()

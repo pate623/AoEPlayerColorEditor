@@ -10,7 +10,7 @@
         EInterpolationStyles activeInterpolationMode,
         int windowsWidth = 0,
         int windowsHeight = 0,
-        int windowsLeft = 0 ,
+        int windowsLeft = 0,
         int windowsTop = 0)
     {
         public string? PaletteFolderLocation { get; set; } = paletteLocation;

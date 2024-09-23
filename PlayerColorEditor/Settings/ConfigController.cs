@@ -11,9 +11,9 @@ namespace PlayerColorEditor.Settings
     {
         public static ConfigModel Config { get; private set; } = new(
             null,
-            activeColorPalette: 0,
-            activeComparedToPalette: 1,
-            activeInterpolationMode: 0);
+            activeColorPalette: DefaultValues.ActivePaletteDropDownSelection,
+            activeComparedToPalette: DefaultValues.ComparedToPaletteDropDownSelection,
+            activeInterpolationMode: DefaultValues.ActiveInterpolationMode);
 
         // Uses UserPreferences.json name for backwards compatibility
         private static readonly FileInfo ConfigFile = new(Path.Combine(Directory.GetCurrentDirectory(), "UserPreferences.json"));
