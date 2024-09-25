@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics;
 using System.IO;
-using System.Windows;
+using System.Threading.Tasks;
 
 namespace PlayerColorEditor.Settings
 {
@@ -15,8 +15,10 @@ namespace PlayerColorEditor.Settings
             activeComparedToPalette: DefaultValues.ComparedToPaletteDropDownSelection,
             activeInterpolationMode: DefaultValues.ActiveInterpolationMode);
 
-        // Uses UserPreferences.json name for backwards compatibility
         private static readonly FileInfo ConfigFile = new(DefaultValues.ConfigurationFileLocation);
+
+        private static bool SaveDelayTimerIsRunning = false;
+        private static bool KeepDelayingConfigSaving = false;
 
         /// <summary>
         /// Loads user preferences from disk to memory.<br/>
@@ -42,28 +44,49 @@ namespace PlayerColorEditor.Settings
 
                 Debug.WriteLine("New Config file created.");
             }
-
-            UpdateMainWindowLocationAndSize();
         }
 
         /// <summary>
         /// Locates all the values to be saved.<br/>
         /// Always overwrites the whole JSON regardless of how many actual values were changed.<br/>
         /// </summary>
-        public static void SaveToDisk()
+        public static void SaveToDisk(bool delayedSaving = false)
         {
-            // TODO Create the delayed saving here.
-            File.WriteAllText(ConfigFile.FullName, System.Text.Json.JsonSerializer.Serialize(Config));
-            Debug.WriteLine("Config saved to disk.");
+            if (!delayedSaving)
+            {
+                File.WriteAllText(ConfigFile.FullName, System.Text.Json.JsonSerializer.Serialize(Config));
+                Debug.WriteLine("Config saved to disk.");
+                return;
+            }
+
+            if (SaveDelayTimerIsRunning)
+            {
+                KeepDelayingConfigSaving = true;
+            }
+            else
+            {
+                SaveDelayTimerIsRunning = true;
+                Debug.WriteLine("User started adjusting the windows size.");
+                DelayedConfigSaving();
+            }
         }
 
-        // TODO move this to somewhere else?
-        private static void UpdateMainWindowLocationAndSize()
+        /// <summary>
+        /// The windows size and location is saved to the config.<br/>
+        /// This ensures there won't be unneeded file saving.<br/>
+        /// </summary>
+        private static async void DelayedConfigSaving()
         {
-            Application.Current.MainWindow.Width = Config.WindowsWidth;
-            Application.Current.MainWindow.Height = Config.WindowsHeight;
-            Application.Current.MainWindow.Left = Config.WindowsLeft;
-            Application.Current.MainWindow.Top = Config.WindowsTop;
+            await Task.Delay(DefaultValues.DelayedConfigSaveTimer);
+            while (KeepDelayingConfigSaving)
+            {
+                KeepDelayingConfigSaving = false;
+                await Task.Delay(DefaultValues.DelayedConfigSaveTimer);
+            }
+
+            SaveDelayTimerIsRunning = false;
+            Debug.WriteLine("User stopped adjusting the windows size.");
+            SaveToDisk();
         }
     }
 }

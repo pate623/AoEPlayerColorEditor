@@ -14,11 +14,15 @@ namespace PlayerColorEditor
 {
     public partial class MainWindow : Window
     {
+        /// This warning is given whenever a main window element is being searched.
+        /// Disabling these warnings here as a whole creates cleaner looking code than disabling these warning on each element search.
+#pragma warning disable CS8602
+
         /// <summary>
         /// Some UI element trigger selection changes on load.<br/>
         /// These triggers can cause the boot order to change which can cause this program to crash.<br/>
         /// </summary>
-        public bool ProgramBooted { get; set; } = false;
+        private bool MainWindowInitialized { get; set; } = false;
 
         private readonly List<Rectangle> PlayerColorBoxes = [];
         private readonly List<Rectangle> CompraredToColorBoxes = [];
@@ -28,50 +32,76 @@ namespace PlayerColorEditor
         /// </summary>
         private readonly Vector3[] CurrentlyActivePlayerColors = new Vector3[8];
 
+        private readonly MainWindowsComponents.WindowSizer WindowSizerComponent;
+
         public MainWindow()
         {
             InitializeComponent();
-        }
+            Show();
+            WindowSizerComponent = new(this);
+            UpdateWindowLocationAndSize();
+            LocatePlayerColorBoxes();
+            DisplayPaletteFolderLocation();
+            DisplaySelectedInterpolationStyle();
+            DisplayColorPresetChoices(Settings.ConfigController.Config.ActiveColorPalettePreset);
+            DisplayComparedToColorChoices(Settings.ConfigController.Config.ActiveComparedToPalettePreset);
+            UpdateDataToSelectedPreset(Settings.ConfigController.Config.ActiveColorPalettePreset);
+            DisplayNewlySelectedColors();
+            MainWindowInitialized = true;
 
-        /// <summary>
-        /// Locates all player color squares and adds them to static lists.<br/>
-        /// This way the colors can be set in a loop and the scripts needn't locate the color squares each time they need to be changed.<br/>
-        /// </summary>
-        public void LocatePlayerColorBoxes()
-        {
+            /// <summary>
+            /// Loads the window location from config and set the main window to this size<br/>
+            /// </summary>
+            void UpdateWindowLocationAndSize()
+            {
+                Width = Settings.ConfigController.Config.WindowsWidth;
+                Height = Settings.ConfigController.Config.WindowsHeight;
+                Left = Settings.ConfigController.Config.WindowsLeft;
+                Top = Settings.ConfigController.Config.WindowsTop;
+            }
+
+            /// <summary>
+            /// Locates all player color squares and adds them to static lists.<br/>
+            /// This way the colors can be set in a loop and the scripts needn't locate the color squares each time they need to be changed.<br/>
+            /// </summary>
+            void LocatePlayerColorBoxes()
+            {
 #pragma warning disable CS8604
-            PlayerColorBoxes.Add(FindName("BluePlayerColor") as Rectangle);
-            PlayerColorBoxes.Add(FindName("RedPlayerColor") as Rectangle);
-            PlayerColorBoxes.Add(FindName("YellowPlayerColor") as Rectangle);
-            PlayerColorBoxes.Add(FindName("BrownPlayerColor") as Rectangle);
+                PlayerColorBoxes.Add(FindName("BluePlayerColor") as Rectangle);
+                PlayerColorBoxes.Add(FindName("RedPlayerColor") as Rectangle);
+                PlayerColorBoxes.Add(FindName("YellowPlayerColor") as Rectangle);
+                PlayerColorBoxes.Add(FindName("BrownPlayerColor") as Rectangle);
 
-            PlayerColorBoxes.Add(FindName("OrangePlayerColor") as Rectangle);
-            PlayerColorBoxes.Add(FindName("GreenPlayerColor") as Rectangle);
-            PlayerColorBoxes.Add(FindName("PurplePlayerColor") as Rectangle);
-            PlayerColorBoxes.Add(FindName("TealPlayerColor") as Rectangle);
+                PlayerColorBoxes.Add(FindName("OrangePlayerColor") as Rectangle);
+                PlayerColorBoxes.Add(FindName("GreenPlayerColor") as Rectangle);
+                PlayerColorBoxes.Add(FindName("PurplePlayerColor") as Rectangle);
+                PlayerColorBoxes.Add(FindName("TealPlayerColor") as Rectangle);
 
-            CompraredToColorBoxes.Add(FindName("BlueComparedToColor") as Rectangle);
-            CompraredToColorBoxes.Add(FindName("RedComparedToColor") as Rectangle);
-            CompraredToColorBoxes.Add(FindName("YellowComparedToColor") as Rectangle);
-            CompraredToColorBoxes.Add(FindName("BrownComparedToColor") as Rectangle);
+                CompraredToColorBoxes.Add(FindName("BlueComparedToColor") as Rectangle);
+                CompraredToColorBoxes.Add(FindName("RedComparedToColor") as Rectangle);
+                CompraredToColorBoxes.Add(FindName("YellowComparedToColor") as Rectangle);
+                CompraredToColorBoxes.Add(FindName("BrownComparedToColor") as Rectangle);
 
-            CompraredToColorBoxes.Add(FindName("OrangeComparedToColor") as Rectangle);
-            CompraredToColorBoxes.Add(FindName("GreenComparedToColor") as Rectangle);
-            CompraredToColorBoxes.Add(FindName("PurpleComparedToColor") as Rectangle);
-            CompraredToColorBoxes.Add(FindName("TealComparedToColor") as Rectangle);
+                CompraredToColorBoxes.Add(FindName("OrangeComparedToColor") as Rectangle);
+                CompraredToColorBoxes.Add(FindName("GreenComparedToColor") as Rectangle);
+                CompraredToColorBoxes.Add(FindName("PurpleComparedToColor") as Rectangle);
+                CompraredToColorBoxes.Add(FindName("TealComparedToColor") as Rectangle);
 #pragma warning restore CS8604
-        }
+            }
 
-/// This warning is given whenever a main window element is being searched.
-/// Disabling these warnings here as a whole creates cleaner looking code than disabling these warning on each element search.
-#pragma warning disable CS8602
+            void DisplaySelectedInterpolationStyle()
+            {
+                var colorSelection = FindName("ColorInterpolationSelection") as System.Windows.Controls.ComboBox;
+                colorSelection.SelectedIndex = (int)Settings.ConfigController.Config.ActiveInterpolationMode;
+            }
+        }
 
         /// <summary>
         /// Updates the currently active player colors combo box to display all available choices.<br/>
         /// Uses names from <see cref="AllColorPalettePresets"/> as the combo box choices.<br/>
         /// </summary>
         /// <param name="activePresetIndex">Displays this as active color preset.</param>
-        public void DisplayColorPresetChoices(int activePresetIndex)
+        private void DisplayColorPresetChoices(int activePresetIndex)
         {
             var presetsComboBox = FindName("PresetSelection") as System.Windows.Controls.ComboBox;
 
@@ -90,7 +120,7 @@ namespace PlayerColorEditor
         /// Updates the Compared to player color ComboBox listings in the UI, and saves the currently active selection to the user preferences.
         /// </summary>
         /// <param name="presetID">ID of selected item.</param>
-        public void DisplayComparedToColorChoices(int presetID)
+        private void DisplayComparedToColorChoices(int presetID)
         {
             var presetsComboBox = FindName("ComparedToColorSelection") as System.Windows.Controls.ComboBox;
 
@@ -112,7 +142,7 @@ namespace PlayerColorEditor
         /// Updates the "Your Edit" player colors squares shown in the UI.<br/>
         /// Uses the colors from <see cref="CurrentlyActivePlayerColors"/>.<br/>
         /// </summary>
-        public void DisplayNewlySelectedColors()
+        private void DisplayNewlySelectedColors()
         {
             for (int i = 0; i < PlayerColorBoxes.Count; i++)
             {
@@ -128,18 +158,12 @@ namespace PlayerColorEditor
         /// <summary>
         /// Get color palettes folder location from the user preferences and displays that string in the UI.
         /// </summary>
-        public void DisplayPaletteFolderLocation()
+        private void DisplayPaletteFolderLocation()
         {
             var colorPalettePathText = FindName("ColorPalettesLocation") as TextBlock;
 
             colorPalettePathText.Text = Settings.ConfigController.Config.PaletteFolderLocation;
             Debug.WriteLine("UI Palette location string updated.");
-        }
-
-        public void DisplaySelectedInterpolationStyle()
-        {
-            var colorSelection = FindName("ColorInterpolationSelection") as System.Windows.Controls.ComboBox;
-            colorSelection.SelectedIndex = (int)Settings.ConfigController.Config.ActiveInterpolationMode;
         }
 
         /// <summary>
@@ -149,7 +173,7 @@ namespace PlayerColorEditor
         /// One the code side; loads the color presets colors into <see cref="CurrentlyActivePlayerColors"/><br/>
         /// Updates user preferences.<br/>
         /// </summary>
-        public void UpdateDataToSelectedPreset(int currentlyActivePresetIndex)
+        private void UpdateDataToSelectedPreset(int currentlyActivePresetIndex)
         {
             if (currentlyActivePresetIndex < PalettesPreset.PalettePresetController.AllColorPalettePresets.Count && currentlyActivePresetIndex >= 0)
             {
@@ -287,7 +311,7 @@ namespace PlayerColorEditor
 
         private void ComparedToColors_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (!ProgramBooted)
+            if (!MainWindowInitialized)
                 return;
 
             var presetSelection = FindName("ComparedToColorSelection") as System.Windows.Controls.ComboBox;
@@ -386,7 +410,7 @@ namespace PlayerColorEditor
         /// </summary>
         private void ColorPreset_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (!ProgramBooted)
+            if (!MainWindowInitialized)
                 return;
 
             var presetSelection = FindName("PresetSelection") as System.Windows.Controls.ComboBox;
@@ -557,7 +581,7 @@ namespace PlayerColorEditor
 
         private void ColorInterpolation_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (!ProgramBooted)
+            if (!MainWindowInitialized)
                 return;
 
             var colorSelection = FindName("ColorInterpolationSelection") as System.Windows.Controls.ComboBox;
@@ -572,18 +596,18 @@ namespace PlayerColorEditor
 
         private void UserControl_SizeChanged(object sender, SizeChangedEventArgs args)
         {
-            if (!ProgramBooted)
+            if (!MainWindowInitialized)
                 return;
 
-            MainWindowsControls.WindowSizer.UserChangedWindowSize();
+            WindowSizerComponent.UserChangedWindowSize();
         }
 
         private void Window_LocationChanged(object sender, EventArgs e)
         {
-            if (!ProgramBooted)
+            if (!MainWindowInitialized)
                 return;
 
-            MainWindowsControls.WindowSizer.UserChangedWindowSize();
+            WindowSizerComponent.UserChangedWindowSize();
         }
 #pragma warning restore CS8602
     }
