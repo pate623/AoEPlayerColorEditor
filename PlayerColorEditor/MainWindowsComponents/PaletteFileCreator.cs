@@ -3,19 +3,19 @@ using System.Diagnostics;
 using System.IO;
 using System.Numerics;
 
-namespace PlayerColorEditor.GamePaletteFiles
+namespace PlayerColorEditor.MainWindowsComponents
 {
-    class PaletteController
+    class PaletteFileCreator
     {
-        private static readonly string PaletteFileStartingText = $"JASC-PAL{Environment.NewLine}0100{Environment.NewLine}256";
+        private readonly string PaletteFileStartingText = $"JASC-PAL{Environment.NewLine}0100{Environment.NewLine}256";
 
-        private static readonly string ColorCodeSeperator = " ";
-        private static readonly string RGBColorSeperator = Environment.NewLine;
+        private readonly string ColorCodeSeperator = " ";
+        private readonly string RGBColorSeperator = Environment.NewLine;
 
         /// <summary>Total of this +1 colors if counting both starting (Player color) and ending <see cref="InterpolatingIntoColors"/> colors.</summary>
         const int ColorInterpolationCount = 15;
 
-        private static readonly Vector3[] InterpolatingIntoColors = [
+        private readonly Vector3[] InterpolatingIntoColors = [
             new(0, 0, 0), // Black
             new(32, 32, 32),
             new(64, 64, 64),
@@ -25,7 +25,7 @@ namespace PlayerColorEditor.GamePaletteFiles
             new(255, 255, 255), // White
             new(128, 96, 64)]; // Brown
 
-        private static readonly string[] PaletteNames = [
+        private readonly string[] PaletteNames = [
             "playercolor_blue.pal",
             "playercolor_red.pal",
             "playercolor_yellow.pal",
@@ -41,7 +41,7 @@ namespace PlayerColorEditor.GamePaletteFiles
         /// </summary>
         /// <param name="playerColors">Holds 8 player colors.</param>
         /// <returns>True if palette files were successfully created.</returns>
-        public static bool WritePlayerColorToPaletteFiles(Vector3[] playerColors)
+        public bool WritePlayerColorToPaletteFiles(Vector3[] playerColors)
         {
             if (Directory.Exists(Settings.ConfigController.Config.PaletteFolderLocation))
             {
@@ -94,7 +94,7 @@ namespace PlayerColorEditor.GamePaletteFiles
         /// </summary>
         /// <param name="playerColor">Holds the main color (RGB).</param>
         /// <returns>True if palette file was successfully created.</returns>
-        private static bool CreatePlayerColorPalette(Vector3 playerColor, string paletteName)
+        private bool CreatePlayerColorPalette(Vector3 playerColor, string paletteName)
         {
             string textToWriteInPaletteFile = PaletteFileStartingText;
 

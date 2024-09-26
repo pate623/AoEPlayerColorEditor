@@ -8,13 +8,13 @@ namespace PlayerColorEditor.PalettesPreset
     /// </summary>
     public class PalettePresetModel(
         string name,
-        Vector3 blue, 
-        Vector3 red, 
-        Vector3 yellow, 
+        Vector3 blue,
+        Vector3 red,
+        Vector3 yellow,
         Vector3 brown,
-        Vector3 orange, 
+        Vector3 orange,
         Vector3 green,
-        Vector3 purple, 
+        Vector3 purple,
         Vector3 teal)
     {
         public string PresetName { get; set; } = name;

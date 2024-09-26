@@ -12,10 +12,18 @@ using System.Windows.Shapes;
 
 namespace PlayerColorEditor
 {
+    // TODO Create #region areas.
+    // These areas need to separate each UI sections and its utilities to its' own section:
+    // Active Color Editing
+    // Compared to Color
+    // Color Palette Creation
+    // Color Palette Preset
+    // Console
+    // Window Controls
     public partial class MainWindow : Window
     {
         /// This warning is given whenever a main window element is being searched.
-        /// Disabling these warnings here as a whole creates cleaner looking code than disabling these warning on each element search.
+        /// Disabling these warnings here as a whole creates cleaner looking code than disabling these warning at each element search.
 #pragma warning disable CS8602
 
         /// <summary>
@@ -27,18 +35,18 @@ namespace PlayerColorEditor
         private readonly List<Rectangle> PlayerColorBoxes = [];
         private readonly List<Rectangle> CompraredToColorBoxes = [];
 
-        /// <summary>
-        /// These are the player colors which Are currently being edited.
-        /// </summary>
+        /// <summary>These are the player colors which Are currently being edited.</summary>
         private readonly Vector3[] CurrentlyActivePlayerColors = new Vector3[8];
 
         private readonly MainWindowsComponents.WindowSizer WindowSizerComponent;
+        private readonly MainWindowsComponents.PaletteFileCreator PaletteCreatorComponent;
 
         public MainWindow()
         {
             InitializeComponent();
             Show();
             WindowSizerComponent = new(this);
+            PaletteCreatorComponent = new();
             UpdateWindowLocationAndSize();
             LocatePlayerColorBoxes();
             DisplayPaletteFolderLocation();
@@ -569,7 +577,8 @@ namespace PlayerColorEditor
         /// </summary>
         private void CreateColors_Click(object sender, RoutedEventArgs e)
         {
-            if (GamePaletteFiles.PaletteController.WritePlayerColorToPaletteFiles(CurrentlyActivePlayerColors))
+            bool successfullyCreatedPalettes = PaletteCreatorComponent.WritePlayerColorToPaletteFiles(CurrentlyActivePlayerColors);
+            if (successfullyCreatedPalettes)
             {
                 PrintToConsole("Created the color palettes", Settings.DefaultValues.ConsoleTextAdding);
             }

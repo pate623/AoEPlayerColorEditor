@@ -32,6 +32,5 @@ namespace PlayerColorEditor.Utilities
             T deserializedJson = JsonConvert.DeserializeObject<T>(jsonAsText);
             return deserializedJson;
         }
-
     }
 }

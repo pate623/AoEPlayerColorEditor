@@ -3,21 +3,8 @@
 using System.Diagnostics;
 using System.Windows;
 
-// TODO Create Logger
 namespace PlayerColorEditor
 {
-    // TODO Figure out best place to store global enums
-    // Create globals.cs file for this?
-    public enum EInterpolationStyles
-    {
-        Default = 0,
-        OnlyMainColor = 1,
-        Glowing = 2
-    }
-
-    /// <summary>
-    /// The startup class.
-    /// </summary>
     public partial class App : Application
     {
         /// <summary>

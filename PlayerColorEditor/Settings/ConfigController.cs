@@ -54,6 +54,7 @@ namespace PlayerColorEditor.Settings
         {
             if (!delayedSaving)
             {
+                // TODO Move this to JSON utility.
                 File.WriteAllText(ConfigFile.FullName, System.Text.Json.JsonSerializer.Serialize(Config));
                 Debug.WriteLine("Config saved to disk.");
                 return;
