@@ -2,7 +2,6 @@
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Text.Json;
 
 namespace PlayerColorEditor.MainWindowComponents.PalettePreset
 {
@@ -44,20 +43,9 @@ namespace PlayerColorEditor.MainWindowComponents.PalettePreset
         /// <summary>
         /// Gets all objects from the <see cref="MainWindow.AllColorPalettePresets"/> variable and saves them to PlayerColorPresets.JSON file.
         /// </summary>
-        public async void SavePalettePresetsToDisk()
+        public void SavePalettePresetsToDisk()
         {
-            // TODO Move this to JSON utility.
-            JsonSerializerOptions options = new() { WriteIndented = true };
-
-            string jsonTextToWriteInTheFile = "";
-
-            for (int i = 0; i < AllColorPalettePresets.Count; i++)
-            {
-                jsonTextToWriteInTheFile += JsonSerializer.Serialize(AllColorPalettePresets[i], options);
-            }
-
-            await File.WriteAllTextAsync(PlayerColorPresetFileLocation, jsonTextToWriteInTheFile);
-
+            Utilities.Json.SaveToDisk(AllColorPalettePresets, PlayerColorPresetFileLocation, true);
             Debug.WriteLine("Player color preset saved to the disk.");
         }
     }
