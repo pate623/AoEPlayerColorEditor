@@ -14,7 +14,6 @@ namespace PlayerColorEditor
         void AppStartup(object sender, StartupEventArgs e)
         {
             Settings.ConfigController.Initialize();
-            PalettesPreset.PalettePresetController.Initialize();
             _ = new MainWindow();
             Debug.WriteLine("Program booted successfully.");
         }

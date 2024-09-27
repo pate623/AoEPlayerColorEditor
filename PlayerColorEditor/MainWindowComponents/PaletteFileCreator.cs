@@ -3,7 +3,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Numerics;
 
-namespace PlayerColorEditor.MainWindowsComponents
+namespace PlayerColorEditor.MainWindowComponents
 {
     class PaletteFileCreator
     {

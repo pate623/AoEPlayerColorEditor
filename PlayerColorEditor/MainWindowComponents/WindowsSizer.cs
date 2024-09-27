@@ -1,4 +1,4 @@
-﻿namespace PlayerColorEditor.MainWindowsComponents
+﻿namespace PlayerColorEditor.MainWindowComponents
 {
     /// <summary>
     /// Records changes on windows location and saves the values into user preferences.<br/>

@@ -4,7 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text.Json;
 
-namespace PlayerColorEditor.PalettesPreset
+namespace PlayerColorEditor.MainWindowComponents.PalettePreset
 {
     /// <summary>
     /// Creates new player color palettes for Age of Empires Definitive Edition.<br/>
@@ -14,17 +14,17 @@ namespace PlayerColorEditor.PalettesPreset
     /// All presets are stored in a JSON file at the root of this program.<br/>
     /// In the code side files are stored in a JSON compatible object.<br/>
     /// </summary>
-    public static class PalettePresetController
+    public class PalettePresetController
     {
-        public static List<PalettePresetModel> AllColorPalettePresets { get; private set; } = [];
+        public List<PalettePresetModel> AllColorPalettePresets { get; private set; } = [];
 
-        private static readonly string PlayerColorPresetFileLocation = Settings.DefaultValues.PalettePresetFileLocation;
+        private readonly string PlayerColorPresetFileLocation = Settings.DefaultValues.PalettePresetFileLocation;
 
         /// <summary>
         /// Loads palette presets from JSON file into memory.<br/>
         /// Creates 3 default palette presets if the palette presets JSON file is not found.<br/>
         /// </summary>
-        public static void Initialize()
+        public PalettePresetController()
         {
             if (File.Exists(PlayerColorPresetFileLocation))
             {
@@ -44,7 +44,7 @@ namespace PlayerColorEditor.PalettesPreset
         /// <summary>
         /// Gets all objects from the <see cref="MainWindow.AllColorPalettePresets"/> variable and saves them to PlayerColorPresets.JSON file.
         /// </summary>
-        public static async void SavePalettePresetsToDisk()
+        public async void SavePalettePresetsToDisk()
         {
             // TODO Move this to JSON utility.
             JsonSerializerOptions options = new() { WriteIndented = true };

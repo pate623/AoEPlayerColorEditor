@@ -1,5 +1,6 @@
 using System.IO;
 using System.Windows.Media;
+using PlayerColorEditor.MainWindowComponents.PalettePreset;
 
 namespace PlayerColorEditor.Settings
 {
@@ -38,9 +39,9 @@ namespace PlayerColorEditor.Settings
         public static int DelayedConfigSaveTimer { get { return 300; } }
 
         /// <summary>The Color palettes this program has by default.</summary>
-        public static PalettesPreset.PalettePresetModel[] PalettePresets()
+        public static PalettePresetModel[] PalettePresets()
         {
-            PalettesPreset.PalettePresetModel editorDefaultPlayerColors = new(
+            PalettePresetModel editorDefaultPlayerColors = new(
                 name: "Editor Default",
                 blue: new(15, 70, 245),
                 red: new(220, 35, 35),
@@ -51,7 +52,7 @@ namespace PlayerColorEditor.Settings
                 purple: new(210, 55, 200),
                 teal: new(126, 242, 225));
 
-            PalettesPreset.PalettePresetModel gameDefaultPlayerColors = new(
+            PalettePresetModel gameDefaultPlayerColors = new(
                 name: "AOE:DE Default",
                 blue: new(45, 45, 245),
                 red: new(210, 40, 40),
@@ -62,7 +63,7 @@ namespace PlayerColorEditor.Settings
                 purple: new(150, 15, 250),
                 teal: new(126, 242, 225));
 
-            PalettesPreset.PalettePresetModel highContrastPlayerColors = new(
+            PalettePresetModel highContrastPlayerColors = new(
                 name: "High Contrast",
                 blue: new(43, 63, 247),
                 red: new(224, 27, 27),
