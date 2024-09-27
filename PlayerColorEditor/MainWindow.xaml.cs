@@ -27,7 +27,7 @@ namespace PlayerColorEditor
         private readonly List<Rectangle> PlayerColorBoxes = [];
         private readonly List<Rectangle> CompraredToColorBoxes = [];
 
-        /// <summary>These are the player colors which Are currently being edited.</summary>
+        /// <summary>These are the player colors which are currently being edited.</summary>
         private readonly Vector3[] CurrentlyActivePlayerColors = new Vector3[8];
 
         private readonly MainWindowComponents.WindowSizer WindowSizer;
@@ -51,9 +51,7 @@ namespace PlayerColorEditor
             DisplayNewlySelectedColors();
             MainWindowInitialized = true;
 
-            /// <summary>
-            /// Loads the window location from config and set the main window to this size<br/>
-            /// </summary>
+            /// <summary>Loads the window location from config and sets the main window to this size and location</summary>
             void UpdateWindowLocationAndSize()
             {
                 Width = Settings.ConfigController.Config.WindowsWidth;
@@ -100,7 +98,7 @@ namespace PlayerColorEditor
 
         #region Active Player Color (Currently Edited)
         /// <summary>
-        /// Updates UI and code to display the newly selected color preset as a currently active "Your Edit" color.
+        /// Updates UI and code to display the newly selected color preset as currently active "Your Edit" colors.
         /// </summary>
         private void ColorPreset_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
@@ -153,6 +151,7 @@ namespace PlayerColorEditor
 
         /// <summary>
         /// Clicking the color boxes under "Your Edits text" opens up a color picker.<br/>
+        /// This color selection allows users to edit the currently active colors to their likings.<br/>
         /// Each time the color picker is closed this script updates <see cref="CurrentlyActivePlayerColors"/> and showcases these changes in the UI.<br/>
         /// </summary>
         private void OpenColorPicker(int selectedPlayerColor)
@@ -264,7 +263,7 @@ namespace PlayerColorEditor
         #region Compared to Color
         /// <summary>
         /// Updates the compared to player colors combo box UI to showcase the new player color choices.<br/>
-        /// Also applies the new color to "compared to colors" squares.<br/>
+        /// Also applies the new colors to "compared to colors" squares.<br/>
         /// Called after user saves, saves as, or deletes a color preset.<br/>
         /// </summary>
         private void ApplyPickedComparedToColors()

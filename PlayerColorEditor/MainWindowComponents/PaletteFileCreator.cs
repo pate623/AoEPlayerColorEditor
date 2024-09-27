@@ -5,6 +5,9 @@ using System.Numerics;
 
 namespace PlayerColorEditor.MainWindowComponents
 {
+    /// <summary>
+    /// This class is used for writing the color data into palette files.
+    /// </summary>
     class PaletteFileCreator
     {
         private readonly string PaletteFileStartingText = $"JASC-PAL{Environment.NewLine}0100{Environment.NewLine}256";
