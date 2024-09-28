@@ -7,8 +7,8 @@
     /// </summary>
     public class WindowSizer(MainWindow parentObject)
     {
-        private readonly double WidthRatio = (double)Settings.DefaultValues.MainWindowsWidth / Settings.DefaultValues.MainWindowsHeight;
-        private readonly double HeightRatio = (double)Settings.DefaultValues.MainWindowsHeight / Settings.DefaultValues.MainWindowsWidth;
+        private readonly double WidthRatio = (double)Settings.DefaultValues.MainWindowWidth / Settings.DefaultValues.MainWindowHeight;
+        private readonly double HeightRatio = (double)Settings.DefaultValues.MainWindowHeight / Settings.DefaultValues.MainWindowWidth;
 
         private readonly MainWindow MainWindow = parentObject;
 
@@ -20,7 +20,7 @@
             double currenWidth = MainWindow.Width;
             double currentHeight = MainWindow.Height;
 
-            bool useCurrentWidth = currenWidth * Settings.DefaultValues.MainWindowsWidth > currentHeight * Settings.DefaultValues.MainWindowsHeight;
+            bool useCurrentWidth = currenWidth * Settings.DefaultValues.MainWindowWidth > currentHeight * Settings.DefaultValues.MainWindowHeight;
             double newWidth = useCurrentWidth ? currenWidth : currentHeight * WidthRatio;
             double newHeight = useCurrentWidth ? currenWidth * HeightRatio : currentHeight;
 

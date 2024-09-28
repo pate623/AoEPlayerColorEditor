@@ -3,6 +3,8 @@
 using System.Diagnostics;
 using System.Windows;
 
+// TODO Create Logger using NLog
+// https://nlog-project.org/
 namespace PlayerColorEditor
 {
     public partial class App : Application

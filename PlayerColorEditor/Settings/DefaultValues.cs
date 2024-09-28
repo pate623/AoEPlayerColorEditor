@@ -6,37 +6,45 @@ namespace PlayerColorEditor.Settings
 {
     public static class DefaultValues
     {
-        public static string PaletteFolderLocation { get { return Path.Combine(Directory.GetCurrentDirectory(), "Palettes"); } }
+        #region Configuration file
         public static string ConfigurationFileLocation { get { return Path.Combine(Directory.GetCurrentDirectory(), "UserPreferences.json"); } }
-        public static string PalettePresetFileLocation { get { return Path.Combine(Directory.GetCurrentDirectory(), "PlayerColorPresets.json"); } }
 
+        /// <summary>Delayed save time in milliseconds</summary>
+        public static int DelayedConfigSaveTimer { get { return 300; } }
+        #endregion
+
+        #region Game Palette Files
+        public static EInterpolationStyles ActiveInterpolationMode { get { return EInterpolationStyles.Default; } }
         public static string[] ExpectedPaletteFolderLocations => [
             @"C:\Program Files (x86)\Steam\steamapps\common\AoEDE\Assets\Palettes",
             @"C:\SteamLibrary\steamapps\common\AoEDE\Assets\Palettes",
             @"D:\SteamLibrary\steamapps\common\AoEDE\Assets\Palettes",
             @"E:\SteamLibrary\steamapps\common\AoEDE\Assets\Palettes",
             @"F:\SteamLibrary\steamapps\common\AoEDE\Assets\Palettes"];
+        public static string PaletteFolderLocation { get { return Path.Combine(Directory.GetCurrentDirectory(), "Palettes"); } }
+        #endregion
 
-        public static int MainWindowsWidth { get { return 355; } }
-        public static int MainWindowsHeight { get { return 595; } }
-        public static int MainWindowsLeft { get { return 120; } }
-        public static int MainWindowsTop { get { return 120; } }
-
-        public static int CountOfUnchangeableColorPresets { get { return 2; } }
-
-        public static int MaxLineCountInConsole { get { return 5; } }
+        #region Main Window Console
         public static Color ConsoleTextBase { get { return Color.FromRgb(0, 0, 0); } }
-        public static Color ConsoleTextSmallDetail { get { return Color.FromRgb(50, 50, 50); } }
-        public static Color ConsoleTextRemoval { get { return Color.FromRgb(190, 20, 20); } }
-        public static Color ConsoleTextAdding { get { return Color.FromRgb(0, 102, 221); } }
+        public static Color ConsoleTextCreated { get { return Color.FromRgb(0, 102, 221); } }
         public static Color ConsoleTextError { get { return Color.FromRgb(190, 20, 20); } }
+        public static Color ConsoleTextRemoved { get { return Color.FromRgb(190, 20, 20); } }
+        public static Color ConsoleTextSmallDetail { get { return Color.FromRgb(50, 50, 50); } }
+        public static int MaxLineCountInConsole { get { return 5; } }
+        #endregion
 
-        public static int ComparedToPaletteDropDownSelection { get { return 1; } }
+        #region Main Window Size and Location
+        public static int MainWindowWidth { get { return 355; } }
+        public static int MainWindowHeight { get { return 595; } }
+        public static int MainWindowLeft { get { return 120; } }
+        public static int MainWindowTop { get { return 120; } }
+        #endregion
+
+        #region Palette Presets
         public static int ActivePaletteDropDownSelection { get { return 0; } }
-        public static EInterpolationStyles ActiveInterpolationMode { get { return EInterpolationStyles.Default; } }
-
-        /// <summary>Delayed save time in milliseconds</summary>
-        public static int DelayedConfigSaveTimer { get { return 300; } }
+        public static int ComparedToPaletteDropDownSelection { get { return 1; } }
+        public static int CountOfUnchangeableColorPresets { get { return 2; } }
+        public static string PalettePresetFileLocation { get { return Path.Combine(Directory.GetCurrentDirectory(), "PlayerColorPresets.json"); } }
 
         /// <summary>The Color palettes this program has by default.</summary>
         public static PalettePresetModel[] PalettePresets()
@@ -76,5 +84,6 @@ namespace PlayerColorEditor.Settings
 
             return [editorDefaultPlayerColors, gameDefaultPlayerColors, highContrastPlayerColors];
         }
+        #endregion
     }
 }

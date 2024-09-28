@@ -37,10 +37,10 @@ namespace PlayerColorEditor.Settings
             else
             {
                 Debug.WriteLine("No Config file found, creating default Config.");
-                Config.WindowsWidth = DefaultValues.MainWindowsWidth;
-                Config.WindowsHeight = DefaultValues.MainWindowsHeight;
-                Config.WindowsLeft = DefaultValues.MainWindowsLeft;
-                Config.WindowsTop = DefaultValues.MainWindowsTop;
+                Config.WindowsWidth = DefaultValues.MainWindowWidth;
+                Config.WindowsHeight = DefaultValues.MainWindowHeight;
+                Config.WindowsLeft = DefaultValues.MainWindowLeft;
+                Config.WindowsTop = DefaultValues.MainWindowTop;
 
                 Debug.WriteLine("New Config file created.");
             }

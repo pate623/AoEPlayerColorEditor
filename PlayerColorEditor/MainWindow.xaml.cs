@@ -12,6 +12,13 @@ using System.Windows.Shapes;
 
 namespace PlayerColorEditor
 {
+    public enum EInterpolationStyles
+    {
+        Default = 0,
+        OnlyMainColor = 1,
+        Glowing = 2
+    }
+
     public partial class MainWindow : Window
     {
         /// This warning is given whenever a main window element is being searched.
@@ -43,8 +50,8 @@ namespace PlayerColorEditor
             PalettePresets = new();
             UpdateWindowLocationAndSize();
             LocatePlayerColorBoxes();
-            DisplayPaletteFolderLocation();
             DisplaySelectedInterpolationStyle();
+            DisplayPaletteFolderLocation();
             DisplayColorPresetChoices(Settings.ConfigController.Config.ActiveColorPalettePreset);
             DisplayComparedToColorChoices(Settings.ConfigController.Config.ActiveComparedToPalettePreset);
             UpdateDataToSelectedPreset(Settings.ConfigController.Config.ActiveColorPalettePreset);
@@ -407,7 +414,7 @@ namespace PlayerColorEditor
             DisplayColorPresetChoices(Settings.DefaultValues.ActivePaletteDropDownSelection);
             DisplayNewlySelectedColors();
             ApplyPickedComparedToColors();
-            PrintToConsole("Deleted palette preset", Settings.DefaultValues.ConsoleTextRemoval);
+            PrintToConsole("Deleted palette preset", Settings.DefaultValues.ConsoleTextRemoved);
         }
 
         /// <summary>
@@ -548,7 +555,7 @@ namespace PlayerColorEditor
             bool successfullyCreatedPalettes = PaletteCreator.WritePlayerColorToPaletteFiles(CurrentlyActivePlayerColors);
             if (successfullyCreatedPalettes)
             {
-                PrintToConsole("Created the color palettes", Settings.DefaultValues.ConsoleTextAdding);
+                PrintToConsole("Created the color palettes", Settings.DefaultValues.ConsoleTextCreated);
             }
             else
             {
