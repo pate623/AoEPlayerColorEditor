@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 
@@ -17,7 +16,9 @@ namespace PlayerColorEditor.MainScreen.Components.PalettePreset
     {
         public List<PalettePresetModel> AllColorPalettePresets { get; private set; } = [];
 
-        private readonly string PlayerColorPresetFileLocation = Settings.DefaultValues.PalettePresetFileLocation;
+        private readonly Logger Log = new();
+
+        private readonly FileInfo PlayerColorPresetFile = new(Settings.DefaultValues.PalettePresetFileLocation);
 
         /// <summary>
         /// Loads palette presets from JSON file into memory.<br/>
@@ -25,19 +26,19 @@ namespace PlayerColorEditor.MainScreen.Components.PalettePreset
         /// </summary>
         public PalettePresetController()
         {
-            if (File.Exists(PlayerColorPresetFileLocation))
+            if (PlayerColorPresetFile.Exists)
             {
-                AllColorPalettePresets = Utilities.Json.DeserializeObjects<PalettePresetModel>(File.ReadAllText(PlayerColorPresetFileLocation)).ToList();
-                Debug.WriteLine("Preset JSON found on star up, all presets loaded into memory.");
+                AllColorPalettePresets = Utilities.Json.DeserializeObjects<PalettePresetModel>(PlayerColorPresetFile).ToList();
+                Log.Debug("Preset JSON found on star up, all presets loaded into memory.");
             }
             else
             {
                 AllColorPalettePresets = [.. Settings.DefaultValues.PalettePresets()];
                 SavePalettePresetsToDisk();
-                Debug.WriteLine("No Preset JSON found, default presets JSON file created and loaded into memory.");
+                Log.Debug("No Preset JSON found, default presets JSON file created and loaded into memory.");
             }
 
-            Debug.WriteLine($"Current number of palette presets: {AllColorPalettePresets.Count}.");
+            Log.Debug($"Current number of palette presets: {AllColorPalettePresets.Count}.");
         }
 
         /// <summary>
@@ -45,8 +46,8 @@ namespace PlayerColorEditor.MainScreen.Components.PalettePreset
         /// </summary>
         public void SavePalettePresetsToDisk()
         {
-            Utilities.Json.SaveToDisk(AllColorPalettePresets, PlayerColorPresetFileLocation, true);
-            Debug.WriteLine("Player color preset saved to the disk.");
+            Utilities.Json.SaveToDisk(AllColorPalettePresets, PlayerColorPresetFile, true);
+            Log.Debug("Player color preset saved to the disk.");
         }
     }
 }

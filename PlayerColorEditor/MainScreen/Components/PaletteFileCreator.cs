@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 using System.IO;
 using System.Numerics;
 
@@ -10,6 +9,8 @@ namespace PlayerColorEditor.MainScreen.Components
     /// </summary>
     class PaletteFileCreator
     {
+        private readonly Logger Log = new();
+
         private readonly string PaletteFileStartingText = $"JASC-PAL{Environment.NewLine}0100{Environment.NewLine}256";
 
         private readonly string ColorCodeSeperator = " ";
@@ -54,30 +55,30 @@ namespace PlayerColorEditor.MainScreen.Components
                     {
                         File.Delete(Settings.ConfigController.Config.PaletteFolderLocation + @"\" + PaletteNames[i]);
                     }
-                    Debug.WriteLine("Previous player colors palettes removed");
+                    Log.Debug("Previous player colors palettes removed");
                 }
                 catch (Exception ex)
                 {
-                    Debug.WriteLine($"Can't delete currently existing palette files\n{ex}");
+                    Log.Debug($"Can't delete currently existing palette files\n{ex}");
                     return false;
                 }
             }
             else
             {
                 _ = Directory.CreateDirectory(Settings.ConfigController.Config.PaletteFolderLocation ?? Settings.DefaultValues.PaletteFolderLocation);
-                Debug.WriteLine("No player color palette folder found, new player color palette folder created.");
+                Log.Debug("No player color palette folder found, new player color palette folder created.");
             }
 
             for (int i = 0; i < PaletteNames.Length; i++)
             {
                 if (!CreatePlayerColorPalette(playerColors[i], PaletteNames[i]))
                 {
-                    Debug.WriteLine("Writing a palette file to disk failed: " + PaletteNames[i]);
+                    Log.Debug("Writing a palette file to disk failed: " + PaletteNames[i]);
                     return false;
                 }
             }
 
-            Debug.WriteLine("All player colors created.");
+            Log.Debug("All player colors created.");
             return true;
         }
 
@@ -154,7 +155,7 @@ namespace PlayerColorEditor.MainScreen.Components
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"Failed to create palette files \n{ex}");
+                Log.Error($"Failed to create palette files", ex);
                 return false;
             }
 

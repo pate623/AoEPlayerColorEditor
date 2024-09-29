@@ -1,11 +1,8 @@
 ﻿// Ignore Spelling: App
 
 using System;
-using System.Diagnostics;
 using System.Windows;
 
-// TODO Create Logger using NLog
-// https://nlog-project.org/
 namespace PlayerColorEditor
 {
     public partial class App : Application
@@ -16,16 +13,16 @@ namespace PlayerColorEditor
         /// </summary>
         void AppStartup(object sender, StartupEventArgs e)
         {
+            Logger log = new();
             try
             {
                 Settings.ConfigController.Initialize();
                 _ = new MainScreen.MainWindow();
-                Debug.WriteLine("Program booted successfully.");
-
+                log.Info("Program booted successfully.");
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"Program crashed {ex}");
+                log.Fatal($"Program crashed {ex}");
                 Environment.Exit(1);
             }
         }

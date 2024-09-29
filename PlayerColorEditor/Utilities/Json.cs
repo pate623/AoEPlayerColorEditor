@@ -11,16 +11,20 @@ namespace PlayerColorEditor.Utilities
     /// </summary>
     public class Json
     {
+        private static readonly Logger Log = new();
+
         /// <summary>
         /// Deserializes JSON objects from text.<br/>
         /// </summary>
         /// <typeparam name="T">The type of object to deserialize</typeparam>
-        /// <param name="fileLocation">The JSON file to read</param>
+        /// <param name="jsonFile">The JSON file to read</param>
         /// <returns>The deserialized objects</returns>
-        public static IEnumerable<T> DeserializeObjects<T>(string fileLocation)
+        public static IEnumerable<T> DeserializeObjects<T>(FileInfo jsonFile)
         {
+            Log.Trace($"Reading file {jsonFile.Name}");
+            string jsonAsTest = File.ReadAllText(jsonFile.FullName);
             JsonSerializer serializer = new();
-            using StringReader strReader = new(fileLocation);
+            using StringReader strReader = new(jsonAsTest);
             using JsonTextReader jsonReader = new(strReader);
             jsonReader.SupportMultipleContent = true;
 
@@ -28,17 +32,21 @@ namespace PlayerColorEditor.Utilities
             {
                 yield return serializer.Deserialize<T>(jsonReader);
             }
+            Log.Trace($"File {jsonFile} read.");
         }
 
         /// <summary>
-        /// Deserializes single JSON object from text.<br/>
+        /// Deserializes single JSON object from file.<br/>
         /// </summary>
         /// <typeparam name="T">The type of object to deserialize</typeparam>
-        /// <param name="fileLocation">The JSON file to read</param>
+        /// <param name="JsonFile">The JSON file to read</param>
         /// <returns>The deserialized object</returns>
-        public static T DeserializeObject<T>(string fileLocation)
+        public static T DeserializeObject<T>(FileInfo JsonFile)
         {
-            T deserializedJson = JsonConvert.DeserializeObject<T>(fileLocation);
+            Log.Trace($"Reading file {JsonFile.Name}");
+            string jsonAsTest = File.ReadAllText(JsonFile.FullName);
+            T deserializedJson = JsonConvert.DeserializeObject<T>(jsonAsTest);
+            Log.Trace($"File {JsonFile} read.");
             return deserializedJson;
         }
 
@@ -50,8 +58,9 @@ namespace PlayerColorEditor.Utilities
         /// <param name="dataContent">List of object to write</param>
         /// <param name="fileLocation">File to write into</param>
         /// <param name="writeIndented">whether or not to write indented JSON text.</param>
-        public static void SaveToDisk<T>(List<T> dataContent, string fileLocation, bool writeIndented = true)
+        public static void SaveToDisk<T>(List<T> dataContent, FileInfo jsonFile, bool writeIndented = true)
         {
+            Log.Trace($"Saving JSON file {jsonFile.Name}");
             System.Text.Json.JsonSerializerOptions options = new() { WriteIndented = writeIndented };
 
             string jsonTextToWriteInTheFile = "";
@@ -61,7 +70,8 @@ namespace PlayerColorEditor.Utilities
                 jsonTextToWriteInTheFile += System.Text.Json.JsonSerializer.Serialize(dataContent[i], options);
             }
 
-            File.WriteAllText(fileLocation, jsonTextToWriteInTheFile);
+            File.WriteAllText(jsonFile.FullName, jsonTextToWriteInTheFile);
+            Log.Trace($"JSON file {jsonFile.Name} saved.");
         }
 
         /// <summary>
@@ -70,11 +80,11 @@ namespace PlayerColorEditor.Utilities
         /// </summary>
         /// <typeparam name="T">Object type to write into the file.</typeparam>
         /// <param name="dataContent">The object to write</param>
-        /// <param name="fileLocation">File to write into</param>
+        /// <param name="jsonFile">File to write into</param>
         /// <param name="writeIndented">whether or not to write indented JSON text.</param>
-        public static void SaveToDisk<T>(T dataContent, string fileLocation, bool writeIndented = true)
+        public static void SaveToDisk<T>(T dataContent, FileInfo jsonFile, bool writeIndented = true)
         {
-            SaveToDisk([dataContent], fileLocation, writeIndented);
+            SaveToDisk([dataContent], jsonFile, writeIndented);
         }
     }
 }

@@ -1,5 +1,4 @@
-﻿using System.Diagnostics;
-using System.IO;
+﻿using System.IO;
 using System.Threading.Tasks;
 
 namespace PlayerColorEditor.Settings
@@ -9,6 +8,8 @@ namespace PlayerColorEditor.Settings
     /// </summary>
     public static class ConfigController
     {
+        private static readonly Logger Log = new();
+
         public static ConfigModel Config { get; private set; } = new(
             null,
             activeColorPalette: DefaultValues.ActivePaletteDropDownSelection,
@@ -26,23 +27,22 @@ namespace PlayerColorEditor.Settings
         /// </summary>
         public static void Initialize()
         {
-            Debug.WriteLine("Started loading user preferences.");
+            Log.Trace("Started loading user preferences.");
 
             if (ConfigFile.Exists)
             {
-                string preferencesFromDisk = File.ReadAllText(ConfigFile.FullName);
-                Config = Utilities.Json.DeserializeObject<ConfigModel>(preferencesFromDisk);
-                Debug.WriteLine("Previous Config file found and loaded.");
+                Config = Utilities.Json.DeserializeObject<ConfigModel>(ConfigFile);
+                Log.Info("Previous Config file found and loaded.");
             }
             else
             {
-                Debug.WriteLine("No Config file found, creating default Config.");
+                Log.Trace("No Config file found, creating default Config.");
                 Config.WindowsWidth = DefaultValues.MainWindowWidth;
                 Config.WindowsHeight = DefaultValues.MainWindowHeight;
                 Config.WindowsLeft = DefaultValues.MainWindowLeft;
                 Config.WindowsTop = DefaultValues.MainWindowTop;
 
-                Debug.WriteLine("New Config file created.");
+                Log.Info("New Config file created.");
             }
         }
 
@@ -54,8 +54,9 @@ namespace PlayerColorEditor.Settings
         {
             if (!delayedSaving)
             {
-                Utilities.Json.SaveToDisk(Config, ConfigFile.FullName, true);
-                Debug.WriteLine("Config saved to disk.");
+                Log.Trace("Saving config to disk.");
+                Utilities.Json.SaveToDisk(Config, ConfigFile, true);
+                Log.Trace("Config saved to disk.");
                 return;
             }
 
@@ -66,7 +67,7 @@ namespace PlayerColorEditor.Settings
             else
             {
                 SaveDelayTimerIsRunning = true;
-                Debug.WriteLine("Delayed config saving started");
+                Log.Trace("Delayed config saving started");
                 DelayedConfigSaving();
             }
         }
@@ -85,7 +86,7 @@ namespace PlayerColorEditor.Settings
             }
 
             SaveDelayTimerIsRunning = false;
-            Debug.WriteLine("Delayed config saving ended, saving config to disk.");
+            Log.Trace("Delayed config saving ended, saving config to disk.");
             SaveToDisk();
         }
     }
