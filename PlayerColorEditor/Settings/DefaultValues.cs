@@ -1,6 +1,5 @@
 using System.IO;
 using System.Windows.Media;
-using PlayerColorEditor.MainWindowComponents.PalettePreset;
 
 namespace PlayerColorEditor.Settings
 {
@@ -14,7 +13,7 @@ namespace PlayerColorEditor.Settings
         #endregion
 
         #region Game Palette Files
-        public static EInterpolationStyles ActiveInterpolationMode { get { return EInterpolationStyles.Default; } }
+        public static MainScreen.EInterpolationStyles ActiveInterpolationMode { get { return MainScreen.EInterpolationStyles.Default; } }
         public static string[] ExpectedPaletteFolderLocations => [
             @"C:\Program Files (x86)\Steam\steamapps\common\AoEDE\Assets\Palettes",
             @"C:\SteamLibrary\steamapps\common\AoEDE\Assets\Palettes",
@@ -47,9 +46,9 @@ namespace PlayerColorEditor.Settings
         public static string PalettePresetFileLocation { get { return Path.Combine(Directory.GetCurrentDirectory(), "PlayerColorPresets.json"); } }
 
         /// <summary>The Color palettes this program has by default.</summary>
-        public static PalettePresetModel[] PalettePresets()
+        public static MainScreen.Components.PalettePreset.PalettePresetModel[] PalettePresets()
         {
-            PalettePresetModel editorDefaultPlayerColors = new(
+            MainScreen.Components.PalettePreset.PalettePresetModel editorDefaultPlayerColors = new(
                 name: "Editor Default",
                 blue: new(15, 70, 245),
                 red: new(220, 35, 35),
@@ -60,7 +59,7 @@ namespace PlayerColorEditor.Settings
                 purple: new(210, 55, 200),
                 teal: new(126, 242, 225));
 
-            PalettePresetModel gameDefaultPlayerColors = new(
+            MainScreen.Components.PalettePreset.PalettePresetModel gameDefaultPlayerColors = new(
                 name: "AOE:DE Default",
                 blue: new(45, 45, 245),
                 red: new(210, 40, 40),
@@ -71,7 +70,7 @@ namespace PlayerColorEditor.Settings
                 purple: new(150, 15, 250),
                 teal: new(126, 242, 225));
 
-            PalettePresetModel highContrastPlayerColors = new(
+            MainScreen.Components.PalettePreset.PalettePresetModel highContrastPlayerColors = new(
                 name: "High Contrast",
                 blue: new(43, 63, 247),
                 red: new(224, 27, 27),

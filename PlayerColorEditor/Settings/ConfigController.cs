@@ -66,7 +66,7 @@ namespace PlayerColorEditor.Settings
             else
             {
                 SaveDelayTimerIsRunning = true;
-                Debug.WriteLine("User started adjusting the windows size.");
+                Debug.WriteLine("Delayed config saving started");
                 DelayedConfigSaving();
             }
         }
@@ -85,7 +85,7 @@ namespace PlayerColorEditor.Settings
             }
 
             SaveDelayTimerIsRunning = false;
-            Debug.WriteLine("User stopped adjusting the windows size.");
+            Debug.WriteLine("Delayed config saving ended, saving config to disk.");
             SaveToDisk();
         }
     }

@@ -3,7 +3,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 
-namespace PlayerColorEditor.MainWindowComponents.PalettePreset
+namespace PlayerColorEditor.MainScreen.Components.PalettePreset
 {
     /// <summary>
     /// Creates new player color palettes for Age of Empires Definitive Edition.<br/>

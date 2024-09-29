@@ -1,6 +1,6 @@
 ﻿using System.Numerics;
 
-namespace PlayerColorEditor.MainWindowComponents.PalettePreset
+namespace PlayerColorEditor.MainScreen.Components.PalettePreset
 {
     /// <summary>
     /// JSON coded "Player Color Palette Preset" object.<br/>

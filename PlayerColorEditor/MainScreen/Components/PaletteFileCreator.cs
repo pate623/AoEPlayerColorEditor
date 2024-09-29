@@ -3,7 +3,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Numerics;
 
-namespace PlayerColorEditor.MainWindowComponents
+namespace PlayerColorEditor.MainScreen.Components
 {
     /// <summary>
     /// This class is used for writing the color data into palette files.

@@ -10,7 +10,7 @@ using System.Windows.Forms;
 using System.Windows.Media;
 using System.Windows.Shapes;
 
-namespace PlayerColorEditor
+namespace PlayerColorEditor.MainScreen
 {
     public enum EInterpolationStyles
     {
@@ -40,9 +40,9 @@ namespace PlayerColorEditor
         /// <summary>These are the player colors which are currently being edited.</summary>
         private readonly Vector3[] CurrentlyActivePlayerColors = new Vector3[8];
 
-        private readonly MainWindowComponents.WindowSizer WindowSizer;
-        private readonly MainWindowComponents.PaletteFileCreator PaletteCreator;
-        private readonly MainWindowComponents.PalettePreset.PalettePresetController PalettePresets;
+        private readonly Components.WindowSizer WindowSizer;
+        private readonly Components.PaletteFileCreator PaletteCreator;
+        private readonly Components.PalettePreset.PalettePresetController PalettePresets;
 
         public MainWindow()
         {
@@ -71,7 +71,7 @@ namespace PlayerColorEditor
             }
 
             /// <summary>
-            /// Locates all player color squares and adds them to static lists.<br/>
+            /// Locates all player color squares and adds them to lists.<br/>
             /// This way the colors can be set in a loop and the scripts needn't locate the color squares each time they need to be changed.<br/>
             /// </summary>
             void LocatePlayerColorBoxes()
@@ -366,7 +366,7 @@ namespace PlayerColorEditor
         {
             var presetNameString = FindName("NewPresetName") as System.Windows.Controls.TextBox;
 
-            MainWindowComponents.PalettePreset.PalettePresetModel newPreset = new(
+            Components.PalettePreset.PalettePresetModel newPreset = new(
                 name: presetNameString.Text,
                 blue: CurrentlyActivePlayerColors[0],
                 red: CurrentlyActivePlayerColors[1],

@@ -1,5 +1,6 @@
 ﻿// Ignore Spelling: App
 
+using System;
 using System.Diagnostics;
 using System.Windows;
 
@@ -15,9 +16,18 @@ namespace PlayerColorEditor
         /// </summary>
         void AppStartup(object sender, StartupEventArgs e)
         {
-            Settings.ConfigController.Initialize();
-            _ = new MainWindow();
-            Debug.WriteLine("Program booted successfully.");
+            try
+            {
+                Settings.ConfigController.Initialize();
+                _ = new MainScreen.MainWindow();
+                Debug.WriteLine("Program booted successfully.");
+
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Program crashed {ex}");
+                Environment.Exit(1);
+            }
         }
     }
 }

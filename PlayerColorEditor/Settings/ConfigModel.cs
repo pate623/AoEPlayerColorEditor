@@ -7,7 +7,7 @@
         string? paletteLocation,
         int activeColorPalette, 
         int activeComparedToPalette,
-        EInterpolationStyles activeInterpolationMode,
+        MainScreen.EInterpolationStyles activeInterpolationMode,
         int? windowsWidth = null,
         int? windowsHeight = null,
         int? windowsLeft = null,
@@ -16,7 +16,7 @@
         public string? PaletteFolderLocation { get; set; } = paletteLocation;
         public int ActiveColorPalettePreset { get; set; } = activeColorPalette;
         public int ActiveComparedToPalettePreset { get; set; } = activeComparedToPalette;
-        public EInterpolationStyles ActiveInterpolationMode { get; set; } = activeInterpolationMode;
+        public MainScreen.EInterpolationStyles ActiveInterpolationMode { get; set; } = activeInterpolationMode;
         public int WindowsWidth { get; set; } = windowsWidth ?? DefaultValues.MainWindowWidth;
         public int WindowsHeight { get; set; } = windowsHeight ?? DefaultValues.MainWindowHeight;
         public int WindowsLeft { get; set; } = windowsLeft ?? DefaultValues.MainWindowLeft;

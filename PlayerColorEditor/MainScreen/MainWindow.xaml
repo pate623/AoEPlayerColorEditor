@@ -1,5 +1,5 @@
 ﻿<Window
-    x:Class="PlayerColorEditor.MainWindow"
+    x:Class="PlayerColorEditor.MainScreen.MainWindow"
     SizeChanged="UserControl_SizeChanged"
     LocationChanged="Window_LocationChanged"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
