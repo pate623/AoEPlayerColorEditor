@@ -31,7 +31,10 @@ namespace PlayerColorEditor
         /// </summary>
         private bool MainWindowInitialized { get; set; } = false;
 
+        /// <summary>UI elements for the "Your Edit" colors.</summary>
         private readonly List<Rectangle> PlayerColorBoxes = [];
+
+        /// <summary>UI elements for the compared to Color boxes.</summary>
         private readonly List<Rectangle> CompraredToColorBoxes = [];
 
         /// <summary>These are the player colors which are currently being edited.</summary>
@@ -389,7 +392,7 @@ namespace PlayerColorEditor
             presetNameBox.Visibility = Visibility.Collapsed;
 
             ApplyPickedComparedToColors();
-            PrintToConsole("Created new palette preset", Settings.DefaultValues.ConsoleTextSmallDetail);
+            PrintToConsole("Created new palette preset", Settings.DefaultValues.ConsoleTextCreated);
         }
 
         /// <summary>
@@ -501,9 +504,9 @@ namespace PlayerColorEditor
         /// Add a line of text to the console window.<br/>
         /// Use empty line as parameter to apply the new maximum line count.<br/>
         /// <para><br/>
-        /// Get old text from the console, add it to a list, then insert the "textToBeAdded" parameter to that list at index 0.<br/>
-        /// Clear the console window and then add all the lines from the list to it, whilst making sure the row count doesn't  exceed 
-        /// <see cref="Settings.DefaultValues.MaxLineCountInConsole"/>.
+        /// Reads the old console text, adds it to a list, then insert the "textToBeAdded" parameter to that list at index 0.<br/>
+        /// Clears the console window and then adds all the lines from the list to it, whilst making sure the row count doesn't  exceed 
+        /// <see cref="Settings.DefaultValues.MaxLineCountInConsole"/>.<br/>
         /// </para>
         /// </summary>
         private void PrintToConsole(string textToBeAdded, Color? textColor = null)
@@ -511,22 +514,19 @@ namespace PlayerColorEditor
             // Optional parameter has to be constant, have to declare default text color value here.
             textColor = textColor == null ? Settings.DefaultValues.ConsoleTextBase : textColor;
 
-            var newText = new Run(textToBeAdded + "\n")
+            Run newText = new(textToBeAdded + "\n")
             {
                 Foreground = new SolidColorBrush((Color)textColor)
             };
 
             var customConsole = FindName("CustomConsole") as TextBlock;
 
-            List<Inline> newConsoleText = [.. customConsole.Inlines];
-            newConsoleText.Insert(0, newText);
+            List<Inline> newLineAndOldConsoleText = [newText, .. customConsole.Inlines];
+            int newConsoleLineCount = Math.Min(newLineAndOldConsoleText.Count, Settings.DefaultValues.MaxLineCountInConsole);
+            List<Inline> newConsoleText = [.. newLineAndOldConsoleText[..newConsoleLineCount]];
 
             customConsole.Inlines.Clear();
-
-            for (int i = 0; i < newConsoleText.Count && i < Settings.DefaultValues.MaxLineCountInConsole; i++)
-            {
-                customConsole.Inlines.Add(newConsoleText[i]);
-            }
+            customConsole.Inlines.AddRange(newConsoleText);
         }
         #endregion
 
