@@ -47,7 +47,7 @@ namespace PlayerColorEditor.MainScreen
 
         public MainWindow()
         {
-            Log = new();
+            Log = new(typeof(MainWindow));
             InitializeComponent();
             Show();
             WindowSizer = new(this);

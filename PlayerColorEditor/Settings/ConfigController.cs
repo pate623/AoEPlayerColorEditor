@@ -8,7 +8,7 @@ namespace PlayerColorEditor.Settings
     /// </summary>
     public static class ConfigController
     {
-        private static readonly Logger Log = new();
+        private static readonly Logger Log = new(typeof(ConfigController));
 
         public static ConfigModel Config { get; private set; } = new(
             null,

@@ -13,9 +13,10 @@ namespace PlayerColorEditor
         /// </summary>
         void AppStartup(object sender, StartupEventArgs e)
         {
-            Logger log = new();
+            Logger log = new(typeof(App));
             try
             {
+                log.Debug("Starting program");
                 Settings.ConfigController.Initialize();
                 _ = new MainScreen.MainWindow();
                 log.Info("Program booted successfully.");

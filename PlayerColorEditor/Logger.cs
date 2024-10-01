@@ -4,10 +4,9 @@ using System;
 
 namespace PlayerColorEditor
 {
-    internal class Logger
+    internal class Logger(Type loggerType)
     {
-        // TODO Add the ability to declare this logger with custom class name
-        private readonly ILogger NlogLogger = LoggerFactory.Create(builder => builder.AddNLog()).CreateLogger<Logger>();
+        private readonly ILogger NlogLogger = LoggerFactory.Create(builder => builder.AddNLog()).CreateLogger(loggerType.ToString());
 
 #pragma warning disable CA2254 // This program doesn't use structured logging
         public void Trace(string message, Exception? ex = null)

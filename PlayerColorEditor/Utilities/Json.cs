@@ -11,7 +11,7 @@ namespace PlayerColorEditor.Utilities
     /// </summary>
     public class Json
     {
-        private static readonly Logger Log = new();
+        private static readonly Logger Log = new(typeof(Json));
 
         /// <summary>
         /// Deserializes JSON objects from text.<br/>

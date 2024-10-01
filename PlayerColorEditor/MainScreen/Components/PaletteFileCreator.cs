@@ -9,7 +9,7 @@ namespace PlayerColorEditor.MainScreen.Components
     /// </summary>
     class PaletteFileCreator
     {
-        private readonly Logger Log = new();
+        private readonly Logger Log = new(typeof(PaletteFileCreator));
 
         private readonly string PaletteFileStartingText = $"JASC-PAL{Environment.NewLine}0100{Environment.NewLine}256";
 

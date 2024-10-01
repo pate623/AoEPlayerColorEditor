@@ -16,7 +16,7 @@ namespace PlayerColorEditor.MainScreen.Components.PalettePreset
     {
         public List<PalettePresetModel> AllColorPalettePresets { get; private set; } = [];
 
-        private readonly Logger Log = new();
+        private readonly Logger Log = new(typeof(PalettePresetModel));
 
         private readonly FileInfo PlayerColorPresetFile = new(Settings.DefaultValues.PalettePresetFileLocation);
 
