@@ -1,8 +1,8 @@
-﻿<Application x:Class="PlayerColorsWithWpf.App"
+﻿<Application x:Class="PlayerColorEditor.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:local="clr-namespace:PlayerColorsWithWpf"
-             StartupUri="MainWindow.xaml">
+             xmlns:local="clr-namespace:PlayerColorEditor"
+             Startup="AppStartup">
     <Application.Resources>
          
     </Application.Resources>

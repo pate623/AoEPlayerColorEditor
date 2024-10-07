@@ -1,30 +1,43 @@
-﻿<!-- MinWidth and MinHeight determine the fixed aspect ratio -->
-<Window x:Class="PlayerColorsWithWpf.MainWindow"
-        SizeChanged="UserControl_SizeChanged" LocationChanged="Window_LocationChanged"
+﻿<Window
+    x:Class="PlayerColorEditor.MainScreen.MainWindow"
+    SizeChanged="UserControl_SizeChanged"
+    LocationChanged="Window_LocationChanged"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
     ResizeMode="CanResizeWithGrip"
-    MinWidth="355" MinHeight="595"
-    Left="120" Top="120"
+    MinWidth="355"
+    MinHeight="595"
+    Left="120"
+    Top="120"
     Title="AOE:DE Custom Player Colors">
 
-    <Viewbox MinWidth="345" MinHeight="534">
-        <Grid Width="320" Height="530">
+    <Viewbox
+        MinWidth="345"
+        MinHeight="534">
+        <Grid
+            Width="320"
+            Height="530">
 
-            <!-- "?" button -->
-            <Button x:Name="Info" Click="Info_Click"
-                HorizontalAlignment="Right" VerticalAlignment="Top"
+            <!-- Program Information -->
+            <Button
+                x:Name="Info"
+                Click="Info_Click"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Top"
                 Margin="0,8,15,0"
                 Width="25"
                 Content="?"/>
 
-            <StackPanel x:Name="InfoPopUp"
-                HorizontalAlignment="Right" VerticalAlignment="Top"
+            <StackPanel
+                x:Name="InfoPopUp"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Top"
                 Margin="0,27,15,0"
-                Width="296" Height="211"
+                Width="296"
+                Height="211"
                 ZIndex="3"
                 Visibility="Collapsed"
                 Background="White">
@@ -50,188 +63,261 @@
 
             <!-- Console -->
             <TextBlock
-                HorizontalAlignment="Right" VerticalAlignment="Top"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Top"
                 Margin="0,34,105,0"
                 FontSize="10"
                 Text="Console"/>
 
-            <TextBlock x:Name="CustomConsole"
-                HorizontalAlignment="Right" VerticalAlignment="Top"
+            <TextBlock
+                x:Name="CustomConsole"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Top"
                 Margin="0,48,3,0"
                 Width="145"
-                FontSize="11" LineHeight="18"/>
+                FontSize="11"
+                LineHeight="18"/>
 
             <!-- Player color headers text boxes -->
             <TextBlock
-                HorizontalAlignment="Left" VerticalAlignment="Top"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
                 Margin="60,10,0,0"
                 FontSize="14"
                 Text="Your Edit | Comparison"/>
 
             <TextBlock
-                HorizontalAlignment="Left" VerticalAlignment="Top"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
                 Margin="10,12,0,0"
                 TextWrapping="Wrap"
                 FontSize="12"
                 Text="Color"/>
 
             <TextBlock
-                HorizontalAlignment="Left" VerticalAlignment="Top"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
                 Margin="10,40,0,0"
                 Text="Blue"/>
 
             <TextBlock
-                HorizontalAlignment="Left" VerticalAlignment="Top"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
                 Margin="10,65,0,0"
                 Text="Red"/>
 
             <TextBlock
-                HorizontalAlignment="Left" VerticalAlignment="Top"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
                 Margin="10,90,0,0"
                 Text="Yellow"/>
 
             <TextBlock
-                HorizontalAlignment="Left" VerticalAlignment="Top"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
                 Margin="10,115,0,0"
                 Text="Brown"/>
 
             <TextBlock
-                HorizontalAlignment="Left" VerticalAlignment="Top"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
                 Margin="10,140,0,0"
                 Text="Orange"/>
 
             <TextBlock
-                HorizontalAlignment="Left" VerticalAlignment="Top"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
                 Margin="10,165,0,0"
                 Text="Green"/>
 
             <TextBlock
-                HorizontalAlignment="Left" VerticalAlignment="Top"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
                 Margin="10,190,0,0"
                 Text="Purple"/>
 
             <TextBlock
-                HorizontalAlignment="Left" VerticalAlignment="Top"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
                 Margin="10,215,0,0"
                 Text="Teal"/>
 
             <!-- User changeable "Your Edit" color boxes -->
-            <Rectangle x:Name="BluePlayerColor" MouseDown="BluePlayer_MouseDown"
+            <Rectangle
+                x:Name="BluePlayerColor"
+                MouseDown="BluePlayer_MouseDown"
                 Cursor="Hand"
-                HorizontalAlignment="Left" VerticalAlignment="Top"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
                 Margin="95,40,0,0"
-                Width="20" Height="20"
+                Width="20"
+                Height="20"
                 Fill="#FF2D2DF5"/>
 
-            <Rectangle x:Name="RedPlayerColor" MouseDown="RedPlayer_MouseDown"
+            <Rectangle
+                x:Name="RedPlayerColor"
+                MouseDown="RedPlayer_MouseDown"
                 Cursor="Hand"
-                HorizontalAlignment="Left" VerticalAlignment="Top"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
                 Margin="95,65,0,0"
-                Width="20" Height="20"
+                Width="20"
+                Height="20"
                 Fill="#FFD22828"/>
 
-            <Rectangle x:Name="YellowPlayerColor" MouseDown="YellowPlayer_MouseDown"
+            <Rectangle
+                x:Name="YellowPlayerColor"
+                MouseDown="YellowPlayer_MouseDown"
                 Cursor="Hand"
-                HorizontalAlignment="Left" VerticalAlignment="Top"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
                 Margin="95,90,0,0"
-                Width="20" Height="20"
+                Width="20"
+                Height="20"
                 Fill="#FFD7D61E"/>
 
-            <Rectangle x:Name="BrownPlayerColor" MouseDown="BrownPlayer_MouseDown"
+            <Rectangle
+                x:Name="BrownPlayerColor"
+                MouseDown="BrownPlayer_MouseDown"
                 Cursor="Hand"
-                HorizontalAlignment="Left" VerticalAlignment="Top"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
                 Margin="95,115,0,0"
-                Width="20" Height="20"
+                Width="20"
+                Height="20"
                 Fill="#FF8E5B00"/>
 
-            <Rectangle x:Name="OrangePlayerColor" MouseDown="OrangePlayer_MouseDown"
+            <Rectangle
+                x:Name="OrangePlayerColor"
+                MouseDown="OrangePlayer_MouseDown"
                 Cursor="Hand"
-                HorizontalAlignment="Left" VerticalAlignment="Top"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
                 Margin="95,140,0,0"
-                Width="20" Height="20"
+                Width="20"
+                Height="20"
                 Fill="#FFFF9605"/>
 
-            <Rectangle x:Name="GreenPlayerColor" MouseDown="GreenPlayer_MouseDown"
+            <Rectangle
+                x:Name="GreenPlayerColor"
+                MouseDown="GreenPlayer_MouseDown"
                 Cursor="Hand"
-                HorizontalAlignment="Left" VerticalAlignment="Top"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
                 Margin="95,165,0,0"
-                Width="20" Height="20"
+                Width="20"
+                Height="20"
                 Fill="#FF04A514"/>
 
-            <Rectangle x:Name="PurplePlayerColor" MouseDown="PurplePlayer_MouseDown"
+            <Rectangle
+                x:Name="PurplePlayerColor"
+                MouseDown="PurplePlayer_MouseDown"
                 Cursor="Hand"
-                HorizontalAlignment="Left" VerticalAlignment="Top"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
                 Margin="95,190,0,0"
-                Width="20" Height="20"
+                Width="20"
+                Height="20"
                 Fill="#FF960FFA"/>
 
-            <Rectangle x:Name="TealPlayerColor" MouseDown="TealPlayer_MouseDown"
+            <Rectangle
+                x:Name="TealPlayerColor"
+                MouseDown="TealPlayer_MouseDown"
                 Cursor="Hand"
-                HorizontalAlignment="Left"  VerticalAlignment="Top"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
                 Margin="95,215,0,0"
-                Width="20" Height="20"
+                Width="20"
+                Height="20"
                 Fill="#FF7EF2E1"/>
 
             <!-- Compared to color boxes -->
-            <Rectangle x:Name="BlueComparedToColor"
-                HorizontalAlignment="Left" VerticalAlignment="Top"
+            <Rectangle
+                x:Name="BlueComparedToColor"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
                 Margin="125,40,0,0"
-                Width="20" Height="20"
+                Width="20"
+                Height="20"
                 Fill="#FF2D2DF5"/>
 
-            <Rectangle x:Name="RedComparedToColor"
-                HorizontalAlignment="Left"  VerticalAlignment="Top"
+            <Rectangle
+                x:Name="RedComparedToColor"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
                 Margin="125,65,0,0"
-                Width="20" Height="20"
+                Width="20"
+                Height="20"
                 Fill="#FFD22828"/>
 
-            <Rectangle x:Name="YellowComparedToColor"
-                HorizontalAlignment="Left" VerticalAlignment="Top"
+            <Rectangle
+                x:Name="YellowComparedToColor"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
                 Margin="125,90,0,0"
-                Width="20" Height="20"
+                Width="20"
+                Height="20"
                 Fill="#FFD7D61E"/>
 
-            <Rectangle x:Name="BrownComparedToColor"
-                HorizontalAlignment="Left" VerticalAlignment="Top"
+            <Rectangle
+                x:Name="BrownComparedToColor"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
                 Margin="125,115,0,0"
-                Width="20" Height="20"
+                Width="20"
+                Height="20"
                 Fill="#FF8E5B00"/>
 
-            <Rectangle x:Name="OrangeComparedToColor"
-                HorizontalAlignment="Left" VerticalAlignment="Top"
+            <Rectangle
+                x:Name="OrangeComparedToColor"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
                 Margin="125,140,0,0"
-                Width="20" Height="20"
+                Width="20"
+                Height="20"
                 Fill="#FFFF9605"/>
 
-            <Rectangle x:Name="GreenComparedToColor"
-                HorizontalAlignment="Left" VerticalAlignment="Top"
+            <Rectangle
+                x:Name="GreenComparedToColor"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
                 Margin="125,165,0,0"
-                Width="20" Height="20"
+                Width="20"
+                Height="20"
                 Fill="#FF04A514"/>
 
-            <Rectangle x:Name="PurpleComparedToColor"
-                HorizontalAlignment="Left" VerticalAlignment="Top"
+            <Rectangle
+                x:Name="PurpleComparedToColor"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
                 Margin="125,190,0,0"
-                Width="20" Height="20"
+                Width="20"
+                Height="20"
                 Fill="#FF960FFA"/>
 
-            <Rectangle x:Name="TealComparedToColor"
-                HorizontalAlignment="Left" VerticalAlignment="Top"
+            <Rectangle
+                x:Name="TealComparedToColor"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
                 Margin="125,215,0,0"
-                Width="20" Height="20"
+                Width="20"
+                Height="20"
                 Fill="#FF7EF2E1"/>
 
             <!-- Compared to colors switch -->
             <TextBlock
-                HorizontalAlignment="Right" VerticalAlignment="Top"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Top"
                 Opacity="0.9"
                 Margin="0,188,25,0"
                 FontSize="11"
                 Text="Compared to Player Colors"/>
 
-            <ComboBox x:Name="ComparedToColorSelection"
-                      SelectionChanged="ComparedToColors_SelectionChanged"
-                HorizontalAlignment="Left" VerticalAlignment="Top"
+            <ComboBox
+                x:Name="ComparedToColorSelection"
+                SelectionChanged="ComparedToColors_SelectionChanged"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
                 Margin="171,205,0,0"
                 FontSize="10"
                 Width="116">
@@ -242,20 +328,26 @@
 
             <!-- Palette folder location -->
             <TextBlock
-                HorizontalAlignment="Left" VerticalAlignment="Top"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
                 Margin="10,251,0,0"
                 FontSize="12"
                 Text="Color Palette Location:"/>
 
-            <Button x:Name="LocateColorPalettes" Click="LocateColorPalettes_Click"
-                HorizontalAlignment="Left" VerticalAlignment="Top"
+            <Button
+                x:Name="LocateColorPalettes"
+                Click="LocateColorPalettes_Click"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
                 Margin="140,250,0,0"
                 Width="110"
                 FontSize="11"
                 Content="Locate Color Palettes"/>
 
-            <TextBlock x:Name="ColorPalettesLocation"
-                HorizontalAlignment="Left" VerticalAlignment="Top"
+            <TextBlock
+                x:Name="ColorPalettesLocation"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
                 Margin="5,273,0,0"
                 Padding="0,0,2,0"
                 TextWrapping="Wrap"
@@ -264,14 +356,17 @@
 
             <!-- Edit and switch palette presets -->
             <TextBlock
-                HorizontalAlignment="Center" VerticalAlignment="Bottom"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Bottom"
                 Margin="0,0,0,190"
                 FontSize="12"
                 Text="Currently Active Player Color Preset"/>
 
-            <ComboBox x:Name="PresetSelection"
-                      SelectionChanged="ColorPreset_SelectionChanged"
-                HorizontalAlignment="Center" VerticalAlignment="Bottom"
+            <ComboBox
+                x:Name="PresetSelection"
+                SelectionChanged="ColorPreset_SelectionChanged"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Bottom"
                 Margin="0,0,0,165"
                 Width="160">
                 <ComboBoxItem IsSelected="True" Content="Choice 1"></ComboBoxItem>
@@ -279,42 +374,56 @@
                 <ComboBoxItem Content="Choice 3"></ComboBoxItem>
             </ComboBox>
 
-            <Button x:Name="SavePreset" Click="SavePreset_Click"
+            <Button
+                x:Name="SavePreset"
+                Click="SavePreset_Click"
                 IsEnabled="False"
-                HorizontalAlignment="Center" VerticalAlignment="Bottom"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Bottom"
                 Margin="0,0,120,133"
                 Width="100"
                 Content="Save Preset"/>
 
-            <Button x:Name="SavePresetAs" Click="SavePresetAs_Click"
+            <Button
+                x:Name="SavePresetAs"
+                Click="SavePresetAs_Click"
                 HorizontalAlignment="Center" VerticalAlignment="Bottom"
                 Margin="120,0,0,133"
                 Width="100"
                 Content="Save Preset As"/>
 
-            <Button x:Name="DeletePreset" Click="DeletePreset_Click"
+            <Button
+                x:Name="DeletePreset"
+                Click="DeletePreset_Click"
                 IsEnabled="False"
-                HorizontalAlignment="Center" VerticalAlignment="Bottom"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Bottom"
                 Margin="0,200,0,102"
                 Width="100"
                 Content="Delete Preset"/>
 
-            <Button x:Name="CreateColors" Click="CreateColors_Click"
-                HorizontalAlignment="Center" VerticalAlignment="Bottom"
+            <Button
+                x:Name="CreateColors"
+                Click="CreateColors_Click"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Bottom"
                 Margin="0,0,0,60"
                 Width="100"
                 Content="Create Colors"/>
 
             <!-- Choose color interpolation Type -->
             <TextBlock
-                HorizontalAlignment="Center" VerticalAlignment="Bottom"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Bottom"
                 Margin="0,0,0,40"
                 FontSize="10"
                 Text="Color Interpolation Type"/>
 
-            <ComboBox x:Name="ColorInterpolationSelection"
-                      SelectionChanged="ColorInterpolation_SelectionChanged"
-                HorizontalAlignment="Center" VerticalAlignment="Bottom"
+            <ComboBox
+                x:Name="ColorInterpolationSelection"
+                SelectionChanged="ColorInterpolation_SelectionChanged"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Bottom"
                 Margin="0,0,0,20"
                 Width="110"
                 FontSize="10">
@@ -324,11 +433,14 @@
             </ComboBox>
 
             <!-- Create new color preset pop up -->
-            <StackPanel x:Name="PresetNamePopUp"
+            <StackPanel
+                x:Name="PresetNamePopUp"
                 Visibility="Collapsed"
-                HorizontalAlignment="Center" VerticalAlignment="Bottom"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Bottom"
                 Margin="0,135,0,0"
-                Width="320" Height="125"
+                Width="320"
+                Height="125"
                 Background="White">
 
                 <TextBlock
@@ -336,40 +448,48 @@
                     Margin="0,10,0,2"
                     Text="Enter Name For The New Preset"/>
 
-                <TextBox x:Name="NewPresetName"
+                <TextBox
+                    x:Name="NewPresetName"
                     Margin="10,0"
                     Text="New Preset Name"/>
 
-                <Button Click="AcceptNewPresetName_Click"
+                <Button
+                    Click="AcceptNewPresetName_Click"
                     VerticalAlignment="bottom"
                     Margin="0,20,0,0"
                     Content="Apply"/>
 
-                <Button Click="CancelNewPresetCreation_Click"
+                <Button
+                    Click="CancelNewPresetCreation_Click"
                     VerticalAlignment="bottom"
                     Margin="0,10,0,0"
                     Content="Cancel"/>
             </StackPanel>
 
             <!-- Delete color preset pop up -->
-            <StackPanel x:Name="PresetDeletePopUp"
+            <StackPanel
+                x:Name="PresetDeletePopUp"
                 Visibility="Collapsed"
-                HorizontalAlignment="Center" VerticalAlignment="Bottom"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Bottom"
                 Margin="0,175,0,0"
-                Width="320" Height="100"
+                Width="320"
+                Height="100"
                 Background="White">
 
-                <TextBlock 
+                <TextBlock
                     HorizontalAlignment="Center"
                     Margin="0,4,0,2"
                     Text="Are You Sure You Want To Delete The Preset?"/>
 
-                <Button Click="AcceptRemoval_Click"
+                <Button
+                    Click="AcceptRemoval_Click"
                     VerticalAlignment="bottom"
                     Margin="0,10,0,0"
                     Content="Confirm"/>
 
-                <Button Click="CancelRemoval_Click"
+                <Button
+                    Click="CancelRemoval_Click"
                     VerticalAlignment="bottom"
                     Margin="0,10,0,0"
                     Content="Cancel"/>
@@ -377,3 +497,4 @@
         </Grid>
     </Viewbox>
 </Window>
+    
