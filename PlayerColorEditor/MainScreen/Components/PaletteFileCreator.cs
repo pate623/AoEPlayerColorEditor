@@ -2,13 +2,11 @@
 using System.IO;
 using System.Numerics;
 
-namespace PlayerColorEditor.MainScreen.Components
-{
+namespace PlayerColorEditor.MainScreen.Components {
     /// <summary>
     /// This class is used for writing the color data into palette files.
     /// </summary>
-    class PaletteFileCreator
-    {
+    class PaletteFileCreator {
         private readonly Logger Log = new(typeof(PaletteFileCreator));
 
         private readonly string PaletteFileStartingText = $"JASC-PAL{Environment.NewLine}0100{Environment.NewLine}256";
@@ -45,35 +43,27 @@ namespace PlayerColorEditor.MainScreen.Components
         /// </summary>
         /// <param name="playerColors">Holds 8 player colors.</param>
         /// <returns>True if palette files were successfully created.</returns>
-        public bool WritePlayerColorToPaletteFiles(Vector3[] playerColors)
-        {
-            if (Directory.Exists(Settings.ConfigController.Config.PaletteFolderLocation))
-            {
-                try
-                {
-                    for (int i = 0; i < PaletteNames.Length; i++)
-                    {
+        public bool WritePlayerColorToPaletteFiles(Vector3[] playerColors) {
+            if (Directory.Exists(Settings.ConfigController.Config.PaletteFolderLocation)) {
+                try {
+                    for (int i = 0; i < PaletteNames.Length; i++) {
                         File.Delete(Settings.ConfigController.Config.PaletteFolderLocation + @"\" + PaletteNames[i]);
                     }
                     Log.Debug("Previous player colors palettes removed");
                 }
-                catch (Exception ex)
-                {
-                    Log.Debug($"Can't delete currently existing palette files\n{ex}");
+                catch (Exception ex) {
+                    Log.Debug($"Can't delete currently existing palette files", ex);
                     return false;
                 }
             }
-            else
-            {
+            else {
                 _ = Directory.CreateDirectory(Settings.ConfigController.Config.PaletteFolderLocation ?? Settings.DefaultValues.PaletteFolderLocation);
                 Log.Debug("No player color palette folder found, new player color palette folder created.");
             }
 
-            for (int i = 0; i < PaletteNames.Length; i++)
-            {
-                if (!CreatePlayerColorPalette(playerColors[i], PaletteNames[i]))
-                {
-                    Log.Debug("Writing a palette file to disk failed: " + PaletteNames[i]);
+            for (int i = 0; i < PaletteNames.Length; i++) {
+                if (!CreatePlayerColorPalette(playerColors[i], PaletteNames[i])) {
+                    Log.Debug($"Writing a palette file to disk failed: {PaletteNames[i]}");
                     return false;
                 }
             }
@@ -98,16 +88,12 @@ namespace PlayerColorEditor.MainScreen.Components
         /// </summary>
         /// <param name="playerColor">Holds the main color (RGB).</param>
         /// <returns>True if palette file was successfully created.</returns>
-        private bool CreatePlayerColorPalette(Vector3 playerColor, string paletteName)
-        {
+        private bool CreatePlayerColorPalette(Vector3 playerColor, string paletteName) {
             string textToWriteInPaletteFile = PaletteFileStartingText;
 
-            foreach (Vector3 interpolateIntoColor in InterpolatingIntoColors)
-            {
-                for (int ineterpolateIndex = 0; ineterpolateIndex <= ColorInterpolationCount; ineterpolateIndex++)
-                {
-                    switch (Settings.ConfigController.Config.ActiveInterpolationMode)
-                    {
+            foreach (Vector3 interpolateIntoColor in InterpolatingIntoColors) {
+                for (int ineterpolateIndex = 0; ineterpolateIndex <= ColorInterpolationCount; ineterpolateIndex++) {
+                    switch (Settings.ConfigController.Config.ActiveInterpolationMode) {
                         case EInterpolationStyles.Default: // Same style as the games default interpolation.
                             Vector3 baseInterpolatedColor = InterpolateLinearly(playerColor, interpolateIntoColor, ineterpolateIndex);
                             textToWriteInPaletteFile += RGBColorSeperator;
@@ -139,22 +125,19 @@ namespace PlayerColorEditor.MainScreen.Components
             }
 
             // Fill in "0 0 0" line to get a total of 256 lines in color data.
-            for (int i = 0; i < 128; i++)
-            {
+            for (int i = 0; i < 128; i++) {
                 textToWriteInPaletteFile += RGBColorSeperator;
                 textToWriteInPaletteFile += "0 0 0";
             }
 
             // Original palette files had an empty line in the end so this one will also have one.
             textToWriteInPaletteFile += RGBColorSeperator;
-            try
-            {
+            try {
                 string paletteFolderLocation = Settings.ConfigController.Config.PaletteFolderLocation ?? Settings.DefaultValues.PaletteFolderLocation;
                 File.WriteAllText(Path.Combine(paletteFolderLocation, paletteName), textToWriteInPaletteFile);
                 return true;
             }
-            catch (Exception ex)
-            {
+            catch (Exception ex) {
                 Log.Error($"Failed to create palette files", ex);
                 return false;
             }
@@ -162,8 +145,7 @@ namespace PlayerColorEditor.MainScreen.Components
             /// <summary>
             /// Linearly interpolates between pColor and InterpolateColor, weights based on interpolateIteration.
             /// </summary>
-            static Vector3 InterpolateLinearly(Vector3 pColor, Vector3 InterpolateColor, int interpolateIteration)
-            {
+            static Vector3 InterpolateLinearly(Vector3 pColor, Vector3 InterpolateColor, int interpolateIteration) {
                 float interpolateStep = (float)interpolateIteration / ColorInterpolationCount;
 
                 return new Vector3(
@@ -177,11 +159,9 @@ namespace PlayerColorEditor.MainScreen.Components
             /// Better color separation than default IneterpolateIndex, not as bad as "OnlyMainColor".<br/>
             /// Has some extra adjustments to prevent colors look burnt.<br/>
             /// </summary>
-            static Vector3 InterpolateForGlow(Vector3 pColor, Vector3 InterpolateColor, int interpolateIteration)
-            {
+            static Vector3 InterpolateForGlow(Vector3 pColor, Vector3 InterpolateColor, int interpolateIteration) {
                 // Use linear scaling for all but the darkest colors
-                if (InterpolateColor.X + InterpolateColor.Y + InterpolateColor.Z > 100)
-                {
+                if (InterpolateColor.X + InterpolateColor.Y + InterpolateColor.Z > 100) {
                     float interpolateStep = (float)interpolateIteration / ColorInterpolationCount;
 
                     return new Vector3(

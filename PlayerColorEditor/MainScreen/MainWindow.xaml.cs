@@ -9,17 +9,14 @@ using System.Windows.Forms;
 using System.Windows.Media;
 using System.Windows.Shapes;
 
-namespace PlayerColorEditor.MainScreen
-{
-    public enum EInterpolationStyles
-    {
+namespace PlayerColorEditor.MainScreen {
+    public enum EInterpolationStyles {
         Default = 0,
         OnlyMainColor = 1,
         Glowing = 2
     }
 
-    public partial class MainWindow : Window
-    {
+    public partial class MainWindow : Window {
         /// This warning is given whenever a main window element is being searched.
         /// Disabling these warnings here as a whole creates cleaner looking code than disabling these warning at each element search.
 #pragma warning disable CS8602
@@ -45,8 +42,7 @@ namespace PlayerColorEditor.MainScreen
         private readonly Components.PaletteFileCreator PaletteCreator;
         private readonly Components.PalettePreset.PalettePresetController PalettePresets;
 
-        public MainWindow()
-        {
+        public MainWindow() {
             Log = new(typeof(MainWindow));
             InitializeComponent();
             Show();
@@ -65,8 +61,7 @@ namespace PlayerColorEditor.MainScreen
             Log.Debug("Main Window Initialized");
 
             /// <summary>Loads the window location from config and sets the main window to this size and location</summary>
-            void UpdateWindowLocationAndSize()
-            {
+            void UpdateWindowLocationAndSize() {
                 Width = Settings.ConfigController.Config.WindowsWidth;
                 Height = Settings.ConfigController.Config.WindowsHeight;
                 Left = Settings.ConfigController.Config.WindowsLeft;
@@ -77,8 +72,7 @@ namespace PlayerColorEditor.MainScreen
             /// Locates all player color squares and adds them to lists.<br/>
             /// This way the colors can be set in a loop and the scripts needn't locate the color squares each time they need to be changed.<br/>
             /// </summary>
-            void LocatePlayerColorBoxes()
-            {
+            void LocatePlayerColorBoxes() {
 #pragma warning disable CS8604
                 PlayerColorBoxes.Add(FindName("BluePlayerColor") as Rectangle);
                 PlayerColorBoxes.Add(FindName("RedPlayerColor") as Rectangle);
@@ -102,8 +96,7 @@ namespace PlayerColorEditor.MainScreen
 #pragma warning restore CS8604
             }
 
-            void DisplaySelectedInterpolationStyle()
-            {
+            void DisplaySelectedInterpolationStyle() {
                 var colorSelection = FindName("ColorInterpolationSelection") as System.Windows.Controls.ComboBox;
                 colorSelection.SelectedIndex = (int)Settings.ConfigController.Config.ActiveInterpolationMode;
             }
@@ -113,8 +106,7 @@ namespace PlayerColorEditor.MainScreen
         /// <summary>
         /// Updates UI and code to display the newly selected color preset as currently active "Your Edit" colors.
         /// </summary>
-        private void ColorPreset_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
+        private void ColorPreset_SelectionChanged(object sender, SelectionChangedEventArgs e) {
             if (!MainWindowInitialized)
                 return;
 
@@ -129,36 +121,28 @@ namespace PlayerColorEditor.MainScreen
         }
 
         #region Color Selecting
-        private void BluePlayer_MouseDown(object sender, RoutedEventArgs e)
-        {
+        private void BluePlayer_MouseDown(object sender, RoutedEventArgs e) {
             OpenColorPicker(0);
         }
-        private void RedPlayer_MouseDown(object sender, RoutedEventArgs e)
-        {
+        private void RedPlayer_MouseDown(object sender, RoutedEventArgs e) {
             OpenColorPicker(1);
         }
-        private void YellowPlayer_MouseDown(object sender, RoutedEventArgs e)
-        {
+        private void YellowPlayer_MouseDown(object sender, RoutedEventArgs e) {
             OpenColorPicker(2);
         }
-        private void BrownPlayer_MouseDown(object sender, RoutedEventArgs e)
-        {
+        private void BrownPlayer_MouseDown(object sender, RoutedEventArgs e) {
             OpenColorPicker(3);
         }
-        private void OrangePlayer_MouseDown(object sender, RoutedEventArgs e)
-        {
+        private void OrangePlayer_MouseDown(object sender, RoutedEventArgs e) {
             OpenColorPicker(4);
         }
-        private void GreenPlayer_MouseDown(object sender, RoutedEventArgs e)
-        {
+        private void GreenPlayer_MouseDown(object sender, RoutedEventArgs e) {
             OpenColorPicker(5);
         }
-        private void PurplePlayer_MouseDown(object sender, RoutedEventArgs e)
-        {
+        private void PurplePlayer_MouseDown(object sender, RoutedEventArgs e) {
             OpenColorPicker(6);
         }
-        private void TealPlayer_MouseDown(object sender, RoutedEventArgs e)
-        {
+        private void TealPlayer_MouseDown(object sender, RoutedEventArgs e) {
             OpenColorPicker(7);
         }
 
@@ -167,12 +151,9 @@ namespace PlayerColorEditor.MainScreen
         /// This color selection allows users to edit the currently active colors to their likings.<br/>
         /// Each time the color picker is closed this script updates <see cref="CurrentlyActivePlayerColors"/> and showcases these changes in the UI.<br/>
         /// </summary>
-        private void OpenColorPicker(int selectedPlayerColor)
-        {
-            Log.Debug("Color picker opened with player color id: " + selectedPlayerColor);
-
-            ColorDialog playerColorPicker = new()
-            {
+        private void OpenColorPicker(int selectedPlayerColor) {
+            Log.Debug($"Color picker opened with player color id: {selectedPlayerColor}");
+            ColorDialog playerColorPicker = new() {
                 Color = System.Drawing.Color.FromArgb(
                     0,
                     (byte)CurrentlyActivePlayerColors[selectedPlayerColor].X,
@@ -188,9 +169,8 @@ namespace PlayerColorEditor.MainScreen
                 playerColorPicker.Color.B);
 
             playerColorPicker.Dispose();
-
-            Log.Debug("Player colors edited by the user.");
             DisplayNewlySelectedColors();
+            Log.Debug("Player colors edited by the user.");
         }
         #endregion
 
@@ -199,36 +179,30 @@ namespace PlayerColorEditor.MainScreen
         /// Uses names from <see cref="AllColorPalettePresets"/> as the combo box choices.<br/>
         /// </summary>
         /// <param name="activePresetIndex">Displays this as active color preset.</param>
-        private void DisplayColorPresetChoices(int activePresetIndex)
-        {
+        private void DisplayColorPresetChoices(int activePresetIndex) {
             var presetsComboBox = FindName("PresetSelection") as System.Windows.Controls.ComboBox;
-
             presetsComboBox.Items.Clear();
 
-            foreach (var currentColorPreset in PalettePresets.AllColorPalettePresets)
-            {
+            foreach (var currentColorPreset in PalettePresets.AllColorPalettePresets) {
                 _ = presetsComboBox.Items.Add(currentColorPreset.PresetName);
             }
 
             presetsComboBox.SelectedIndex = activePresetIndex;
-            Log.Debug("Player color presets list in ComboBox updated.");
+            Log.Debug("Player color presets list in ComboBox updated");
         }
 
         /// <summary>
         /// Updates the "Your Edit" player colors squares shown in the UI.<br/>
         /// Uses the colors from <see cref="CurrentlyActivePlayerColors"/>.<br/>
         /// </summary>
-        private void DisplayNewlySelectedColors()
-        {
-            for (int i = 0; i < PlayerColorBoxes.Count; i++)
-            {
+        private void DisplayNewlySelectedColors() {
+            for (int i = 0; i < PlayerColorBoxes.Count; i++) {
                 PlayerColorBoxes[i].Fill = new SolidColorBrush(Color.FromRgb(
                     (byte)CurrentlyActivePlayerColors[i].X,
                     (byte)CurrentlyActivePlayerColors[i].Y,
                     (byte)CurrentlyActivePlayerColors[i].Z));
             }
-
-            Log.Debug("UI player colors updated.");
+            Log.Debug("UI player colors updated");
         }
 
         /// <summary>
@@ -238,24 +212,20 @@ namespace PlayerColorEditor.MainScreen
         /// One the code side; loads the color presets colors into <see cref="CurrentlyActivePlayerColors"/><br/>
         /// Updates user preferences.<br/>
         /// </summary>
-        private void UpdateDataToSelectedPreset(int currentlyActivePresetIndex)
-        {
-            if (currentlyActivePresetIndex < PalettePresets.AllColorPalettePresets.Count && currentlyActivePresetIndex >= 0)
-            {
-                for (int i = 0; i < CurrentlyActivePlayerColors.Length; i++)
-                {
+        private void UpdateDataToSelectedPreset(int currentlyActivePresetIndex) {
+            if (currentlyActivePresetIndex < PalettePresets.AllColorPalettePresets.Count && currentlyActivePresetIndex >= 0) {
+                for (int i = 0; i < CurrentlyActivePlayerColors.Length; i++) {
                     CurrentlyActivePlayerColors[i] = new Vector3(
                         PalettePresets.AllColorPalettePresets[currentlyActivePresetIndex].GetPlayerColor(i).X,
                         PalettePresets.AllColorPalettePresets[currentlyActivePresetIndex].GetPlayerColor(i).Y,
                         PalettePresets.AllColorPalettePresets[currentlyActivePresetIndex].GetPlayerColor(i).Z);
                 }
-                Log.Debug($"Newly selected color {currentlyActivePresetIndex} updated to the Vector3[] NewPlayerColors.");
+                Log.Debug($"Newly selected color {currentlyActivePresetIndex} updated to the Vector3[] NewPlayerColors");
 
                 Settings.ConfigController.Config.ActiveColorPalettePreset = currentlyActivePresetIndex;
                 Settings.ConfigController.SaveToDisk();
             }
-            else
-            {
+            else {
                 Log.Error("Failed to update player colors; given index was too big. " +
                     $"Given index number was {currentlyActivePresetIndex} " +
                     $"and the count of palette presets is {PalettePresets.AllColorPalettePresets.Count}.");
@@ -263,8 +233,7 @@ namespace PlayerColorEditor.MainScreen
 
             // If currently selected preset is one of the default presets then disable save and delete buttons.
             // Makes sure this doesn't get executed before all window elements are loaded.
-            if (FindName("SavePreset") is System.Windows.Controls.Button savePresetButton)
-            {
+            if (FindName("SavePreset") is System.Windows.Controls.Button savePresetButton) {
                 savePresetButton.IsEnabled = currentlyActivePresetIndex >= Settings.DefaultValues.CountOfUnchangeableColorPresets;
 
                 var deletePresetButton = FindName("DeletePreset") as System.Windows.Controls.Button;
@@ -279,35 +248,33 @@ namespace PlayerColorEditor.MainScreen
         /// Also applies the new colors to "compared to colors" squares.<br/>
         /// Called after user saves, saves as, or deletes a color preset.<br/>
         /// </summary>
-        private void ApplyPickedComparedToColors()
-        {
+        private void ApplyPickedComparedToColors() {
             var presetSelection = FindName("ComparedToColorSelection") as System.Windows.Controls.ComboBox;
             int toBeSetIndex = presetSelection.SelectedIndex;
 
-            if (PalettePresets.AllColorPalettePresets.Count <= toBeSetIndex)
-            {
+            if (PalettePresets.AllColorPalettePresets.Count <= toBeSetIndex) {
                 Log.Warn("Index too big for comparison combo box, reseted to index 1");
                 Settings.ConfigController.Config.ActiveComparedToPalettePreset = Settings.DefaultValues.ComparedToPaletteDropDownSelection;
                 DisplayComparedToColorChoices(Settings.DefaultValues.ComparedToPaletteDropDownSelection);
                 DisplayComparedToPlayerColors(Settings.DefaultValues.ComparedToPaletteDropDownSelection);
             }
-            else
-            {
+            else {
                 Settings.ConfigController.Config.ActiveComparedToPalettePreset = toBeSetIndex;
                 DisplayComparedToColorChoices(toBeSetIndex);
                 DisplayComparedToPlayerColors(toBeSetIndex);
             }
         }
 
-        private void ComparedToColors_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            if (!MainWindowInitialized)
+        private void ComparedToColors_SelectionChanged(object sender, SelectionChangedEventArgs e) {
+            if (!MainWindowInitialized) {
                 return;
+            }
 
             var presetSelection = FindName("ComparedToColorSelection") as System.Windows.Controls.ComboBox;
 
-            if (presetSelection.SelectedIndex == -1)
+            if (presetSelection.SelectedIndex == -1) {
                 return;
+            }
 
             Log.Debug($"New preset selected for compared to colors combo box, with index: {presetSelection.SelectedIndex}.");
             Settings.ConfigController.Config.ActiveComparedToPalettePreset = presetSelection.SelectedIndex;
@@ -318,14 +285,11 @@ namespace PlayerColorEditor.MainScreen
         /// Updates the Compared to player color ComboBox listings in the UI, and saves the currently active selection to the user preferences.
         /// </summary>
         /// <param name="presetID">ID of selected item.</param>
-        private void DisplayComparedToColorChoices(int presetID)
-        {
+        private void DisplayComparedToColorChoices(int presetID) {
             var presetsComboBox = FindName("ComparedToColorSelection") as System.Windows.Controls.ComboBox;
-
             presetsComboBox.Items.Clear();
 
-            foreach (var currentColorPreset in PalettePresets.AllColorPalettePresets)
-            {
+            foreach (var currentColorPreset in PalettePresets.AllColorPalettePresets) {
                 _ = presetsComboBox.Items.Add(currentColorPreset.PresetName);
             }
 
@@ -339,16 +303,13 @@ namespace PlayerColorEditor.MainScreen
         /// <summary>
         /// Changes UI to show newly selected compared to player colors in the compared to player color squares.
         /// </summary>
-        private void DisplayComparedToPlayerColors(int presetID)
-        {
-            if (PalettePresets.AllColorPalettePresets.Count <= presetID)
-            {
+        private void DisplayComparedToPlayerColors(int presetID) {
+            if (PalettePresets.AllColorPalettePresets.Count <= presetID) {
                 Log.Debug("Index for compared to colors is too big");
                 return;
             }
 
-            for (int i = 0; i < CompraredToColorBoxes.Count; i++)
-            {
+            for (int i = 0; i < CompraredToColorBoxes.Count; i++) {
                 CompraredToColorBoxes[i].Fill = new SolidColorBrush(Color.FromRgb(
                     (byte)PalettePresets.AllColorPalettePresets[presetID].GetPlayerColor(i).X,
                     (byte)PalettePresets.AllColorPalettePresets[presetID].GetPlayerColor(i).Y,
@@ -365,10 +326,8 @@ namespace PlayerColorEditor.MainScreen
         /// Creates new color palettes object from <see cref="CurrentlyActivePlayerColors"/> and saves it to <see cref="AllColorPalettePresets"/>.<br/>
         /// Saves the palettes from <see cref="AllColorPalettePresets"/> to the disk and sets the UI elements to display the newly created color preset.<br/>
         /// </summary>
-        private void AcceptNewPresetName_Click(object sender, RoutedEventArgs e)
-        {
+        private void AcceptNewPresetName_Click(object sender, RoutedEventArgs e) {
             var presetNameString = FindName("NewPresetName") as System.Windows.Controls.TextBox;
-
             Components.PalettePreset.PalettePresetModel newPreset = new(
                 name: presetNameString.Text,
                 blue: CurrentlyActivePlayerColors[0],
@@ -381,19 +340,15 @@ namespace PlayerColorEditor.MainScreen
                 teal: CurrentlyActivePlayerColors[7]);
 
             PalettePresets.AllColorPalettePresets.Add(newPreset);
-
             PalettePresets.SavePalettePresetsToDisk();
             Log.Debug("Created new palette preset.");
 
             // Update UI to reflect all changes.
             DisplayColorPresetChoices(PalettePresets.AllColorPalettePresets.Count - 1);
-
             var presetDropdown = FindName("PresetSelection") as System.Windows.Controls.ComboBox;
             presetDropdown.IsEnabled = true;
-
             var presetNameBox = FindName("PresetNamePopUp") as StackPanel;
             presetNameBox.Visibility = Visibility.Collapsed;
-
             ApplyPickedComparedToColors();
             PrintToConsole("Created new palette preset", Settings.DefaultValues.ConsoleTextCreated);
         }
@@ -402,8 +357,7 @@ namespace PlayerColorEditor.MainScreen
         /// Closes the "delete preset" pop up and deletes the presets.<br/>
         /// Deletes a preset from <see cref="AllColorPalettePresets"/> at index of currently active "PresetSelection".<br/>
         /// </summary>
-        private void AcceptRemoval_Click(object sender, RoutedEventArgs e)
-        {
+        private void AcceptRemoval_Click(object sender, RoutedEventArgs e) {
             var deletePopup = FindName("PresetDeletePopUp") as StackPanel;
             deletePopup.Visibility = Visibility.Collapsed;
 
@@ -412,7 +366,6 @@ namespace PlayerColorEditor.MainScreen
 
             var presetSelection = FindName("PresetSelection") as System.Windows.Controls.ComboBox;
             PalettePresets.AllColorPalettePresets.RemoveAt(presetSelection.SelectedIndex);
-
             PalettePresets.SavePalettePresetsToDisk();
             Log.Debug("Player color preset deleted.");
 
@@ -426,8 +379,7 @@ namespace PlayerColorEditor.MainScreen
         /// <summary>
         /// Closes the pop up asking a name for new preset without creating new preset.
         /// </summary>
-        private void CancelNewPresetCreation_Click(object sender, RoutedEventArgs e)
-        {
+        private void CancelNewPresetCreation_Click(object sender, RoutedEventArgs e) {
             var presetNameBox = FindName("PresetNamePopUp") as StackPanel;
             presetNameBox.Visibility = Visibility.Collapsed;
 
@@ -440,8 +392,7 @@ namespace PlayerColorEditor.MainScreen
         /// <summary>
         /// Closes the "delete preset" pop up without deleting the presets.
         /// </summary>
-        private void CancelRemoval_Click(object sender, RoutedEventArgs e)
-        {
+        private void CancelRemoval_Click(object sender, RoutedEventArgs e) {
             var deletePopup = FindName("PresetDeletePopUp") as StackPanel;
             deletePopup.Visibility = Visibility.Collapsed;
 
@@ -454,8 +405,7 @@ namespace PlayerColorEditor.MainScreen
         /// <summary>
         /// Opens a pop up menu confirming or declining the preset deletion.
         /// </summary>
-        private void DeletePreset_Click(object sender, RoutedEventArgs e)
-        {
+        private void DeletePreset_Click(object sender, RoutedEventArgs e) {
             var deletePopup = FindName("PresetDeletePopUp") as StackPanel;
             deletePopup.Visibility = Visibility.Visible;
 
@@ -468,8 +418,7 @@ namespace PlayerColorEditor.MainScreen
         /// <summary>
         /// Opens pop up asking a name for the new preset.
         /// </summary>
-        private void SavePresetAs_Click(object sender, RoutedEventArgs e)
-        {
+        private void SavePresetAs_Click(object sender, RoutedEventArgs e) {
             var presetNameBox = FindName("PresetNamePopUp") as StackPanel;
             presetNameBox.Visibility = Visibility.Visible;
 
@@ -486,13 +435,11 @@ namespace PlayerColorEditor.MainScreen
         /// <summary>
         /// Saves colors from <see cref="CurrentlyActivePlayerColors"/> to the <see cref="AllColorPalettePresets"/> at "currently active color preset" index.
         /// </summary>
-        private void SavePreset_Click(object sender, RoutedEventArgs e)
-        {
+        private void SavePreset_Click(object sender, RoutedEventArgs e) {
             var presetSelection = FindName("PresetSelection") as System.Windows.Controls.ComboBox;
             int currentPreset = presetSelection.SelectedIndex;
 
-            for (int i = 0; i < PlayerColorBoxes.Count; i++)
-            {
+            for (int i = 0; i < PlayerColorBoxes.Count; i++) {
                 PalettePresets.AllColorPalettePresets[currentPreset].SetPlayerColor(CurrentlyActivePlayerColors[i], i);
             }
 
@@ -512,13 +459,11 @@ namespace PlayerColorEditor.MainScreen
         /// <see cref="Settings.DefaultValues.MaxLineCountInConsole"/>.<br/>
         /// </para>
         /// </summary>
-        private void PrintToConsole(string textToBeAdded, Color? textColor = null)
-        {
+        private void PrintToConsole(string textToBeAdded, Color? textColor = null) {
             // Optional parameter has to be constant, have to declare default text color value here.
             textColor = textColor == null ? Settings.DefaultValues.ConsoleTextBase : textColor;
 
-            Run newText = new(textToBeAdded + "\n")
-            {
+            Run newText = new(textToBeAdded + "\n") {
                 Foreground = new SolidColorBrush((Color)textColor)
             };
 
@@ -534,15 +479,16 @@ namespace PlayerColorEditor.MainScreen
         #endregion
 
         #region Game Color Palette Creation
-        private void ColorInterpolation_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            if (!MainWindowInitialized)
+        private void ColorInterpolation_SelectionChanged(object sender, SelectionChangedEventArgs e) {
+            if (!MainWindowInitialized) {
                 return;
+            }
 
             var colorSelection = FindName("ColorInterpolationSelection") as System.Windows.Controls.ComboBox;
 
-            if (colorSelection.SelectedIndex == -1)
+            if (colorSelection.SelectedIndex == -1) {
                 return;
+            }
 
             Log.Debug($"{(EInterpolationStyles)colorSelection.SelectedIndex} interpolation style selected.");
             Settings.ConfigController.Config.ActiveInterpolationMode = (EInterpolationStyles)colorSelection.SelectedIndex;
@@ -553,16 +499,13 @@ namespace PlayerColorEditor.MainScreen
         /// Creates all color palettes from <see cref="CurrentlyActivePlayerColors"/>.<br/>
         /// Color palettes location is defined in the user preferences.<br/>
         /// </summary>
-        private void CreateColors_Click(object sender, RoutedEventArgs e)
-        {
+        private void CreateColors_Click(object sender, RoutedEventArgs e) {
             bool successfullyCreatedPalettes = PaletteCreator.WritePlayerColorToPaletteFiles(CurrentlyActivePlayerColors);
-            if (successfullyCreatedPalettes)
-            {
+            if (successfullyCreatedPalettes) {
                 Log.Info("Created the color palettes");
                 PrintToConsole("Created the color palettes", Settings.DefaultValues.ConsoleTextCreated);
             }
-            else
-            {
+            else {
                 Log.Error("Failed to create color palettes");
                 PrintToConsole("Failed to create color palettes", Settings.DefaultValues.ConsoleTextError);
             }
@@ -571,10 +514,8 @@ namespace PlayerColorEditor.MainScreen
         /// <summary>
         /// Get color palettes folder location from the user preferences and displays that string in the UI.
         /// </summary>
-        private void DisplayPaletteFolderLocation()
-        {
+        private void DisplayPaletteFolderLocation() {
             var colorPalettePathText = FindName("ColorPalettesLocation") as TextBlock;
-
             colorPalettePathText.Text = Settings.ConfigController.Config.PaletteFolderLocation;
             Log.Trace("UI Palette location string updated.");
         }
@@ -583,14 +524,10 @@ namespace PlayerColorEditor.MainScreen
         /// Opens a folder browser.<br/>
         /// Saves the picked folder as the folder where all palette files will be created.<br/>
         /// </summary>
-        private void LocateColorPalettes_Click(object sender, RoutedEventArgs e)
-        {
+        private void LocateColorPalettes_Click(object sender, RoutedEventArgs e) {
             FolderBrowserDialog findPaletteFolder = new();
-
-            for (int i = 0; i < Settings.DefaultValues.ExpectedPaletteFolderLocations.Length; i++)
-            {
-                if (Directory.Exists(Settings.DefaultValues.ExpectedPaletteFolderLocations[i]))
-                {
+            for (int i = 0; i < Settings.DefaultValues.ExpectedPaletteFolderLocations.Length; i++) {
+                if (Directory.Exists(Settings.DefaultValues.ExpectedPaletteFolderLocations[i])) {
                     findPaletteFolder.SelectedPath = Settings.DefaultValues.ExpectedPaletteFolderLocations[i];
                     Log.Debug("Palette location found automatically.");
                     break;
@@ -598,23 +535,19 @@ namespace PlayerColorEditor.MainScreen
             }
 
             DialogResult browseFileResult = findPaletteFolder.ShowDialog();
-
-            if (browseFileResult == System.Windows.Forms.DialogResult.OK)
-            {
+            if (browseFileResult == System.Windows.Forms.DialogResult.OK) {
                 Settings.ConfigController.Config.PaletteFolderLocation = findPaletteFolder.SelectedPath;
                 Log.Debug($"Palette location changed. New palette location is: {Settings.ConfigController.Config.PaletteFolderLocation}");
             }
 
             findPaletteFolder.Dispose();
-
             DisplayPaletteFolderLocation();
             Settings.ConfigController.SaveToDisk();
         }
         #endregion
 
         #region Program Info
-        private void Info_Click(object sender, RoutedEventArgs e)
-        {
+        private void Info_Click(object sender, RoutedEventArgs e) {
             var InfoPopUp = FindName("InfoPopUp") as StackPanel;
             bool infoPopUpVisible = InfoPopUp.Visibility == Visibility.Visible;
             InfoPopUp.Visibility = infoPopUpVisible ? Visibility.Collapsed : Visibility.Visible;
@@ -622,19 +555,17 @@ namespace PlayerColorEditor.MainScreen
         #endregion
 
         #region Window Controls
-        private void UserControl_SizeChanged(object sender, SizeChangedEventArgs args)
-        {
-            if (!MainWindowInitialized)
+        private void UserControl_SizeChanged(object sender, SizeChangedEventArgs args) {
+            if (!MainWindowInitialized) {
                 return;
-
+            }
             WindowSizer.UserChangedWindowSize();
         }
 
-        private void Window_LocationChanged(object sender, EventArgs e)
-        {
-            if (!MainWindowInitialized)
+        private void Window_LocationChanged(object sender, EventArgs e) {
+            if (!MainWindowInitialized) {
                 return;
-
+            }
             WindowSizer.UserChangedWindowSize();
         }
         #endregion

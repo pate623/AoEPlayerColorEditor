@@ -1,7 +1,6 @@
 ﻿using System.Numerics;
 
-namespace PlayerColorEditor.MainScreen.Components.PalettePreset
-{
+namespace PlayerColorEditor.MainScreen.Components.PalettePreset {
     /// <summary>
     /// JSON coded "Player Color Palette Preset" object.<br/>
     /// Player color Blue is index 0 and Teal is index 7<br/>
@@ -15,8 +14,7 @@ namespace PlayerColorEditor.MainScreen.Components.PalettePreset
         Vector3 orange,
         Vector3 green,
         Vector3 purple,
-        Vector3 teal)
-    {
+        Vector3 teal) {
         public string PresetName { get; set; } = name;
 
         public int[] BluePlayerColor { get; set; } = [(int)blue.X, (int)blue.Y, (int)blue.Z];
@@ -28,10 +26,8 @@ namespace PlayerColorEditor.MainScreen.Components.PalettePreset
         public int[] PurplePlayerColor { get; set; } = [(int)purple.X, (int)purple.Y, (int)purple.Z];
         public int[] TealPlayerColor { get; set; } = [(int)teal.X, (int)teal.Y, (int)teal.Z];
 
-        public void SetPlayerColor(Vector3 playerColor, int playerIndex)
-        {
-            switch (playerIndex)
-            {
+        public void SetPlayerColor(Vector3 playerColor, int playerIndex) {
+            switch (playerIndex) {
                 case 0:
                     BluePlayerColor = [(int)playerColor.X, (int)playerColor.Y, (int)playerColor.Z];
                     break;
@@ -65,10 +61,8 @@ namespace PlayerColorEditor.MainScreen.Components.PalettePreset
         /// </summary>
         /// <param name="index">The player which colors to get</param>
         /// <returns>The RGB player color</returns>
-        public Vector3 GetPlayerColor(int index)
-        {
-            return index switch
-            {
+        public Vector3 GetPlayerColor(int index) {
+            return index switch {
                 0 => new Vector3(BluePlayerColor[0], BluePlayerColor[1], BluePlayerColor[2]),
                 1 => new Vector3(RedPlayerColor[0], RedPlayerColor[1], RedPlayerColor[2]),
                 2 => new Vector3(YellowPlayerColor[0], YellowPlayerColor[1], YellowPlayerColor[2]),

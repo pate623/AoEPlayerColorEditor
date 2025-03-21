@@ -1,18 +1,16 @@
-﻿namespace PlayerColorEditor.Settings
-{
+﻿namespace PlayerColorEditor.Settings {
     /// <summary>
     /// JSON coded Configuration object.
     /// </summary>
     public class ConfigModel(
         string? paletteLocation,
-        int activeColorPalette, 
+        int activeColorPalette,
         int activeComparedToPalette,
         MainScreen.EInterpolationStyles activeInterpolationMode,
         int? windowsWidth = null,
         int? windowsHeight = null,
         int? windowsLeft = null,
-        int? windowsTop = null)
-    {
+        int? windowsTop = null) {
         public string? PaletteFolderLocation { get; set; } = paletteLocation;
         public int ActiveColorPalettePreset { get; set; } = activeColorPalette;
         public int ActiveComparedToPalettePreset { get; set; } = activeComparedToPalette;

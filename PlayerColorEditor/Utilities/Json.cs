@@ -4,13 +4,11 @@ using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.IO;
 
-namespace PlayerColorEditor.Utilities
-{
+namespace PlayerColorEditor.Utilities {
     /// <summary>
     /// Helper class for saving and reading JSON files.
     /// </summary>
-    public class Json
-    {
+    public class Json {
         private static readonly Logger Log = new(typeof(Json));
 
         /// <summary>
@@ -19,8 +17,7 @@ namespace PlayerColorEditor.Utilities
         /// <typeparam name="T">The type of object to deserialize</typeparam>
         /// <param name="jsonFile">The JSON file to read</param>
         /// <returns>The deserialized objects</returns>
-        public static IEnumerable<T> DeserializeObjects<T>(FileInfo jsonFile)
-        {
+        public static IEnumerable<T> DeserializeObjects<T>(FileInfo jsonFile) {
             Log.Trace($"Reading file {jsonFile.Name}");
             string jsonAsTest = File.ReadAllText(jsonFile.FullName);
             JsonSerializer serializer = new();
@@ -28,8 +25,7 @@ namespace PlayerColorEditor.Utilities
             using JsonTextReader jsonReader = new(strReader);
             jsonReader.SupportMultipleContent = true;
 
-            while (jsonReader.Read())
-            {
+            while (jsonReader.Read()) {
                 yield return serializer.Deserialize<T>(jsonReader);
             }
             Log.Trace($"File {jsonFile} read.");
@@ -41,8 +37,7 @@ namespace PlayerColorEditor.Utilities
         /// <typeparam name="T">The type of object to deserialize</typeparam>
         /// <param name="JsonFile">The JSON file to read</param>
         /// <returns>The deserialized object</returns>
-        public static T DeserializeObject<T>(FileInfo JsonFile)
-        {
+        public static T DeserializeObject<T>(FileInfo JsonFile) {
             Log.Trace($"Reading file {JsonFile.Name}");
             string jsonAsTest = File.ReadAllText(JsonFile.FullName);
             T deserializedJson = JsonConvert.DeserializeObject<T>(jsonAsTest);
@@ -58,15 +53,13 @@ namespace PlayerColorEditor.Utilities
         /// <param name="dataContent">List of object to write</param>
         /// <param name="fileLocation">File to write into</param>
         /// <param name="writeIndented">whether or not to write indented JSON text.</param>
-        public static void SaveToDisk<T>(List<T> dataContent, FileInfo jsonFile, bool writeIndented = true)
-        {
+        public static void SaveToDisk<T>(List<T> dataContent, FileInfo jsonFile, bool writeIndented = true) {
             Log.Trace($"Saving JSON file {jsonFile.Name}");
             System.Text.Json.JsonSerializerOptions options = new() { WriteIndented = writeIndented };
 
             string jsonTextToWriteInTheFile = "";
 
-            for (int i = 0; i < dataContent.Count; i++)
-            {
+            for (int i = 0; i < dataContent.Count; i++) {
                 jsonTextToWriteInTheFile += System.Text.Json.JsonSerializer.Serialize(dataContent[i], options);
             }
 
@@ -82,8 +75,7 @@ namespace PlayerColorEditor.Utilities
         /// <param name="dataContent">The object to write</param>
         /// <param name="jsonFile">File to write into</param>
         /// <param name="writeIndented">whether or not to write indented JSON text.</param>
-        public static void SaveToDisk<T>(T dataContent, FileInfo jsonFile, bool writeIndented = true)
-        {
+        public static void SaveToDisk<T>(T dataContent, FileInfo jsonFile, bool writeIndented = true) {
             SaveToDisk([dataContent], jsonFile, writeIndented);
         }
     }

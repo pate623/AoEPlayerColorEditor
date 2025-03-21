@@ -1,10 +1,8 @@
 using System.IO;
 using System.Windows.Media;
 
-namespace PlayerColorEditor.Settings
-{
-    public static class DefaultValues
-    {
+namespace PlayerColorEditor.Settings {
+    public static class DefaultValues {
         #region Configuration file
         public static string ConfigurationFileLocation { get { return Path.Combine(Directory.GetCurrentDirectory(), "UserPreferences.json"); } }
 
@@ -46,8 +44,7 @@ namespace PlayerColorEditor.Settings
         public static string PalettePresetFileLocation { get { return Path.Combine(Directory.GetCurrentDirectory(), "PlayerColorPresets.json"); } }
 
         /// <summary>The Color palettes this program has by default.</summary>
-        public static MainScreen.Components.PalettePreset.PalettePresetModel[] PalettePresets()
-        {
+        public static MainScreen.Components.PalettePreset.PalettePresetModel[] PalettePresets() {
             MainScreen.Components.PalettePreset.PalettePresetModel editorDefaultPlayerColors = new(
                 name: "Editor Default",
                 blue: new(15, 70, 245),

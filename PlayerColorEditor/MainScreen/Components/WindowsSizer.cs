@@ -1,12 +1,10 @@
-﻿namespace PlayerColorEditor.MainScreen.Components
-{
+﻿namespace PlayerColorEditor.MainScreen.Components {
     /// <summary>
     /// Records changes on windows location and saves the values into user preferences.<br/>
     /// Users can only scale the window in fixed ratio.<br/>
     /// Fixed ratio is determined by the window minimum width and height written in the XAML file.<br/>
     /// </summary>
-    public class WindowSizer(MainWindow parentObject)
-    {
+    public class WindowSizer(MainWindow parentObject) {
         private readonly double WidthRatio = (double)Settings.DefaultValues.MainWindowWidth / Settings.DefaultValues.MainWindowHeight;
         private readonly double HeightRatio = (double)Settings.DefaultValues.MainWindowHeight / Settings.DefaultValues.MainWindowWidth;
 
@@ -15,8 +13,7 @@
         /// <summary>
         /// Saves the new window location and size to the user preferences and saves the user preferences to the disk after user stops adjusting the window.<br/>
         /// </summary>
-        public void UserChangedWindowSize()
-        {
+        public void UserChangedWindowSize() {
             double currenWidth = MainWindow.Width;
             double currentHeight = MainWindow.Height;
 
